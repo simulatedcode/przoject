@@ -16,6 +16,8 @@ if (typeof window !== "undefined") {
     gsap.registerPlugin(ScrollTrigger, useGSAP);
 }
 
+const THEME_COLOR = "#1D2A22";
+
 function HelasModel({ isLoaded, ...props }: any) {
     const { scene } = useGLTF("/models/helas.glb");
     const texture = useTexture("/images/textur_metal.jpg");
@@ -36,16 +38,17 @@ function HelasModel({ isLoaded, ...props }: any) {
                     // Maintain standard custom physical material parameters
                     child.material = new THREE.MeshPhysicalMaterial({
                         map: texture,
+                        color: new THREE.Color(THEME_COLOR),
                         metalness: 1.0,
                         roughness: 0.2,
-                        iridescence: 4.8,
-                        iridescenceIOR: 2.5,
-                        iridescenceThicknessRange: [100, 400],
-                        ior: 8.5,
+                        iridescence: 4.0,
+                        iridescenceIOR: 1.5,
+                        iridescenceThicknessRange: [100, 800],
+                        ior: 2.5,
                         transmission: 1.0,
                         thickness: 1.0,
                         attenuationDistance: 1.0,
-                        attenuationColor: new THREE.Color("#242424"),
+                        attenuationColor: new THREE.Color(THEME_COLOR),
                     });
                 }
             });
@@ -86,32 +89,37 @@ function StudioFloor({ isLoaded, children }: any) {
         <group position={[0, -0.993, 0]}>
             {/* 1️⃣ Matte Floor Surface */}
             <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow ref={floorRef}>
-                <planeGeometry args={[100, 100]} />
-                <meshStandardMaterial color="#111111" roughness={4} metalness={0.6} />
+                <planeGeometry args={[120, 120]} />
+                <meshStandardMaterial
+                    color={THEME_COLOR}
+                    roughness={0.8}
+                    metalness={0.1}
+                    envMapIntensity={0.2}
+                />
             </mesh>
 
-            {/* 2️⃣ Visible Grid Lines */}
+            {/* 2️⃣ Visible Grid Lines - Subtle dark variations of theme */}
             <Grid
                 position={[0, 0.005, 0]}
-                args={[50, 50]}
-                cellColor="#242424"
-                sectionColor="#242424"
-                fadeDistance={40}
+                args={[100, 100]}
+                cellColor={THEME_COLOR}
+                sectionColor={THEME_COLOR}
+                fadeDistance={50}
                 fadeStrength={1}
-                sectionThickness={1}
-                cellThickness={0.5}
+                sectionThickness={0.8}
+                cellThickness={0.4}
                 infiniteGrid
             />
 
-            {/* 3️⃣ Soft Contact Shadows - Positioned slightly above the grid for realistic blending */}
+            {/* 3️⃣ Soft Contact Shadows - Tinted with theme for better blending */}
             <ContactShadows
                 position={[0, 0.01, 0]}
-                opacity={0.8}
-                scale={10}
-                blur={4.8}
-                far={1.5}
+                opacity={0.065}
+                scale={12}
+                blur={8}
+                far={2}
                 resolution={512}
-                color="#111111"
+                color={THEME_COLOR}
             />
             {children}
         </group>
@@ -158,15 +166,49 @@ function FloatingDebris({ count = 40 }) {
 
     return (
         <instancedMesh ref={mesh} args={[undefined, undefined, count]}>
-            <dodecahedronGeometry args={[0.02, 0]} />
-            <meshStandardMaterial color="#111" roughness={0.1} metalness={1} />
+            <dodecahedronGeometry args={[0.002, 0]} />
+            <meshStandardMaterial color="#84A990" roughness={0.08} metalness={0.03} />
         </instancedMesh>
+    );
+}
+
+function CloudBackground({ scrollProgress }: { scrollProgress: number }) {
+    const texture = useTexture("/images/cloud.png");
+    const opacity = Math.min(0.6, Math.max(0, (scrollProgress - 0.8) * 2));
+    const meshRef = useRef<THREE.Mesh>(null!);
+
+    useFrame((state) => {
+        if (meshRef.current) {
+            // High-depth parallax: Clouds are far away, so they move slowly
+            const targetX = state.mouse.x * 4;
+            const targetY = 3.2 + scrollProgress * 0.5 + state.mouse.y * 2;
+
+            meshRef.current.position.x = THREE.MathUtils.lerp(meshRef.current.position.x, targetX, 0.04);
+            meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, targetY, 0.04);
+        }
+    });
+
+    return (
+        <mesh ref={meshRef} position={[0, 0.08, -28]} scale={[38, 38 * (361 / 1143), 1]}>
+            <planeGeometry />
+            <meshBasicMaterial
+                map={texture}
+                color="#84A990"
+                blendColor={THEME_COLOR}
+                blendEquation={THREE.AddEquation}
+                transparent
+                opacity={opacity}
+                depthWrite={false}
+                fog={false}
+            />
+        </mesh>
     );
 }
 
 export default function Hero({ isLoaded }: { isLoaded: boolean }) {
     const orbitRef = useRef<any>(null);
     const [entranceDone, setEntranceDone] = useState(false);
+    const [scrollProgress, setScrollProgress] = useState(0);
     useEffect(() => {
         // Entrance takes ~3s. We'll wait 3s before allowing scroll to take over.
         const timer = setTimeout(() => {
@@ -183,6 +225,7 @@ export default function Hero({ isLoaded }: { isLoaded: boolean }) {
             end: "bottom bottom",
             scrub: 2,
             onUpdate: (self) => {
+                setScrollProgress(self.progress);
                 if (orbitRef.current && entranceDone) {
                     const minAngle = 0;
                     const maxAngle = Math.PI / 2;
@@ -203,39 +246,38 @@ export default function Hero({ isLoaded }: { isLoaded: boolean }) {
     return (
         <div className="absolute inset-0 w-full h-full -z-10 pointer-events-auto">
             <Canvas shadows camera={{ position: [0, 8, 0.01], fov: 45 }} gl={{ toneMapping: THREE.ACESFilmicToneMapping }}>
-                <color attach="background" args={["#242424"]} />
-                <fog attach="fog" args={["#242424", 40, 400]} />
+                <color attach="background" args={[THEME_COLOR]} />
+                <fog attach="fog" args={[THEME_COLOR, 15, 50]} />
 
-                {/* Balanced studio lighting */}
-                <ambientLight intensity={0.5} />
+                {/* High Contrast Studio Lighting */}
+                <ambientLight intensity={0.05} />
+
+                {/* Front Shine Accent - Reduced to preserve side-light drama */}
+                <pointLight
+                    position={[0, 4, 15]}
+                    color="#D5E2D9"
+                    intensity={3}
+                    distance={50}
+                    decay={2}
+                />
 
                 {/* 
-                  Primary directional light configuration for long cinematic shadows.
-                  Positioned high and far away to mimic sunrise/sunset trajectories.
+                  Side Directional Light for long cinematic shadows pointing left.
                 */}
                 <directionalLight
-                    position={[-6, 4, -6]}
-                    intensity={1.5} // High intensity key light for Bloom to catch
+                    position={[20, 5, -2]}
+                    color="#84A990"
+                    intensity={2}
                     castShadow
                     shadow-mapSize={[4096, 4096]}
-
-                    // Negative bias limits "Shadow Acne" (self-shadowing defects)
-                    shadow-bias={-0.00001}
-
-                    // normalBias prevents Peter-Panning (detachment) 
-                    // Too high = shadow detaches. Too low = self-shadowing artifacts.
-                    shadow-normalBias={0.02}
+                    shadow-bias={-0.0005}
+                    shadow-normalBias={0.05}
                 >
-                    {/* 
-                      Orthographic frustum tuning.
-                      If args are [-50, 50, ...], 4096px resolution stretches over 100 units.
-                      By tightening the args to [-8, 8, ...], 4096px renders extreme, razor-sharp precision solely over the hero. 
-                    */}
-                    <orthographicCamera attach="shadow-camera" args={[-6, 6, 6, -6, 0.1, 20]} />
+                    <orthographicCamera attach="shadow-camera" args={[-20, 20, 20, -20, 0.1, 100]} />
                 </directionalLight>
 
-                {/* Fill light: low blue/teal rim light to accent the dark side of the metal */}
-                <directionalLight position={[-18, 18, 18]} intensity={0.3} color="#88ccff" />
+                {/* Fill light: Rim light to accent the right side from behind */}
+                <directionalLight position={[20, 10, -10]} intensity={0.5} color="#D5E2D9" />
 
                 <Suspense fallback={null}>
                     <Stars
@@ -261,6 +303,7 @@ export default function Hero({ isLoaded }: { isLoaded: boolean }) {
 
                     <StudioFloor isLoaded={isLoaded} />
                     <FloatingDebris />
+                    <CloudBackground scrollProgress={scrollProgress} />
 
                     {/* Cinematic Post-Processing Pipeline */}
                     <EffectComposer enableNormalPass multisampling={4}>
@@ -308,3 +351,4 @@ export default function Hero({ isLoaded }: { isLoaded: boolean }) {
 
 useGLTF.preload("/models/helas.glb");
 useTexture.preload("/images/textur_metal.jpg");
+useTexture.preload("/images/cloud.png");
