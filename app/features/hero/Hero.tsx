@@ -62,14 +62,14 @@ function HelasModel({ isLoaded, ...props }: any) {
             gsap.fromTo(
                 groupRef.current.position,
                 { y: -4 },
-                { y: 0, duration: 3, ease: "expo.out" }
+                { y: 0, duration: 3, ease: "sine.out" }
             );
 
             // "The Materialize" - Scale up from nothing
             gsap.fromTo(
                 groupRef.current.scale,
                 { x: 0, y: 0, z: 0 },
-                { x: 1, y: 1, z: 1, duration: 2.5, ease: "power3.out" }
+                { x: 1, y: 1, z: 1, duration: 2.5, ease: "sine.out" }
             );
         }
     }, [isLoaded]);
@@ -87,20 +87,21 @@ function StudioFloor({ isLoaded, children }: any) {
 
     return (
         <group position={[0, -0.998, 0]}>
-            {/* 1️⃣ Matte Floor Surface */}
-            <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow ref={floorRef}>
+            {/* 1️⃣ Matte Floor Surface - Double Sided to prevent culling during tilt */}
+            <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow ref={floorRef} position={[0, 0, 0]}>
                 <planeGeometry args={[120, 120]} />
                 <meshStandardMaterial
                     color={THEME_COLOR}
                     roughness={0.8}
                     metalness={0.1}
                     envMapIntensity={0.2}
+                    side={THREE.DoubleSide}
                 />
             </mesh>
 
-            {/* 2️⃣ Visible Grid Lines - Subtle dark variations of theme */}
+            {/* 2️⃣ Visible Grid Lines - Slightly offset to prevent Z-fighting */}
             <Grid
-                position={[0, 0.005, 0]}
+                position={[0, 0.01, 0]}
                 args={[100, 100]}
                 cellColor={THEME_COLOR}
                 sectionColor={THEME_COLOR}
@@ -111,9 +112,9 @@ function StudioFloor({ isLoaded, children }: any) {
                 infiniteGrid
             />
 
-            {/* 3️⃣ Soft Contact Shadows - Tinted with theme for better blending */}
+            {/* 3️⃣ Soft Contact Shadows - Slightly above Grid */}
             <ContactShadows
-                position={[0, 0.01, 0]}
+                position={[0, 0.02, 0]}
                 opacity={0.065}
                 scale={12}
                 blur={8}
@@ -161,6 +162,8 @@ function CloudBackground({ scrollProgress }: { scrollProgress: number }) {
 
 function CameraController({ orbitRef, entranceDone, scrollProgress }: { orbitRef: any, entranceDone: boolean, scrollProgress: number }) {
     const mouse = useRef(new THREE.Vector2(0, 0));
+    // Ref for smoothed mouse to implement weighted inertia
+    const smoothMouse = useRef(new THREE.Vector2(0, 0));
 
     useEffect(() => {
         const handleMouseMove = (e: MouseEvent) => {
@@ -175,25 +178,58 @@ function CameraController({ orbitRef, entranceDone, scrollProgress }: { orbitRef
     useFrame(() => {
         if (!entranceDone || !orbitRef.current) return;
 
+        // 0. Update Smooth Mouse with "heavy" weighted inertia
+        // Lower factor = more cinematic weight/drifting
+        smoothMouse.current.x = THREE.MathUtils.lerp(smoothMouse.current.x, mouse.current.x, 0.04);
+        smoothMouse.current.y = THREE.MathUtils.lerp(smoothMouse.current.y, mouse.current.y, 0.04);
+
         // 1. Calculate Base Angles from Scroll progress
-        const startPolar = 1.56;
-        const endPolar = 1.57;
-        const startAzimuth = -1.41;
-        const endAzimuth = 0.001;
+        // Transition path: Main Sweep (Phase 1) then Transition Tilt (Phase 2 at 80%)
+        const landingPolar = 1.40;
+        const neutralPolar = 1.57;    // Frontal leveling
+        const peakTiltPolar = 1.72;   // Softened tilt down (Axis-Y) for natural feel
 
-        const basePolar = startPolar + (endPolar - startPolar) * scrollProgress;
-        const baseAzimuth = startAzimuth + (endAzimuth - startAzimuth) * scrollProgress;
+        const startAzimuth = -1.5458;
+        const finalAzimuth = 0.001;
 
-        // 2. Calculate Mouse Parallax Offsets (Angular Tilt)
-        const polarOffset = -mouse.current.y * 0.25; // Vertical tilt
-        const azimuthOffset = mouse.current.x * 0.25; // Horizontal tilt
+        let basePolar;
+        let baseAzimuth;
 
-        // 3. Combine Base + Offset
+        // Phase 1 (0.0 to 0.8): Sweep Azimuth around and level the Polar angle
+        if (scrollProgress < 0.8) {
+            const p = scrollProgress / 0.8;
+            // Use sin easing for more natural phase start/stop
+            const easedP = (1 - Math.cos(p * Math.PI)) / 2;
+            basePolar = landingPolar + (neutralPolar - landingPolar) * easedP;
+            baseAzimuth = startAzimuth + (finalAzimuth - startAzimuth) * easedP;
+        }
+        // Phase 2 (0.8 to 1.0): Subtle transition tilt down
+        else {
+            const p = (scrollProgress - 0.8) / 0.2;
+            const easedP = (1 - Math.cos(p * Math.PI)) / 2;
+            basePolar = neutralPolar + (peakTiltPolar - neutralPolar) * easedP;
+            baseAzimuth = finalAzimuth; // Keep facing front
+        }
+
+        // 2. Calculate Parallax Offsets using Smoothed Mouse
+        // Angular Tilt (Subtle but weighted)
+        const polarOffset = -smoothMouse.current.y * 0.06;
+        const azimuthOffset = smoothMouse.current.x * 0.08;
+
+        // 3. Positional Multi-axis Parallax (The "Natural" Key)
+        // Shifting the target itself creates a deeper 3D parallax feel
+        const targetX = smoothMouse.current.x * 0.4;
+        const targetY = smoothMouse.current.y * 0.3;
+
+        orbitRef.current.target.x = THREE.MathUtils.lerp(orbitRef.current.target.x, targetX, 0.04);
+        orbitRef.current.target.y = THREE.MathUtils.lerp(orbitRef.current.target.y, targetY, 0.04);
+
+        // 4. Combine Base + Offset
         let targetPolar = basePolar + polarOffset;
         let targetAzimuth = baseAzimuth + azimuthOffset;
 
         // 4. Safety Constraints
-        targetPolar = THREE.MathUtils.clamp(targetPolar, 0.01, Math.PI / 2 - 0.01);
+        targetPolar = THREE.MathUtils.clamp(targetPolar, 0.01, 2.4); // Headroom for 1.88 tilt + 0.25 parallax
 
         // 5. Smoothly LERP the values for high-end feel
         const currentPolar = orbitRef.current.getPolarAngle();
@@ -254,7 +290,7 @@ export default function Hero({ isLoaded }: { isLoaded: boolean }) {
             tl.to(controlsProxy, {
                 distance: 9.74,
                 duration: 3.5,
-                ease: "expo.out"
+                ease: "sine.out"
             }, 0);
 
             // Slow Sweeping Rotation (Sweep continues longer)
@@ -262,7 +298,7 @@ export default function Hero({ isLoaded }: { isLoaded: boolean }) {
                 polar: 1.5543,
                 azimuth: -1.5458,
                 duration: 3,
-                ease: "power3.inOut"
+                ease: "sine.inOut"
             }, 0);
         }
     }, [isLoaded]);
@@ -271,7 +307,7 @@ export default function Hero({ isLoaded }: { isLoaded: boolean }) {
 
     useGSAP(() => {
         ScrollTrigger.create({
-            trigger: document.documentElement,
+            trigger: "#hero-trigger",
             start: "top top",
             end: "bottom bottom",
             scrub: 2,
@@ -395,7 +431,7 @@ export default function Hero({ isLoaded }: { isLoaded: boolean }) {
                     enableDamping={true} // Add physics-based momentum decay to the rotation
                     dampingFactor={0.05} // Smoothly slows down the camera movement
                     minPolarAngle={0}
-                    maxPolarAngle={Math.PI / 1.88}
+                    maxPolarAngle={2.4}
                     target={[0, 0, 0]}
                     onChange={handleOrbitChange}
                 />

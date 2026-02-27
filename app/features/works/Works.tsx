@@ -4,11 +4,10 @@ import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ScrambleTextPlugin } from "gsap-trial/dist/ScrambleTextPlugin";
-import TransitionLink from "../../components/TransitionLink";
+import TransitionLink from "@/app/components/TransitionLink";
 
 if (typeof window !== "undefined") {
-    gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin);
+    gsap.registerPlugin(ScrollTrigger);
 }
 
 // Reusable component for the interactive split-text list row
@@ -51,8 +50,8 @@ function WorkListItem({
                 gsap.to(overlayRef.current, { opacity: 0.8, duration: 0.5 });
 
                 // Split text apart dynamically to edges
-                gsap.to(leftTextRef.current, { x: "-30vw", duration: 0.8, ease: "power4.out" });
-                gsap.to(rightTextRef.current, { x: "30vw", duration: 0.8, ease: "power4.out" });
+                gsap.to(leftTextRef.current, { x: "-30vw", duration: 0.8, ease: "sine.out" });
+                gsap.to(rightTextRef.current, { x: "30vw", duration: 0.8, ease: "sine.out" });
 
                 // Unclip and scale Image
                 gsap.fromTo(
@@ -65,7 +64,7 @@ function WorkListItem({
                         clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
                         x: imageXOffset,
                         duration: 0.8,
-                        ease: "power4.out"
+                        ease: "sine.out"
                     }
                 );
 
@@ -73,7 +72,7 @@ function WorkListItem({
                 gsap.fromTo(
                     imageRef.current,
                     { scale: 1 },
-                    { scale: 1.05, duration: 1.5, ease: "power3.out" }
+                    { scale: 1.05, duration: 1.5, ease: "sine.out" }
                 );
             }}
             onMouseLeave={() => {
@@ -81,8 +80,8 @@ function WorkListItem({
                 gsap.to(overlayRef.current, { opacity: 0, duration: 0.5 });
 
                 // Return text to center
-                gsap.to(leftTextRef.current, { x: 0, duration: 0.8, ease: "power4.out" });
-                gsap.to(rightTextRef.current, { x: 0, duration: 0.8, ease: "power4.out" });
+                gsap.to(leftTextRef.current, { x: 0, duration: 0.8, ease: "sine.out" });
+                gsap.to(rightTextRef.current, { x: 0, duration: 0.8, ease: "sine.out" });
 
                 // Hide image
                 gsap.to(imageContainerRef.current, {
