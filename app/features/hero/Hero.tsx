@@ -86,7 +86,7 @@ function StudioFloor({ isLoaded, children }: any) {
     const floorRef = useRef<any>(null);
 
     return (
-        <group position={[0, -0.993, 0]}>
+        <group position={[0, -0.998, 0]}>
             {/* 1️⃣ Matte Floor Surface */}
             <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow ref={floorRef}>
                 <planeGeometry args={[120, 120]} />
@@ -126,52 +126,6 @@ function StudioFloor({ isLoaded, children }: any) {
     );
 }
 
-function FloatingDebris({ count = 40 }) {
-    const mesh = useRef<THREE.InstancedMesh>(null!);
-    const particles = useMemo(() => {
-        const temp = [];
-        for (let i = 0; i < count; i++) {
-            const t = Math.random() * 100;
-            const factor = 20 + Math.random() * 100;
-            const speed = 0.01 + Math.random() / 200;
-            const xFactor = -5 + Math.random() * 10;
-            const yFactor = -5 + Math.random() * 10;
-            const zFactor = -5 + Math.random() * 10;
-            temp.push({ t, factor, speed, xFactor, yFactor, zFactor, mx: 0, my: 0 });
-        }
-        return temp;
-    }, [count]);
-
-    const dummy = useMemo(() => new THREE.Object3D(), []);
-
-    useFrame((state) => {
-        particles.forEach((particle, i) => {
-            let { t, factor, speed, xFactor, yFactor, zFactor } = particle;
-            t = particle.t += speed / 2;
-            const a = Math.cos(t) + Math.sin(t * 1) / 10;
-            const b = Math.sin(t) + Math.cos(t * 2) / 10;
-            const s = Math.cos(t);
-            dummy.position.set(
-                (particle.mx / 10) * a + xFactor + Math.cos((t / 10) * factor) + (Math.sin(t * 1) * factor) / 10,
-                (particle.my / 10) * b + yFactor + Math.sin((t / 10) * factor) + (Math.cos(t * 2) * factor) / 10,
-                (particle.my / 10) * b + zFactor + Math.cos((t / 10) * factor) + (Math.sin(t * 3) * factor) / 10
-            );
-            dummy.scale.set(s, s, s);
-            dummy.rotation.set(s * 5, s * 5, s * 5);
-            dummy.updateMatrix();
-            mesh.current.setMatrixAt(i, dummy.matrix);
-        });
-        mesh.current.instanceMatrix.needsUpdate = true;
-    });
-
-    return (
-        <instancedMesh ref={mesh} args={[undefined, undefined, count]}>
-            <dodecahedronGeometry args={[0.002, 0]} />
-            <meshStandardMaterial color="#84A990" roughness={0.08} metalness={0.03} />
-        </instancedMesh>
-    );
-}
-
 function CloudBackground({ scrollProgress }: { scrollProgress: number }) {
     const texture = useTexture("/images/cloud.png");
     const opacity = Math.min(0.6, Math.max(0, (scrollProgress - 0.8) * 2));
@@ -205,17 +159,114 @@ function CloudBackground({ scrollProgress }: { scrollProgress: number }) {
     );
 }
 
+function CameraController({ orbitRef, entranceDone, scrollProgress }: { orbitRef: any, entranceDone: boolean, scrollProgress: number }) {
+    const mouse = useRef(new THREE.Vector2(0, 0));
+
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            // Normalized coordinates (-1 to 1)
+            mouse.current.x = (e.clientX / window.innerWidth) * 2 - 1;
+            mouse.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
+        };
+        window.addEventListener("mousemove", handleMouseMove);
+        return () => window.removeEventListener("mousemove", handleMouseMove);
+    }, []);
+
+    useFrame(() => {
+        if (!entranceDone || !orbitRef.current) return;
+
+        // 1. Calculate Base Angles from Scroll progress
+        const startPolar = 1.56;
+        const endPolar = 1.57;
+        const startAzimuth = -1.41;
+        const endAzimuth = 0.001;
+
+        const basePolar = startPolar + (endPolar - startPolar) * scrollProgress;
+        const baseAzimuth = startAzimuth + (endAzimuth - startAzimuth) * scrollProgress;
+
+        // 2. Calculate Mouse Parallax Offsets (Angular Tilt)
+        const polarOffset = -mouse.current.y * 0.25; // Vertical tilt
+        const azimuthOffset = mouse.current.x * 0.25; // Horizontal tilt
+
+        // 3. Combine Base + Offset
+        let targetPolar = basePolar + polarOffset;
+        let targetAzimuth = baseAzimuth + azimuthOffset;
+
+        // 4. Safety Constraints
+        targetPolar = THREE.MathUtils.clamp(targetPolar, 0.01, Math.PI / 2 - 0.01);
+
+        // 5. Smoothly LERP the values for high-end feel
+        const currentPolar = orbitRef.current.getPolarAngle();
+        const currentAzimuth = orbitRef.current.getAzimuthalAngle();
+
+        orbitRef.current.setPolarAngle(THREE.MathUtils.lerp(currentPolar, targetPolar, 0.08));
+        orbitRef.current.setAzimuthalAngle(THREE.MathUtils.lerp(currentAzimuth, targetAzimuth, 0.08));
+
+        // Required to reflect changes
+        orbitRef.current.update();
+    });
+
+    return null;
+}
+
 export default function Hero({ isLoaded }: { isLoaded: boolean }) {
     const orbitRef = useRef<any>(null);
     const [entranceDone, setEntranceDone] = useState(false);
     const [scrollProgress, setScrollProgress] = useState(0);
+    const [cameraData, setCameraData] = useState({ polar: 0, azimuthal: 0, distance: 0 });
+
     useEffect(() => {
-        // Entrance takes ~3s. We'll wait 3s before allowing scroll to take over.
-        const timer = setTimeout(() => {
-            setEntranceDone(true);
-        }, 3000);
-        return () => clearTimeout(timer);
-    }, []);
+        if (isLoaded && orbitRef.current) {
+            // First, set the camera to a "far" starting point
+            orbitRef.current.minDistance = 0;
+            orbitRef.current.maxDistance = 1000;
+
+            // Initial chaotic side view
+            orbitRef.current.setPolarAngle(Math.PI / 4);
+            orbitRef.current.setAzimuthalAngle(Math.PI / -4);
+
+            // Proxy object for GSAP to animate OrbitControls properties
+            const controlsProxy = {
+                distance: 35,
+                polar: Math.PI / 4,
+                azimuth: Math.PI / -4
+            };
+
+            // Cinematic Entrance Animation
+            const tl = gsap.timeline({
+                delay: 0.3,
+                onUpdate: () => {
+                    orbitRef.current.minDistance = controlsProxy.distance;
+                    orbitRef.current.maxDistance = controlsProxy.distance;
+                    orbitRef.current.setPolarAngle(controlsProxy.polar);
+                    orbitRef.current.setAzimuthalAngle(controlsProxy.azimuth);
+                    orbitRef.current.update();
+                },
+                onComplete: () => {
+                    // Unlock distances and mark entrance as done
+                    orbitRef.current.minDistance = 5;
+                    orbitRef.current.maxDistance = 30;
+                    setEntranceDone(true);
+                }
+            });
+
+            // Fast Zoom-in (Distance settles first)
+            tl.to(controlsProxy, {
+                distance: 9.74,
+                duration: 3.5,
+                ease: "expo.out"
+            }, 0);
+
+            // Slow Sweeping Rotation (Sweep continues longer)
+            tl.to(controlsProxy, {
+                polar: 1.5543,
+                azimuth: -1.5458,
+                duration: 3,
+                ease: "power3.inOut"
+            }, 0);
+        }
+    }, [isLoaded]);
+
     const hasInitialized = useRef(false);
 
     useGSAP(() => {
@@ -226,28 +277,30 @@ export default function Hero({ isLoaded }: { isLoaded: boolean }) {
             scrub: 2,
             onUpdate: (self) => {
                 setScrollProgress(self.progress);
-                if (orbitRef.current && entranceDone) {
-                    const minAngle = 0;
-                    const maxAngle = Math.PI / 2;
-                    const currentAngle = minAngle + (maxAngle - minAngle) * self.progress;
-
-                    orbitRef.current.setPolarAngle(currentAngle);
-
-                    if (!hasInitialized.current) {
-                        orbitRef.current.enableDamping = true;
-                        orbitRef.current.update();
-                        hasInitialized.current = true;
-                    }
+                if (orbitRef.current && entranceDone && !hasInitialized.current) {
+                    orbitRef.current.enableDamping = true;
+                    orbitRef.current.update();
+                    hasInitialized.current = true;
                 }
             }
         });
     }, [entranceDone]);
 
+    const handleOrbitChange = () => {
+        if (orbitRef.current) {
+            setCameraData({
+                polar: orbitRef.current.getPolarAngle(),
+                azimuthal: orbitRef.current.getAzimuthalAngle(),
+                distance: orbitRef.current.getDistance()
+            });
+        }
+    };
+
     return (
         <div className="absolute inset-0 w-full h-full -z-10 pointer-events-auto">
-            <Canvas shadows camera={{ position: [0, 8, 0.01], fov: 45 }} gl={{ toneMapping: THREE.ACESFilmicToneMapping }}>
+            <Canvas shadows camera={{ position: [20, 10, 40], fov: 45 }} gl={{ toneMapping: THREE.ACESFilmicToneMapping }}>
                 <color attach="background" args={[THEME_COLOR]} />
-                <fog attach="fog" args={[THEME_COLOR, 15, 50]} />
+                <fog attach="fog" args={[THEME_COLOR, 15, 60]} />
 
                 {/* High Contrast Studio Lighting */}
                 <ambientLight intensity={0.05} />
@@ -257,23 +310,24 @@ export default function Hero({ isLoaded }: { isLoaded: boolean }) {
                     position={[0, 4, 15]}
                     color="#D5E2D9"
                     intensity={3}
-                    distance={50}
+                    distance={20}
                     decay={2}
                 />
 
                 {/* 
-                  Side Directional Light for long cinematic shadows pointing left.
+                  Side Directional Light for long cinematic shadows. 
+                  Positioned to create the high-contrast silhouette from the screenshot.
                 */}
                 <directionalLight
-                    position={[20, 5, -2]}
+                    position={[38, 8, 0.5]}
                     color="#84A990"
-                    intensity={2}
+                    intensity={2.5}
                     castShadow
                     shadow-mapSize={[4096, 4096]}
-                    shadow-bias={-0.0005}
+                    shadow-bias={-0.0001}
                     shadow-normalBias={0.05}
                 >
-                    <orthographicCamera attach="shadow-camera" args={[-20, 20, 20, -20, 0.1, 100]} />
+                    <orthographicCamera attach="shadow-camera" args={[-15, 15, 15, -15, 0.1, 100]} />
                 </directionalLight>
 
                 {/* Fill light: Rim light to accent the right side from behind */}
@@ -302,8 +356,8 @@ export default function Hero({ isLoaded }: { isLoaded: boolean }) {
 
 
                     <StudioFloor isLoaded={isLoaded} />
-                    <FloatingDebris />
                     <CloudBackground scrollProgress={scrollProgress} />
+                    <CameraController orbitRef={orbitRef} entranceDone={entranceDone} scrollProgress={scrollProgress} />
 
                     {/* Cinematic Post-Processing Pipeline */}
                     <EffectComposer enableNormalPass multisampling={4}>
@@ -341,10 +395,28 @@ export default function Hero({ isLoaded }: { isLoaded: boolean }) {
                     enableDamping={true} // Add physics-based momentum decay to the rotation
                     dampingFactor={0.05} // Smoothly slows down the camera movement
                     minPolarAngle={0}
-                    maxPolarAngle={Math.PI / 2}
+                    maxPolarAngle={Math.PI / 1.88}
                     target={[0, 0, 0]}
+                    onChange={handleOrbitChange}
                 />
             </Canvas>
+
+            {/* Camera Info HUD Overlay */}
+            <div className="fixed bottom-10 left-10 z-50 flex flex-col gap-1 font-mono text-[9px] uppercase tracking-[0.2em] text-[#84A990]/80 pointer-events-none">
+                <div className="flex gap-4 items-center">
+                    <span className="w-16 opacity-50">Polar</span>
+                    <span className="text-white mix-blend-difference">{cameraData.polar.toFixed(4)} <span className="opacity-30">rad</span></span>
+                </div>
+                <div className="flex gap-4 items-center">
+                    <span className="w-16 opacity-50">Azimuth</span>
+                    <span className="text-white mix-blend-difference">{cameraData.azimuthal.toFixed(4)} <span className="opacity-30">rad</span></span>
+                </div>
+                <div className="flex gap-4 items-center">
+                    <span className="w-16 opacity-50">Zoom</span>
+                    <span className="text-white mix-blend-difference">{cameraData.distance.toFixed(2)}</span>
+                </div>
+                <div className="mt-2 h-px w-24 bg-linear-to-r from-white/20 to-transparent" />
+            </div>
         </div >
     );
 }
