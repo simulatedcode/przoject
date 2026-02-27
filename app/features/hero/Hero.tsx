@@ -178,16 +178,15 @@ function CameraController({ orbitRef, entranceDone, scrollProgress }: { orbitRef
     useFrame(() => {
         if (!entranceDone || !orbitRef.current) return;
 
-        // 0. Update Smooth Mouse with "heavy" weighted inertia
-        // Lower factor = more cinematic weight/drifting
-        smoothMouse.current.x = THREE.MathUtils.lerp(smoothMouse.current.x, mouse.current.x, 0.04);
-        smoothMouse.current.y = THREE.MathUtils.lerp(smoothMouse.current.y, mouse.current.y, 0.04);
+        // Update Smooth Mouse with higher responsiveness (shorter lead/lag)
+        smoothMouse.current.x = THREE.MathUtils.lerp(smoothMouse.current.x, mouse.current.x, 0.8);
+        smoothMouse.current.y = THREE.MathUtils.lerp(smoothMouse.current.y, mouse.current.y, 0.8);
 
         // 1. Calculate Base Angles from Scroll progress
         // Transition path: Main Sweep (Phase 1) then Transition Tilt (Phase 2 at 80%)
-        const landingPolar = 1.40;
+        const landingPolar = 1.48;    // Higher start (closer to eye level)
         const neutralPolar = 1.57;    // Frontal leveling
-        const peakTiltPolar = 1.72;   // Softened tilt down (Axis-Y) for natural feel
+        const peakTiltPolar = 1.65;   // Very subtle tilt down (Axis-Y) for natural feel
 
         const startAzimuth = -1.5458;
         const finalAzimuth = 0.001;
