@@ -21,51 +21,105 @@ function HelasModel({ isLoaded, ...props }: any) {
     const { scene } = useGLTF("/models/helas.glb");
     const texture = useTexture("/images/textur_metal.jpg");
     const groupRef = useRef<THREE.Group>(null!);
+    const materialsRef = useRef<THREE.MeshPhysicalMaterial[]>([]);
 
+    // Apply hologram starting material to all meshes
     useEffect(() => {
         if (texture && scene) {
             texture.wrapS = THREE.RepeatWrapping;
             texture.wrapT = THREE.RepeatWrapping;
             texture.colorSpace = THREE.SRGBColorSpace;
 
+            materialsRef.current = [];
+
             scene.traverse((child: any) => {
                 if (child.isMesh) {
                     child.castShadow = true;
                     child.receiveShadow = true;
-                    child.material = new THREE.MeshPhysicalMaterial({
-                        map: texture,
-                        color: new THREE.Color(THEME_COLOR),
-                        metalness: 1.0,
-                        roughness: 0.2,
-                        iridescence: 4.0,
+
+                    // Start as hologram: transparent, glowing, no texture map yet
+                    const mat = new THREE.MeshPhysicalMaterial({
+                        color: new THREE.Color("#84A990"),
+                        emissive: new THREE.Color("#84A990"),
+                        emissiveIntensity: 2.0,
+                        metalness: 0.0,
+                        roughness: 1.0,
+                        transmission: 1.0,
+                        thickness: 0.5,
+                        transparent: true,
+                        opacity: 0.5,
+                        wireframe: false,
+                        ior: 1.5,
+                        iridescence: 0.0,
                         iridescenceIOR: 1.5,
                         iridescenceThicknessRange: [100, 800],
-                        ior: 2.5,
-                        transmission: 1.0,
-                        thickness: 1.0,
                         attenuationDistance: 1.0,
                         attenuationColor: new THREE.Color(THEME_COLOR),
                     });
+
+                    child.material = mat;
+                    materialsRef.current.push(mat);
                 }
             });
         }
     }, [scene, texture]);
 
+    // On load: rise + scale + hologram → solid transition
     useEffect(() => {
-        if (isLoaded && groupRef.current) {
+        if (isLoaded && groupRef.current && materialsRef.current.length > 0) {
+            // Rise and scale in — delayed so camera arrives first
             gsap.fromTo(
                 groupRef.current.position,
-                { y: -4 },
-                { y: 0, duration: 3, ease: "sine.out" }
+                { y: -1.5 },
+                { y: 0, duration: 3.5, delay: 1.0, ease: "power2.out" }
             );
             gsap.fromTo(
                 groupRef.current.scale,
                 { x: 0, y: 0, z: 0 },
-                { x: 1, y: 1, z: 1, duration: 2.5, ease: "sine.out" }
+                { x: 1, y: 1, z: 1, duration: 3.5, delay: 1.0, ease: "expo.out" }
             );
-        }
-    }, [isLoaded]);
 
+            // Hologram → solid: tween material properties via proxy
+            const proxy = {
+                emissiveIntensity: 2.0,
+                metalness: 0.0,
+                roughness: 1.0,
+                transmission: 1.0,
+                opacity: 0.05,
+                iridescence: 0.0,
+            };
+
+            gsap.to(proxy, {
+                emissiveIntensity: 0.0,
+                metalness: 1.0,
+                roughness: 0.2,
+                transmission: 0.9,
+                opacity: 1.0,
+                iridescence: 4.0,
+                duration: 4.0,
+                delay: 1.5,          // camera arrives → beat of silence → model solidifies
+                ease: "power1.inOut",
+                onUpdate: () => {
+                    materialsRef.current.forEach((mat) => {
+                        mat.emissiveIntensity = proxy.emissiveIntensity;
+                        mat.metalness = proxy.metalness;
+                        mat.roughness = proxy.roughness;
+                        mat.transmission = proxy.transmission;
+                        mat.opacity = proxy.opacity;
+                        mat.iridescence = proxy.iridescence;
+                        // Swap in texture and final color once mostly solid
+                        if (proxy.opacity > 0.85 && mat.map !== texture) {
+                            mat.map = texture;
+                            mat.color.set(THEME_COLOR);
+                            mat.emissive.set("#000000");
+                            mat.ior = 2.5;
+                            mat.needsUpdate = true;
+                        }
+                    });
+                },
+            });
+        }
+    }, [isLoaded, texture]);
 
     return (
         <group ref={groupRef} position={[0, -4, 0]} scale={0}>
@@ -73,6 +127,7 @@ function HelasModel({ isLoaded, ...props }: any) {
         </group>
     );
 }
+
 
 function StudioFloor({ isLoaded, children }: any) {
     return (
@@ -99,7 +154,7 @@ function StudioFloor({ isLoaded, children }: any) {
                 infiniteGrid
             />
             <ContactShadows
-                position={[0, 0.02, 0]}
+                position={[0, 0, 0]}
                 opacity={0.065}
                 scale={12}
                 blur={8}
@@ -114,15 +169,15 @@ function StudioFloor({ isLoaded, children }: any) {
 
 function CloudBackground({ scrollProgress }: { scrollProgress: number }) {
     const texture = useTexture("/images/cloud.png");
-    const opacity = Math.min(0.6, Math.max(0, (scrollProgress - 0.8) * 2));
+    const opacity = Math.min(0.6, Math.max(0, (scrollProgress - 0.35) * 3));
     const meshRef = useRef<THREE.Mesh>(null!);
 
     useFrame((state) => {
         if (meshRef.current) {
             const targetX = state.mouse.x * 4;
             const targetY = 3.2 + scrollProgress * 0.5 + state.mouse.y * 2;
-            meshRef.current.position.x = THREE.MathUtils.lerp(meshRef.current.position.x, targetX, 0.04);
-            meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, targetY, 0.04);
+            meshRef.current.position.x = THREE.MathUtils.lerp(meshRef.current.position.x, targetX, 0.14);
+            meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, targetY, 0.14);
         }
     });
 
@@ -135,7 +190,7 @@ function CloudBackground({ scrollProgress }: { scrollProgress: number }) {
                 transparent
                 opacity={opacity}
                 depthWrite={false}
-                fog={false}
+                fog={true}
             />
         </mesh>
     );
@@ -166,7 +221,7 @@ function CinematicEffects() {
     return (
         <EffectComposer enableNormalPass multisampling={4}>
             <Bloom blendFunction={BlendFunction.ADD} intensity={1.2} luminanceThreshold={0.5} luminanceSmoothing={0.9} mipmapBlur={true} />
-            <Noise premultiply opacity={0.08} />
+            <Noise premultiply opacity={0.5 * 2} />
         </EffectComposer>
     );
 }
@@ -180,66 +235,92 @@ function useHeroEntrance(isLoaded: boolean, orbitRef: any) {
     const { active, progress } = useProgress();
     const assetsReady = !active && progress === 100;
 
+    const playEntrance = (orbit: any) => {
+        orbit.minDistance = 0;
+        orbit.maxDistance = 1000;
+        orbit.setPolarAngle(Math.PI / 6);
+        orbit.setAzimuthalAngle(Math.PI / -4);
+
+        const controlsProxy = {
+            distance: 75,
+            polar: Math.PI / 6,
+            azimuth: Math.PI / -4
+        };
+
+        const tl = gsap.timeline({
+            delay: 1.0,
+            onUpdate: () => {
+                if (!orbit) return;
+                orbit.minDistance = controlsProxy.distance;
+                orbit.maxDistance = controlsProxy.distance;
+                orbit.setPolarAngle(controlsProxy.polar);
+                orbit.setAzimuthalAngle(controlsProxy.azimuth);
+                orbit.update();
+            },
+            onComplete: () => {
+                if (!orbit) return;
+                orbit.minDistance = 8;
+                orbit.maxDistance = 32;
+                setEntranceDone(true);
+            }
+        });
+
+        // Beat 1 (0s):     silence — nothing moves yet
+        // Beat 2 (1.0s):   slow zoom + orbit to landing position
+        // Beat 3 (1.0s+):  model rises and materializes from hologram
+        tl.to(controlsProxy, { distance: 9.74, duration: 3.5, ease: "power2.out" }, 0);
+        tl.to(controlsProxy, { polar: 1.5643, azimuth: -1.5558, duration: 3.5, ease: "power1.inOut" }, 0);
+    };
+
     useEffect(() => {
         if (isLoaded && assetsReady && orbitRef.current) {
-            orbitRef.current.minDistance = 0;
-            orbitRef.current.maxDistance = 1000;
-            orbitRef.current.setPolarAngle(Math.PI / 4);
-            orbitRef.current.setAzimuthalAngle(Math.PI / -4);
-
-            const controlsProxy = {
-                distance: 35,
-                polar: Math.PI / 4,
-                azimuth: Math.PI / -4
-            };
-
-            const tl = gsap.timeline({
-                delay: 0.3,
-                onUpdate: () => {
-                    if (!orbitRef.current) return;
-                    orbitRef.current.minDistance = controlsProxy.distance;
-                    orbitRef.current.maxDistance = controlsProxy.distance;
-                    orbitRef.current.setPolarAngle(controlsProxy.polar);
-                    orbitRef.current.setAzimuthalAngle(controlsProxy.azimuth);
-                    orbitRef.current.update();
-                },
-                onComplete: () => {
-                    if (!orbitRef.current) return;
-                    orbitRef.current.minDistance = 5;
-                    orbitRef.current.maxDistance = 30;
-                    setEntranceDone(true);
-                }
-            });
-
-            tl.to(controlsProxy, { distance: 9.74, duration: 3.5, ease: "sine.out" }, 0);
-            tl.to(controlsProxy, { polar: 1.5543, azimuth: -1.5458, duration: 3, ease: "sine.inOut" }, 0);
+            playEntrance(orbitRef.current);
         }
     }, [isLoaded, assetsReady, orbitRef]);
+
+    // Press R to replay entrance for preview
+    useEffect(() => {
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key === "r" || e.key === "R") {
+                if (orbitRef.current) playEntrance(orbitRef.current);
+            }
+        };
+        window.addEventListener("keydown", onKey);
+        return () => window.removeEventListener("keydown", onKey);
+    }, [orbitRef]);
 
     return { entranceDone, assetsReady };
 }
 
 function CameraController({ orbitRef, entranceDone, scrollProgress, isInteracting }: { orbitRef: any, entranceDone: boolean, scrollProgress: number, isInteracting: boolean }) {
-    useFrame(() => {
+    const accRef = useRef(0);
+
+    useFrame((_, delta) => {
+        accRef.current += delta;
+        if (accRef.current < 1 / 30) return;
+        accRef.current %= 1 / 30;
+
         if (!entranceDone || !orbitRef.current || isInteracting) return;
 
 
-        const landingPolar = 1.48;
-        const neutralPolar = 1.57;
-        const peakTiltPolar = 1.65;
-        const startAzimuth = -1.5458;
+        const landingPolar = 1.468;
+        const neutralPolar = 1.576;
+        const peakTiltPolar = 1.67;
+        const startAzimuth = -1.1458;
         const finalAzimuth = 0.001;
 
         let basePolar;
         let baseAzimuth;
 
-        if (scrollProgress < 0.8) {
-            const p = scrollProgress / 0.8;
+        // Phase 1 — 0→0.5: Camera orbits from landing angle to dead-front
+        // Phase 2 — 0.5→1.0: Camera tilts up (peakTiltPolar) as hero exits
+        if (scrollProgress < 0.2) {
+            const p = Math.min(1, scrollProgress / 0.2);
             const easedP = (1 - Math.cos(p * Math.PI)) / 2;
             basePolar = landingPolar + (neutralPolar - landingPolar) * easedP;
             baseAzimuth = startAzimuth + (finalAzimuth - startAzimuth) * easedP;
         } else {
-            const p = (scrollProgress - 0.8) / 0.2;
+            const p = Math.min(1, (scrollProgress - 0.2) / 0.4);
             const easedP = (1 - Math.cos(p * Math.PI)) / 2;
             basePolar = neutralPolar + (peakTiltPolar - neutralPolar) * easedP;
             baseAzimuth = finalAzimuth;
@@ -251,13 +332,10 @@ function CameraController({ orbitRef, entranceDone, scrollProgress, isInteractin
         let targetPolar = basePolar;
         let targetAzimuth = baseAzimuth;
 
-        targetPolar = THREE.MathUtils.clamp(targetPolar, 0.01, 2.4);
+        targetPolar = THREE.MathUtils.clamp(targetPolar, 0.01, 2);
 
-        const currentPolar = orbitRef.current.getPolarAngle();
-        const currentAzimuth = orbitRef.current.getAzimuthalAngle();
-
-        orbitRef.current.setPolarAngle(THREE.MathUtils.lerp(currentPolar, targetPolar, 0.08));
-        orbitRef.current.setAzimuthalAngle(THREE.MathUtils.lerp(currentAzimuth, targetAzimuth, 0.08));
+        orbitRef.current.setPolarAngle(targetPolar);
+        orbitRef.current.setAzimuthalAngle(targetAzimuth);
 
         orbitRef.current.update();
     });
@@ -276,11 +354,14 @@ export default function Hero({ isLoaded }: { isLoaded: boolean }) {
 
 
     useGSAP(() => {
+        // Span hero-trigger + pin-spacer so scrollProgress stays alive
+        // during the physical slide, camera tilt continues to progress 1.0
         ScrollTrigger.create({
             trigger: "#hero-trigger",
             start: "top top",
-            end: "bottom bottom",
-            scrub: 2,
+            endTrigger: "#pin-spacer",
+            end: "bottom top",
+            scrub: true,
             onUpdate: (self) => {
                 setScrollProgress(self.progress);
                 if (orbitRef.current && entranceDone && !hasInitialized.current) {
@@ -305,7 +386,7 @@ export default function Hero({ isLoaded }: { isLoaded: boolean }) {
 
     return (
         <div className="absolute inset-0 w-full h-full -z-10 pointer-events-auto">
-            <Canvas shadows camera={{ position: [20, 10, 40], fov: 45 }} gl={{ toneMapping: THREE.ACESFilmicToneMapping }}>
+            <Canvas shadows camera={{ position: [20, 10, 40], fov: 35 }} gl={{ toneMapping: THREE.ACESFilmicToneMapping }}>
                 <color attach="background" args={[THEME_COLOR]} />
                 <fog attach="fog" args={[THEME_COLOR, 15, 60]} />
 
@@ -325,16 +406,16 @@ export default function Hero({ isLoaded }: { isLoaded: boolean }) {
                     enableZoom={false}
                     enablePan={false}
                     enableDamping={true}
-                    dampingFactor={0.05}
+                    dampingFactor={0.08}
                     minPolarAngle={0}
-                    maxPolarAngle={2.4}
+                    maxPolarAngle={2}
                     target={[0, 0, 0]}
                     onChange={handleOrbitChange}
                     onStart={() => setIsInteracting(true)}
                     onEnd={() => setIsInteracting(false)}
                 />
             </Canvas>
-            <div className="fixed bottom-10 left-10 z-50 flex flex-col gap-1 font-mono text-[9px] uppercase tracking-[0.2em] text-[#84A990]/80 pointer-events-none">
+            <div className="fixed top-10 left-10 z-50 flex flex-col gap-1 font-mono text-[9px] uppercase tracking-[0.2em] text-[#84A990]/80 pointer-events-none">
                 <div className="flex gap-4 items-center">
                     <span className="w-16 opacity-50">Polar</span>
                     <span className="text-white mix-blend-difference">{cameraData.polar.toFixed(4)} <span className="opacity-30">rad</span></span>

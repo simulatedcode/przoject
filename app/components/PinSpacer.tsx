@@ -25,7 +25,7 @@ export default function PinSpacer() {
     return (
         <section
             id="pin-spacer"
-            className="h-[150vh] w-full z-10 pointer-events-none bg-primary-950"
+            className="min-h-screen w-full z-10 pointer-events-none bg-linear-to-t from-primary-950 via-primary-900/80 mask-to-b"
         />
     );
 }
