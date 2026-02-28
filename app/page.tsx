@@ -28,7 +28,7 @@ export default function Home() {
       {/* Scrollable Content Layers */}
       <div className="relative z-10">
         {/* Spacer for Hero Intro Section - Scoped trigger for 3D Camera Path */}
-        <section id="hero-trigger" className="h-[200vh] pointer-events-none" />
+        <section id="hero-trigger" className="h-[190vh] pointer-events-none" />
 
         {/* Strategic "Hold" phase before section transition */}
         <PinSpacer />

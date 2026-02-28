@@ -294,6 +294,20 @@ function useHeroEntrance(isLoaded: boolean, orbitRef: any) {
 
 function CameraController({ orbitRef, entranceDone, scrollProgress, isInteracting }: { orbitRef: any, entranceDone: boolean, scrollProgress: number, isInteracting: boolean }) {
     const accRef = useRef(0);
+    const cursorPolarRef = useRef(0);
+    const cursorAzimuthRef = useRef(0);
+    // Global mouse — bypasses z-index layering that blocks state.mouse
+    const mouseNDC = useRef({ x: 0, y: 0 });
+
+    useEffect(() => {
+        const onMove = (e: MouseEvent) => {
+            // Normalize to -1..1 range (x: left→right, y: top→bottom inverted)
+            mouseNDC.current.x = (e.clientX / window.innerWidth) * 2 - 1;
+            mouseNDC.current.y = -((e.clientY / window.innerHeight) * 2 - 1);
+        };
+        window.addEventListener("mousemove", onMove);
+        return () => window.removeEventListener("mousemove", onMove);
+    }, []);
 
     useFrame((_, delta) => {
         accRef.current += delta;
@@ -302,18 +316,15 @@ function CameraController({ orbitRef, entranceDone, scrollProgress, isInteractin
 
         if (!entranceDone || !orbitRef.current || isInteracting) return;
 
-
         const landingPolar = 1.468;
         const neutralPolar = 1.576;
-        const peakTiltPolar = 1.67;
+        const peakTiltPolar = 1.62;
         const startAzimuth = -1.1458;
         const finalAzimuth = 0.001;
 
         let basePolar;
         let baseAzimuth;
 
-        // Phase 1 — 0→0.5: Camera orbits from landing angle to dead-front
-        // Phase 2 — 0.5→1.0: Camera tilts up (peakTiltPolar) as hero exits
         if (scrollProgress < 0.2) {
             const p = Math.min(1, scrollProgress / 0.2);
             const easedP = (1 - Math.cos(p * Math.PI)) / 2;
@@ -326,13 +337,21 @@ function CameraController({ orbitRef, entranceDone, scrollProgress, isInteractin
             baseAzimuth = finalAzimuth;
         }
 
+        const POLAR_RANGE = 0.052;
+        const AZIMUTH_RANGE = 0.06;
+        const CURSOR_SMOOTH = 0.1;
+
+        const targetCursorPolar = -mouseNDC.current.y * POLAR_RANGE;
+        const targetCursorAzimuth = -mouseNDC.current.x * AZIMUTH_RANGE;
+
+        cursorPolarRef.current = THREE.MathUtils.lerp(cursorPolarRef.current, targetCursorPolar, CURSOR_SMOOTH);
+        cursorAzimuthRef.current = THREE.MathUtils.lerp(cursorAzimuthRef.current, targetCursorAzimuth, CURSOR_SMOOTH);
+
         orbitRef.current.target.x = THREE.MathUtils.lerp(orbitRef.current.target.x, 0, 0.12);
         orbitRef.current.target.y = THREE.MathUtils.lerp(orbitRef.current.target.y, 0, 0.12);
 
-        let targetPolar = basePolar;
-        let targetAzimuth = baseAzimuth;
-
-        targetPolar = THREE.MathUtils.clamp(targetPolar, 0.01, 2);
+        const targetPolar = THREE.MathUtils.clamp(basePolar + cursorPolarRef.current, 0.01, 2);
+        const targetAzimuth = baseAzimuth + cursorAzimuthRef.current;
 
         orbitRef.current.setPolarAngle(targetPolar);
         orbitRef.current.setAzimuthalAngle(targetAzimuth);
@@ -342,6 +361,7 @@ function CameraController({ orbitRef, entranceDone, scrollProgress, isInteractin
 
     return null;
 }
+
 
 export default function Hero({ isLoaded }: { isLoaded: boolean }) {
     const orbitRef = useRef<any>(null);

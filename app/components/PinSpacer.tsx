@@ -11,8 +11,8 @@ if (typeof window !== "undefined") {
 export default function PinSpacer() {
     useGSAP(() => {
         gsap.to("#hero-wrapper", {
-            y: "-100vh",
-            ease: "none",
+            y: "-120vh",
+            ease: "power3.out",
             scrollTrigger: {
                 trigger: "#pin-spacer",
                 start: "top bottom",
