@@ -169,13 +169,13 @@ function StudioFloor({ isLoaded, children }: any) {
 
 function CloudBackground({ scrollProgress }: { scrollProgress: number }) {
     const texture = useTexture("/images/cloud.png");
-    const opacity = Math.min(0.6, Math.max(0, (scrollProgress - 0.35) * 3));
+    const opacity = Math.min(0.8, Math.max(0, (scrollProgress - 0.01) * 2));
     const meshRef = useRef<THREE.Mesh>(null!);
 
     useFrame((state) => {
         if (meshRef.current) {
             const targetX = state.mouse.x * 4;
-            const targetY = 3.2 + scrollProgress * 0.5 + state.mouse.y * 2;
+            const targetY = 3 - scrollProgress * 1 + state.mouse.y * 2;
             meshRef.current.position.x = THREE.MathUtils.lerp(meshRef.current.position.x, targetX, 0.14);
             meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, targetY, 0.14);
         }
@@ -293,7 +293,6 @@ function useHeroEntrance(isLoaded: boolean, orbitRef: any) {
 }
 
 function CameraController({ orbitRef, entranceDone, scrollProgress, isInteracting }: { orbitRef: any, entranceDone: boolean, scrollProgress: number, isInteracting: boolean }) {
-    const accRef = useRef(0);
     const cursorPolarRef = useRef(0);
     const cursorAzimuthRef = useRef(0);
     // Global mouse — bypasses z-index layering that blocks state.mouse
@@ -310,10 +309,6 @@ function CameraController({ orbitRef, entranceDone, scrollProgress, isInteractin
     }, []);
 
     useFrame((_, delta) => {
-        accRef.current += delta;
-        if (accRef.current < 1 / 30) return;
-        accRef.current %= 1 / 30;
-
         if (!entranceDone || !orbitRef.current || isInteracting) return;
 
         const landingPolar = 1.268;
@@ -337,9 +332,19 @@ function CameraController({ orbitRef, entranceDone, scrollProgress, isInteractin
             baseAzimuth = finalAzimuth;
         }
 
-        const POLAR_RANGE = 0.05;
-        const AZIMUTH_RANGE = 0.06;
-        const CURSOR_SMOOTH = 0.1;
+        // Cursor tilt amplifies with scroll: subtle at top, full max at bottom
+        // scrollProgress goes 0 → 1. Use a smooth ease for the multiplier.
+        const scrollT = Math.min(1, scrollProgress / 0.4); // reaches max by 40% scroll
+        const easedScrollT = scrollT * scrollT * (3 - 2 * scrollT); // smoothstep
+
+        const POLAR_RANGE_MIN = 0.02;
+        const POLAR_RANGE_MAX = 0.05;
+        const AZIMUTH_RANGE_MIN = 0.02;
+        const AZIMUTH_RANGE_MAX = 0.05;
+
+        const POLAR_RANGE = THREE.MathUtils.lerp(POLAR_RANGE_MIN, POLAR_RANGE_MAX, easedScrollT);
+        const AZIMUTH_RANGE = THREE.MathUtils.lerp(AZIMUTH_RANGE_MIN, AZIMUTH_RANGE_MAX, easedScrollT);
+        const CURSOR_SMOOTH = 1.0; // Instant — no delay on cursor tilt
 
         const targetCursorPolar = -mouseNDC.current.y * POLAR_RANGE;
         const targetCursorAzimuth = -mouseNDC.current.x * AZIMUTH_RANGE;
@@ -450,6 +455,15 @@ export default function Hero({ isLoaded }: { isLoaded: boolean }) {
                 </div>
                 <div className="mt-2 h-px w-24 bg-linear-to-r from-white/20 to-transparent" />
             </div>
+            {/* Bottom-edge blend veil: fades the 3D floor into PinSpacer background */}
+            <div
+                className="pointer-events-none absolute bottom-0 left-0 right-0"
+                style={{
+                    height: "35%",
+                    background: `linear-gradient(to bottom, transparent 0%, ${THEME_COLOR}CC 60%, ${THEME_COLOR} 100%)`,
+                    zIndex: 1,
+                }}
+            />
         </div>
     );
 }
