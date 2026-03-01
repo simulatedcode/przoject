@@ -238,12 +238,12 @@ function useHeroEntrance(isLoaded: boolean, orbitRef: any) {
     const playEntrance = (orbit: any) => {
         orbit.minDistance = 0;
         orbit.maxDistance = 1000;
-        orbit.setPolarAngle(Math.PI / 6);
+        orbit.setPolarAngle(Math.PI / 2.8);
         orbit.setAzimuthalAngle(Math.PI / -4);
 
         const controlsProxy = {
-            distance: 75,
-            polar: Math.PI / 6,
+            distance: 26,
+            polar: Math.PI / 2.8,
             azimuth: Math.PI / -4
         };
 
@@ -259,7 +259,7 @@ function useHeroEntrance(isLoaded: boolean, orbitRef: any) {
             },
             onComplete: () => {
                 if (!orbit) return;
-                orbit.minDistance = 8;
+                orbit.minDistance = 5;
                 orbit.maxDistance = 32;
                 setEntranceDone(true);
             }
@@ -269,7 +269,7 @@ function useHeroEntrance(isLoaded: boolean, orbitRef: any) {
         // Beat 2 (1.0s):   slow zoom + orbit to landing position
         // Beat 3 (1.0s+):  model rises and materializes from hologram
         tl.to(controlsProxy, { distance: 9.74, duration: 3.5, ease: "power2.out" }, 0);
-        tl.to(controlsProxy, { polar: 1.5643, azimuth: -1.5558, duration: 3.5, ease: "power1.inOut" }, 0);
+        tl.to(controlsProxy, { polar: 1.268, azimuth: -1.1458, duration: 3.5, ease: "power1.inOut" }, 0);
     };
 
     useEffect(() => {
@@ -316,7 +316,7 @@ function CameraController({ orbitRef, entranceDone, scrollProgress, isInteractin
 
         if (!entranceDone || !orbitRef.current || isInteracting) return;
 
-        const landingPolar = 1.468;
+        const landingPolar = 1.268;
         const neutralPolar = 1.576;
         const peakTiltPolar = 1.62;
         const startAzimuth = -1.1458;
@@ -325,19 +325,19 @@ function CameraController({ orbitRef, entranceDone, scrollProgress, isInteractin
         let basePolar;
         let baseAzimuth;
 
-        if (scrollProgress < 0.2) {
-            const p = Math.min(1, scrollProgress / 0.2);
+        if (scrollProgress < 0.08) {
+            const p = Math.min(1, scrollProgress / 0.08);
             const easedP = (1 - Math.cos(p * Math.PI)) / 2;
             basePolar = landingPolar + (neutralPolar - landingPolar) * easedP;
             baseAzimuth = startAzimuth + (finalAzimuth - startAzimuth) * easedP;
         } else {
-            const p = Math.min(1, (scrollProgress - 0.2) / 0.4);
+            const p = Math.min(1, (scrollProgress - 0.08) / 0.2);
             const easedP = (1 - Math.cos(p * Math.PI)) / 2;
             basePolar = neutralPolar + (peakTiltPolar - neutralPolar) * easedP;
             baseAzimuth = finalAzimuth;
         }
 
-        const POLAR_RANGE = 0.052;
+        const POLAR_RANGE = 0.05;
         const AZIMUTH_RANGE = 0.06;
         const CURSOR_SMOOTH = 0.1;
 
@@ -350,7 +350,7 @@ function CameraController({ orbitRef, entranceDone, scrollProgress, isInteractin
         orbitRef.current.target.x = THREE.MathUtils.lerp(orbitRef.current.target.x, 0, 0.12);
         orbitRef.current.target.y = THREE.MathUtils.lerp(orbitRef.current.target.y, 0, 0.12);
 
-        const targetPolar = THREE.MathUtils.clamp(basePolar + cursorPolarRef.current, 0.01, 2);
+        const targetPolar = THREE.MathUtils.clamp(basePolar + cursorPolarRef.current, 0.08, 2);
         const targetAzimuth = baseAzimuth + cursorAzimuthRef.current;
 
         orbitRef.current.setPolarAngle(targetPolar);

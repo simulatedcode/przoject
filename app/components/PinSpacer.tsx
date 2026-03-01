@@ -11,13 +11,14 @@ if (typeof window !== "undefined") {
 export default function PinSpacer() {
     useGSAP(() => {
         gsap.to("#hero-wrapper", {
-            y: "-120vh",
-            ease: "power3.out",
+            y: "-100vh",
+            ease: "none",
             scrollTrigger: {
-                trigger: "#pin-spacer",
-                start: "top bottom",
+                trigger: "#hero-trigger",
+                start: "top top",
+                endTrigger: "#pin-spacer",
                 end: "bottom top",
-                scrub: 1.5,
+                scrub: true,
             }
         });
     });
@@ -25,7 +26,7 @@ export default function PinSpacer() {
     return (
         <section
             id="pin-spacer"
-            className="min-h-screen w-full z-10 pointer-events-none bg-linear-to-t from-primary-950 via-primary-900/80 mask-to-b"
+            className="min-h-screen w-full -z-10 pointer-events-none -mt-16 bg-linear-to-b from-primary-950 via-primary-900 to-primary-900/80"
         />
     );
 }
