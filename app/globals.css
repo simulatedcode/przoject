@@ -102,18 +102,14 @@ body {
 .hero_wrapper {
   position: relative;
   top: 0;
-  height: 100dvh;
-  width: 100%;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.helas {
   height: 100%;
   width: 100%;
 }
 
-.artist {
-  margin-top: 50vh;
+.helas {
+  height: 100dvh;
+  width: 100%;
+  inset: 0;
 }
 
 /* Edge vignette */

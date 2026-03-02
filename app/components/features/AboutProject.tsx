@@ -8,7 +8,7 @@ interface AboutProjectProps {
 
 export function AboutProject({ scrambleHeader }: AboutProjectProps) {
     return (
-        <div className="relative max-w-4xl mx-auto px-carbon-06 w-full min-h-screen bg-primary flex flex-col justify-center">
+        <div className="relative max-w-4xl mx-auto px-carbon-06 w-full min-h-dvh bg-primary flex flex-col justify-center">
             <div className="flex items-center gap-carbon-04 mb-carbon-04 font-mono text-carbon-03 text-surface uppercase tracking-[0.3em]">
                 <span className="status-indicator-pulse">●</span>
                 <span>PROJECT_INITIATED</span>

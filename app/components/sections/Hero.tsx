@@ -24,8 +24,8 @@ export function Hero() {
                 scrollTrigger: {
                     trigger: heroRef.current,
                     start: "top top",
-                    end: "+=200%", // 2 viewports
-                    scrub: true,
+                    end: "+=130%", // 2 viewports
+                    scrub: 2,
                     pin: contentRef.current,
                     pinSpacing: true,
                 },
@@ -52,7 +52,7 @@ export function Hero() {
     }, []);
 
     return (
-        <section ref={heroRef} className="hero">
+        <section ref={heroRef} className="hero inset-0">
             {/* Sticky background */}
             <div ref={wrapperRef} className="hero_wrapper">
                 <div className="helas pointer-events-none">
@@ -63,9 +63,9 @@ export function Hero() {
             {/* Pinned content */}
             <div
                 ref={contentRef}
-                className="absolute inset-0 z-10 w-full min-h-screen bg-primary pointer-events-none opacity-0"
+                className="absolute inset-0 z-10 w-full min-h-dvh bg-primary pointer-events-none opacity-0"
             >
-                <div className="pointer-events-auto w-full pb-carbon-13">
+                <div className="pointer-events-auto">
                     <AboutProject scrambleHeader={scrambleHeader} />
                 </div>
             </div>
