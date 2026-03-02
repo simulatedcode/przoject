@@ -92,6 +92,30 @@ body {
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
 
+.hero {
+  position: relative;
+  height: 230dvh;
+  width: 100%;
+  overflow: hidden;
+}
+
+.hero_wrapper {
+  position: relative;
+  top: 0;
+  height: 100dvh;
+  width: 100%;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.helas {
+  height: 100%;
+  width: 100%;
+}
+
+.artist {
+  margin-top: 50vh;
+}
+
 /* Edge vignette */
 .vignette {
   position: absolute;

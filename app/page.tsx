@@ -1,64 +1,38 @@
-import Image from "next/image";
+"use client";
+
+import { useRef, useEffect } from "react";
+import { Hero } from "./components/sections/Hero";
+import { Artist } from "./components/sections/Artist";
+import { HistoryPreview } from "./components/sections/HistoryPreview";
+import { Expertise } from "./components/sections/Expertise";
+import { Contact } from "./components/sections/Contact";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // ScrollTrigger configuration for sections (if any)
+    gsap.to(containerRef.current, {
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: "top top",
+        end: "bottom bottom",
+        scrub: true,
+      },
+    });
+  }, []);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background font-sans">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between p-carbon-07 bg-background sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-carbon-06 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-foreground">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-muted">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-secondary hover:text-primary transition-colors"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-secondary hover:text-primary transition-colors"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-carbon-05 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-carbon-02 rounded bg-primary px-carbon-05 text-background transition-colors hover:opacity-90 md:w-[158px] glitch-hover"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded border border-solid border-border px-carbon-05 transition-colors hover:bg-surface-brighter md:w-[158px] glitch-hover"
-            href="/history"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main ref={containerRef} className="flex min-h-screen flex-col bg-background selection:bg-primary/20 selection:text-primary overflow-x-hidden">
+      <Hero />
+      <Artist />
+      <HistoryPreview />
+      <Expertise />
+      <Contact />
+    </main>
   );
 }
