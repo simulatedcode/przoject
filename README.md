@@ -1,36 +1,147 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Hero Section Creation Guide
 
-## Getting Started
+## Portfolio Website Next.js + GSAP
 
-First, run the development server:
+Overview
+This document defines the step by step process to create a fullscreen hero section for a portfolio website. The hero must be immersive, minimal, and performance focused.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. Define Objective
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The hero section must:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+* Introduce the artist or studio clearly.
+* Create strong visual impact in the first 5 seconds.
+* Support motion without sacrificing performance.
+* Work smoothly on desktop and mobile.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. Define Structure
 
-## Learn More
+Create a fullscreen section.
 
-To learn more about Next.js, take a look at the following resources:
+Structure hierarchy:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+section.hero
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+* div.hero_wrapper
 
-## Deploy on Vercel
+  * div.hero_background
+  * div.hero_content
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Requirements:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+* hero height: 100vh
+* overflow-x: hidden
+* hero_wrapper: position relative
+* hero_background: position absolute, full width and height
+* hero_content: position relative, above background
+
+3. Define Layout Rules
+
+* Center content vertically and horizontally.
+* Limit text width for readability.
+* Use clamp() for responsive typography.
+* Maintain strong contrast between text and background.
+
+Example layout logic:
+
+* Headline large and dominant.
+* Supporting text smaller.
+* Optional small label above headline.
+
+4. Typography System
+
+Headline rules:
+
+* Responsive size using clamp.
+* Bold weight.
+* Tight line height.
+
+Subtext rules:
+
+* Smaller size.
+* Controlled max-width.
+* Balanced spacing below headline.
+
+5. Background Layer
+
+Option A. Minimal animated background
+
+* Use gradient or texture.
+* Add subtle scale or rotation animation.
+* Keep animation duration slow, 8 to 15 seconds loop.
+* Avoid heavy filters.
+
+Option B. Three.js background
+
+* Use a lightweight 3D object.
+* Keep polygon count low.
+* Slow continuous rotation.
+* Disable complex interaction on mobile.
+
+6. Entrance Animation
+
+Use GSAP for controlled entrance.
+
+Animation sequence:
+
+* Headline moves from y 40px to 0.
+* Opacity from 0 to 1.
+* Stagger lines slightly.
+* Duration under 1.2 seconds.
+* Ease should feel smooth and controlled.
+
+Animation must run once on initial load.
+
+7. Scroll Interaction
+
+Use ScrollTrigger carefully.
+
+Scroll behavior:
+
+* Fade headline slightly on scroll.
+* Scale background subtly.
+* Avoid strong parallax shifts.
+* Do not break natural scrolling.
+
+No aggressive pinning for hero unless concept demands it.
+
+8. Performance Strategy
+
+* Lazy load heavy 3D or video.
+* Avoid layout shifts.
+* Test on mid-range mobile device.
+* Keep animation GPU friendly.
+
+Target:
+
+* Smooth 60fps scrolling.
+* Good Lighthouse performance score.
+
+9. Accessibility
+
+* Use semantic h1 for headline.
+* Ensure readable contrast.
+* Respect prefers-reduced-motion.
+* Text must remain visible without animation.
+
+10. Brand Integration
+
+Hero must reflect identity.
+
+For an artist or studio:
+
+* Add subtle texture referencing process.
+* Keep composition clean.
+* Avoid visual noise.
+* Ensure name or studio identity is clearly readable.
+
+Completion Checklist
+
+Before finalizing hero section:
+
+* Layout stable.
+* Animations smooth.
+* Mobile responsive.
+* No console errors.
+* No scroll glitches.
+* Identity clearly communicated.
