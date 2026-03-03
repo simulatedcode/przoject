@@ -63,7 +63,7 @@ export function Hero() {
     return (
         <section ref={heroRef} className="hero inset-0">
             {/* Sticky background */}
-            <div ref={wrapperRef} className="hero_wrapper">
+            <div ref={wrapperRef} className="hero_wrapper z-100">
                 <div className="helas pointer-events-none">
                     <Helas />
                 </div>
@@ -72,7 +72,7 @@ export function Hero() {
             {/* Pinned content */}
             <div
                 ref={contentRef}
-                className="absolute inset-0 z-10 w-full min-h-dvh bg-project-200 pointer-events-none opacity-0"
+                className="absolute inset-0 z-10 w-full min-h-dvh bg-project-200 backdrop-blur-sm pointer-events-none opacity-0 mix-blend-screen"
             >
                 <div className="pointer-events-auto z-10">
                     <AboutProject scrambleHeader={scrambleHeader} />

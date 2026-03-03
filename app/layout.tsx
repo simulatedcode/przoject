@@ -17,8 +17,8 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Archival System | PRZOJECT",
-  description: "Dystopian data persistence and architectural archive.",
+  title: "Przoject | Archival System",
+  description: "Data persistence and architectural archive.",
 };
 
 export default function RootLayout({
@@ -31,7 +31,9 @@ export default function RootLayout({
       <body className={`${ibmPlexSans.variable} ${ibmPlexMono.variable} antialiased relative selection:bg-primary/30 selection:text-primary`}>
         <div className="grain-overlay vignette" aria-hidden="true" />
         <ScanLine />
-        <SmoothScroll>{children}</SmoothScroll>
+        <SmoothScroll>
+          {children}
+        </SmoothScroll>
       </body>
     </html>
   );

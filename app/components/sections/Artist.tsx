@@ -2,62 +2,65 @@
 
 import { useState } from "react";
 import { ScrambleText } from "../ui/ScrambleText";
+import DystopianBackground from "../layout/DystopianBackground";
 
 export function Artist() {
     const [scrambleTitle, setScrambleTitle] = useState(0);
 
     return (
-        <section
-            className="min-h-screen flex flex-col justify-center py-carbon-13 border-b border-border/30 px-carbon-06"
-            onMouseEnter={() => setScrambleTitle(prev => prev + 1)}
-        >
-            <div className="max-w-4xl mx-auto w-full grid grid-cols-1 md:grid-cols-[200px_1fr] gap-carbon-10">
-                <aside className="space-y-carbon-06">
-                    <div className="font-mono text-carbon-02 text-muted uppercase tracking-widest border-b border-border/30 pb-carbon-02 mb-carbon-04">
-                        ENTITY_PROFILE
-                    </div>
-
-                    <div className="space-y-carbon-04 font-mono text-carbon-03">
-                        <div className="space-y-1">
-                            <span className="text-muted/50 text-[10px] block uppercase">DESIGNATION</span>
-                            <span className="text-primary block">RIZA_ARCHIVIST</span>
+        <DystopianBackground>
+            <section
+                className="min-h-screen flex flex-col justify-center py-carbon-13 border-b border-border/30 px-carbon-06"
+                onMouseEnter={() => setScrambleTitle(prev => prev + 1)}
+            >
+                <div className="max-w-4xl mx-auto w-full grid grid-cols-1 md:grid-cols-[200px_1fr] gap-carbon-10">
+                    <aside className="space-y-carbon-06">
+                        <div className="font-mono text-carbon-02 text-muted uppercase tracking-widest border-b border-border/30 pb-carbon-02 mb-carbon-04">
+                            ENTITY_PROFILE
                         </div>
-                        <div className="space-y-1">
-                            <span className="text-muted/50 text-[10px] block uppercase">ROLE</span>
-                            <span className="text-secondary block">SYSTEM_ARCHITECT</span>
-                        </div>
-                        <div className="space-y-1">
-                            <span className="text-muted/50 text-[10px] block uppercase">LOCATION</span>
-                            <span className="text-foreground block">SECTOR_YG_ID</span>
-                        </div>
-                    </div>
-                </aside>
 
-                <div className="max-w-2xl">
-                    <h2 className="text-carbon-08 font-sans font-bold tracking-tight text-foreground mb-carbon-06">
-                        <ScrambleText text="THE_OPERATOR" trigger={scrambleTitle} duration={0.6} />
-                    </h2>
-
-                    <div className="space-y-carbon-06 text-carbon-05 font-sans leading-relaxed text-muted">
-                        <p>
-                            Specializing in the intersection of digital decay and structural permanence. My work focuses on building interfaces that survive the noise, providing clarity in an era of information fragmentation.
-                        </p>
-                        <p>
-                            Drawing inspiration from early cybernetic theories and industrial brutalism, I construct experiences that prioritize function, readability, and a distinct lack of compromise.
-                        </p>
-                    </div>
-
-                    <div className="mt-carbon-08 p-carbon-05 bg-surface/30 border border-border/50 rounded-sm">
-                        <div className="flex items-center gap-carbon-04 text-carbon-02 font-mono text-secondary uppercase tracking-widest mb-carbon-02">
-                            <span className="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
-                            <span>CURRENT_DIRECTIVE: RECONSTRUCTING_HISTORY</span>
+                        <div className="space-y-carbon-04 font-mono text-carbon-03">
+                            <div className="space-y-1">
+                                <span className="text-muted/50 text-[10px] block uppercase">DESIGNATION</span>
+                                <span className="text-primary block">RIZA_ARCHIVIST</span>
+                            </div>
+                            <div className="space-y-1">
+                                <span className="text-muted/50 text-[10px] block uppercase">ROLE</span>
+                                <span className="text-secondary block">SYSTEM_ARCHITECT</span>
+                            </div>
+                            <div className="space-y-1">
+                                <span className="text-muted/50 text-[10px] block uppercase">LOCATION</span>
+                                <span className="text-foreground block">SECTOR_YG_ID</span>
+                            </div>
                         </div>
-                        <p className="text-carbon-03 font-sans text-muted/70 italic">
-                            Operating outside traditional network constraints since 2018.
-                        </p>
+                    </aside>
+
+                    <div className="max-w-2xl">
+                        <h2 className="text-carbon-08 font-sans font-bold tracking-tight text-foreground mb-carbon-06">
+                            <ScrambleText text="THE_OPERATOR" trigger={scrambleTitle} duration={0.6} />
+                        </h2>
+
+                        <div className="space-y-carbon-06 text-carbon-05 font-sans leading-relaxed text-muted">
+                            <p>
+                                Specializing in the intersection of digital decay and structural permanence. My work focuses on building interfaces that survive the noise, providing clarity in an era of information fragmentation.
+                            </p>
+                            <p>
+                                Drawing inspiration from early cybernetic theories and industrial brutalism, I construct experiences that prioritize function, readability, and a distinct lack of compromise.
+                            </p>
+                        </div>
+
+                        <div className="mt-carbon-08 p-carbon-05 bg-surface/30 border border-border/50 rounded-sm">
+                            <div className="flex items-center gap-carbon-04 text-carbon-02 font-mono text-secondary uppercase tracking-widest mb-carbon-02">
+                                <span className="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+                                <span>CURRENT_DIRECTIVE: RECONSTRUCTING_HISTORY</span>
+                            </div>
+                            <p className="text-carbon-03 font-sans text-muted/70 italic">
+                                Operating outside traditional network constraints since 2018.
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </DystopianBackground>
     );
 }

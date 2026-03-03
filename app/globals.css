@@ -4,24 +4,36 @@
   --background: #0b0f0b;
   --foreground: #f0f4f1;
 
-  --color-50: #f0f4f1;
-  --color-100: #d6e0d7;
-  --color-200: #bccdbd;
-  --color-300: #a2b9a3;
-  --color-400: #88a58a;
-  --color-500: #658567;
-  --color-600: #5a775c;
-  --color-700: #465d48;
-  --color-800: #324334;
-  --color-900: #1f291f;
-  --color-950: #0b0f0b;
+  /* Base Palette Base */
+  --color-50: #f0f5f2;
+  --color-100: #d5e2da;
+  --color-200: #bacfc2;
+  --color-300: #9fbcaa;
+  --color-400: #84a992;
+  --color-500: #69967a;
+  --color-600: #567b64;
+  --color-700: #43604e;
+  --color-800: #304538;
+  --color-900: #1d2a22;
+  --color-950: #0a0f0c;
 
-  /* Semantic Design Tokens */
-  --color-primary: var(--color-500);
+  /* Dystopia Core Colors */
+  --dystopia-black: var(--color-950);
+  --dystopia-charcoal: var(--color-900);
+  --dystopia-panel: var(--color-800);
+  --dystopia-acid: #b4ff00;
+  --dystopia-warning: #ff3b3b;
+  --dystopia-cyan: #00f0ff;
+
+  /* Semantic UI Tokens derived from tailwind-design-system */
+  --color-primary: var(--dystopia-acid);
   --color-secondary: var(--color-300);
-  --color-surface: var(--color-900);
-  --color-surface-brighter: var(--color-800);
+  --color-accent: var(--dystopia-cyan);
+  --color-destructive: var(--dystopia-warning);
+  --color-surface: var(--dystopia-charcoal);
+  --color-surface-brighter: var(--dystopia-panel);
   --color-border: var(--color-800);
+  --color-ring: var(--dystopia-acid);
   --color-muted: var(--color-400);
 
   --spacing-01: 0.125rem;
@@ -47,10 +59,20 @@
 
   --color-primary: var(--color-primary);
   --color-secondary: var(--color-secondary);
+  --color-accent: var(--color-accent);
+  --color-destructive: var(--color-destructive);
   --color-surface: var(--color-surface);
   --color-surface-brighter: var(--color-surface-brighter);
   --color-border: var(--color-border);
+  --color-ring: var(--color-ring);
   --color-muted: var(--color-muted);
+
+  --color-dystopia-black: var(--dystopia-black);
+  --color-dystopia-charcoal: var(--dystopia-charcoal);
+  --color-dystopia-panel: var(--dystopia-panel);
+  --color-dystopia-acid: var(--dystopia-acid);
+  --color-dystopia-warning: var(--dystopia-warning);
+  --color-dystopia-cyan: var(--dystopia-cyan);
 
   --color-project-50: var(--color-50);
   --color-project-100: var(--color-100);
@@ -77,6 +99,20 @@
   --spacing-carbon-11: var(--spacing-11);
   --spacing-carbon-12: var(--spacing-12);
   --spacing-carbon-13: var(--spacing-13);
+
+}
+
+
+
+@utility bg-dot-grid {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.18) 1px,
+      transparent 1px);
+  background-size: 48px 48px;
+}
+
+@utility bg-radial-vignette {
+  background-image:
+    radial-gradient(circle at center, transparent 40%, rgba(0, 0, 0, 0.08) 100%);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -94,12 +130,12 @@ body {
 
 .hero {
   position: relative;
-  height: 300dvh;
+  height: 230dvh;
   width: 100%;
 }
 
 .hero_wrapper {
-  position: sticky;
+  position: relative;
   top: 0;
   height: 100dvh;
   width: 100%;
@@ -108,6 +144,15 @@ body {
 .helas {
   height: 100%;
   width: 100%;
+}
+
+.noise::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+  opacity: 0.05;
+  pointer-events: none;
 }
 
 /* Edge vignette */

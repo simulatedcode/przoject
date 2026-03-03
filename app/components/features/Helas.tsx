@@ -1,110 +1,105 @@
 "use client";
 
-import { Suspense, useRef, useEffect } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { useGLTF, Center, Environment, OrbitControls, ContactShadows } from "@react-three/drei";
+import { Suspense, useRef, useEffect, useState } from "react";
+import { Canvas } from "@react-three/fiber";
+import { useGLTF, useTexture, Plane } from "@react-three/drei";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 import * as THREE from "three";
 
-function Model() {
+import { CinematicLights } from "./support/CinematicLights";
+import { CinematicEffects } from "./support/CinematicEffects";
+import { CameraControl } from "./support/CameraControl";
+import StudioFloor from "./support/StudioFloor";
+
+function Model({ isLoaded, ...props }: any) {
     const { scene } = useGLTF("/models/helas.glb");
-    const modelRef = useRef<THREE.Group>(null);
+    const texture = useTexture("/images/textur_metal.jpg");
 
     useEffect(() => {
+        if (!texture || !scene) return;
+
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.colorSpace = THREE.SRGBColorSpace;
+
+        // Apply immediately solid material
         scene.traverse((child: any) => {
             if (child.isMesh) {
                 child.castShadow = true;
                 child.receiveShadow = true;
+
+                child.material = new THREE.MeshPhysicalMaterial({
+                    map: texture,
+                    color: new THREE.Color("#ffffff"),
+                    metalness: 0.8,
+                    roughness: 0.3,
+                    iridescence: 4,
+                    iridescenceIOR: 1.3,
+                    iridescenceThicknessRange: [100, 400],
+                    ior: 1.5,
+                    sheen: 1,
+                    sheenRoughness: 0.5,
+                    clearcoat: 0.5,
+                    clearcoatRoughness: 0.2,
+                });
             }
         });
-    }, [scene]);
 
-    useFrame((state) => {
-        if (!modelRef.current) return;
+    }, [scene, texture]);
 
-        // Target rotation based on mouse position (-1 to 1)
-        const targetX = state.mouse.y * 0.08; // Tilt up/down
-        const targetY = state.mouse.x * 0.08; // Tilt left/right
-
-        // Smoothly interpolate current rotation to target
-        modelRef.current.rotation.x = THREE.MathUtils.lerp(
-            modelRef.current.rotation.x,
-            targetX,
-            0.1
-        );
-        modelRef.current.rotation.y = THREE.MathUtils.lerp(
-            modelRef.current.rotation.y,
-            targetY,
-            0.1
-        );
-    });
-
-    return <primitive ref={modelRef} object={scene} />;
+    return <primitive object={scene} {...props} />;
 }
 
-function Ground() {
-    const groundRef = useRef<THREE.Mesh>(null);
 
-    return (
-        <mesh
-            ref={groundRef}
-            rotation={[-Math.PI / 2, 0, 0]}
-            position={[0, -1.01, 0]}
-            receiveShadow
-        >
-            <planeGeometry args={[100, 100]} />
-            <meshStandardMaterial
-                color="#658567"
-                roughness={0.9}
-                metalness={0.1}
-            />
-        </mesh>
-    );
-}
 
 export function Helas() {
     const canvasRef = useRef<HTMLDivElement>(null);
+    const [themeColor, setThemeColor] = useState("#9FBCAA");
+    const [cameraData, setCameraData] = useState({ polar: 1.18, azimuthal: -2.32, distance: 10.2 });
+
+    useEffect(() => {
+        const rootStyle = getComputedStyle(document.documentElement);
+        const color = rootStyle.getPropertyValue('--background').trim() || "#9FBCAA";
+        setThemeColor(color);
+    }, []);
 
     return (
         <div ref={canvasRef} className="helas pointer-events-none transition-opacity duration-1000">
-            <Canvas shadows camera={{ position: [0, 2, 6], fov: 45 }}>
-                <ambientLight intensity={0.8} />
+            <Canvas shadows camera={{ position: [0, 2, 10], fov: 35 }}>
+                <color attach="background" args={[themeColor]} />
+                <fog attach="fog" args={[themeColor, 15, 60]} />
 
-                <directionalLight
-                    position={[10, 5, 10]}
-                    intensity={1.5}
-                    castShadow
-                />
-                <ContactShadows
-                    position={[0, -1, 0]}
-                    opacity={0.05}
-                    scale={4}
-                    blur={2}
-                />
+                <CinematicLights />
 
                 <Suspense fallback={null}>
-                    <Center>
-                        <Model />
-                    </Center>
-
-                    <Ground />
-
-                    <Environment preset="city" />
+                    <Model />
+                    <StudioFloor color={themeColor} />
+                    <CinematicEffects />
                 </Suspense>
 
-                <OrbitControls
-                    enableZoom={false}
-                    enablePan={false}
-                    enableRotate={false}
-                    maxPolarAngle={Math.PI / 2}
-                    minPolarAngle={Math.PI / 2}
-                />
+                <CameraControl setCameraData={setCameraData} />
             </Canvas>
+            <div className="fixed top-10 left-10 z-50 flex flex-col gap-1 font-mono text-[9px] uppercase tracking-[0.2em] text-[#84A990]/80 pointer-events-none">
+                <div className="flex gap-4 items-center">
+                    <span className="w-16 opacity-50">Polar</span>
+                    <span className="text-white mix-blend-difference">{cameraData.polar.toFixed(4)} <span className="opacity-30">rad</span></span>
+                </div>
+                <div className="flex gap-4 items-center">
+                    <span className="w-16 opacity-50">Azimuth</span>
+                    <span className="text-white mix-blend-difference">{cameraData.azimuthal.toFixed(4)} <span className="opacity-30">rad</span></span>
+                </div>
+                <div className="flex gap-4 items-center">
+                    <span className="w-16 opacity-50">Zoom</span>
+                    <span className="text-white mix-blend-difference">{cameraData.distance.toFixed(2)}</span>
+                </div>
+                <div className="mt-2 h-px w-24 bg-linear-to-r from-white/20 to-transparent" />
+            </div>
         </div>
     );
 }
 
 useGLTF.preload("/models/helas.glb");
+useTexture.preload("/images/textur_metal.jpg");
