@@ -8,7 +8,7 @@ interface AboutProjectProps {
 
 export function AboutProject({ scrambleHeader }: AboutProjectProps) {
     return (
-        <div className="relative max-w-4xl mx-auto px-carbon-06 w-full min-h-dvh bg-primary flex flex-col justify-center py-carbon-13">
+        <div className="relative max-w-4xl mx-auto px-carbon-06 w-full min-h-dvh bg-project-200 flex flex-col justify-center py-carbon-13">
 
             <h1 className="text-carbon-11 sm:text-carbon-13 font-sans font-bold uppercase leading-[0.9] tracking-widest text-surface mb-carbon-10">
                 <ScrambleText

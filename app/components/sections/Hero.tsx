@@ -24,25 +24,34 @@ export function Hero() {
                 scrollTrigger: {
                     trigger: heroRef.current,
                     start: "top top",
-                    end: "+=130%", // 2 viewports
+                    end: "+=200%", // Total scroll distance (300dvh total - 100dvh visible)
                     scrub: 2,
                     pin: contentRef.current,
                     pinSpacing: true,
                 },
             });
 
-            // Phase 1: wait 1 viewport (no visual change)
+            // Phase 1: Wait (Exactly 100vh of scroll travel)
+            // Background is pinned, no visual change to content
             tl.to({}, { duration: 1 });
 
-            // Phase 2: fade in
-            tl.fromTo(
-                contentRef.current,
-                { opacity: 0 },
-                { opacity: 1, ease: "none", duration: 1 }
-            );
-            // Phase 3: slide wrapper up
-            tl.to(wrapperRef.current, {
-                y: "-100vh",
+            // Phase 2: Reveal (Fade content in over 100vh)
+            tl.fromTo(contentRef.current, {
+                opacity: 0,
+                ease: "none",
+                duration: 1,
+            }, {
+                opacity: 1,
+                ease: "none",
+                duration: 1,
+            });
+
+            // Phase 3: Transition out happens naturally as the pin ends 
+            // after the 200% scroll travel. The 300dvh height ensures 
+            // there is 100vh of 'natural' scroll to the Artist section.
+
+            tl.to(contentRef.current, {
+                yPercent: -100,
                 ease: "none",
                 duration: 1,
             });
@@ -63,9 +72,9 @@ export function Hero() {
             {/* Pinned content */}
             <div
                 ref={contentRef}
-                className="absolute inset-0 z-10 w-full min-h-dvh bg-primary pointer-events-none opacity-0"
+                className="absolute inset-0 z-10 w-full min-h-dvh bg-project-200 pointer-events-none opacity-0"
             >
-                <div className="pointer-events-auto">
+                <div className="pointer-events-auto z-10">
                     <AboutProject scrambleHeader={scrambleHeader} />
                 </div>
             </div>
