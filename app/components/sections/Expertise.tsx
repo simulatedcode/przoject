@@ -8,10 +8,9 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 const expertise = [
-    { category: "ARCHIVE_SYSTEMS", skills: ["Next.js 15", "React 19", "Server Actions", "Streaming"] },
-    { category: "VISUAL_PROCESSING", skills: ["Tailwind CSS", "GSAP", "Three.js", "Shaders"] },
-    { category: "CORE_ARCHITECTURE", skills: ["TypeScript", "Distributed Data", "API Design", "Security"] },
-    { category: "NEURAL_INTERFACES", skills: ["UI/UX Design", "Motion Systems", "Accessibility", "Aesthetics"] },
+    { category: "PHYSICAL_REPRODUCTION", skills: ["Screen Printing", "Analog Reproduction", "Material Studies", "Typography"] },
+    { category: "TRADITIONAL_MEDIA", skills: ["Watercolor Painting", "Color Theory", "Composition", "Texture Mapping"] },
+    { category: "DIGITAL_TERRAINS", skills: ["Web Development", "UI/UX Design", "Speculative Spaces", "Interaction Architecture"] },
 ];
 
 export function Expertise() {
@@ -56,12 +55,15 @@ export function Expertise() {
                     <div className="font-mono text-carbon-02 text-muted uppercase tracking-widest mb-carbon-03">
                         CAPABILITY_MATRIX
                     </div>
-                    <h2 className="text-carbon-08 font-sans font-bold tracking-tight text-foreground leading-none">
+                    <h2 className="text-carbon-08 font-sans font-bold tracking-tight text-foreground leading-none mb-carbon-06">
                         <ScrambleText text="EXPERT_SYSTEMS" trigger={scrambleTitle} duration={0.6} />
                     </h2>
+                    <p className="text-carbon-05 font-sans leading-relaxed text-surface/80 max-w-2xl border-l-2 border-primary/30 pl-carbon-06">
+                        His expertise lies in bridging traditional image-making with speculative spatial inquiry—allowing physical techniques to inform digital terrains.
+                    </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-carbon-08">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-carbon-08">
                     {expertise.map((group, i) => (
                         <div
                             key={i}
@@ -83,8 +85,8 @@ export function Expertise() {
                     ))}
                 </div>
 
-                <div className="mt-carbon-12 grid grid-cols-2 md:grid-cols-4 gap-carbon-04 opacity-20">
-                    {[...Array(4)].map((_, i) => (
+                <div className="mt-carbon-12 grid grid-cols-3 gap-carbon-04 opacity-20">
+                    {[...Array(3)].map((_, i) => (
                         <div key={i} className="h-2 bg-border/30 rounded-full overflow-hidden">
                             <div
                                 className="h-full bg-primary/50 transition-all duration-1000 ease-out"

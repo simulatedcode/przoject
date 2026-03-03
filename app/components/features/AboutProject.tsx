@@ -21,19 +21,10 @@ export function AboutProject({ scrambleHeader }: AboutProjectProps) {
             <div className="grid grid-cols-1 md:grid-cols-[1fr_250px] gap-carbon-10 items-start">
                 <div className="space-y-carbon-07 text-carbon-05 font-sans leading-relaxed text-surface/90 max-w-2xl">
                     <p>
-                        You see beauty through romanticizing. Beauty appears in duality. Presence and absence. Clarity and blur. Reality and fiction. The image feels real, yet you sense illusion.
+                        In A Landscape unfolds within the framework of Speculative Memory Fiction. It approaches landscape not as scenery, but as a constructed memory-system—an image shaped by repetition and inheritance. Drawing tension from the romantic visual legacy associated with Raden Saleh, the project repositions the sublime as procedural rather than transcendental.
                     </p>
                     <p>
-                        Perception becomes unstable. Your mind translates layers of subconscious input. The panorama looks convincing. It feels like a real place. But it comes from memory. This tension creates ambiguity.
-                    </p>
-                    <p>
-                        The work questions the liminal realm. Where does the visible horizon lead you. What defines the line between memory and imagination. How does fiction become believable.
-                    </p>
-                    <p>
-                        His landscapes carry solitude. They suggest both presence and void. They invite you to reflect on your own memories. You confront the space between what was and what is imagined.
-                    </p>
-                    <p className="text-surface font-semibold border-l-2 border-surface/30 pl-carbon-06 py-2 italic font-sans leading-relaxed">
-                        Through screen printing, repetition, and layered imagery, Fahriza constructs a visual field where memory becomes landscape. The result is a space where illusion and reality coexist, and where beauty emerges from uncertainty.
+                        The horizon does not promise harmony or collapse. It behaves like a rendered terrain where history flickers between documentation and fabrication. Memory is not retrieved—it is composed. Identity does not emerge from geography, but from the circulation of images that define it.
                     </p>
                 </div>
 

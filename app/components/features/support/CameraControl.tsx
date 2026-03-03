@@ -37,7 +37,7 @@ export function CameraControl({ setCameraData }: CameraControlProps) {
             enableDamping={true}
             dampingFactor={0.08}
             minPolarAngle={0}
-            maxPolarAngle={1.68} // Increased to allow the default polar angle of 1.68
+            maxPolarAngle={1.66} // Increased to allow the default polar angle of 1.68
             target={[0, 0, 0]}
         />
     );

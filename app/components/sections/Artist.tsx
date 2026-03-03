@@ -22,11 +22,11 @@ export function Artist() {
                         <div className="space-y-carbon-04 font-mono text-carbon-03">
                             <div className="space-y-1">
                                 <span className="text-muted/50 text-[10px] block uppercase">DESIGNATION</span>
-                                <span className="text-primary block">RIZA_ARCHIVIST</span>
+                                <span className="text-primary block">M_FAHRIZA_ANSYARI</span>
                             </div>
                             <div className="space-y-1">
                                 <span className="text-muted/50 text-[10px] block uppercase">ROLE</span>
-                                <span className="text-secondary block">SYSTEM_ARCHITECT</span>
+                                <span className="text-secondary block">VISUAL_ARTIST</span>
                             </div>
                             <div className="space-y-1">
                                 <span className="text-muted/50 text-[10px] block uppercase">LOCATION</span>
@@ -37,25 +37,25 @@ export function Artist() {
 
                     <div className="max-w-2xl">
                         <h2 className="text-carbon-08 font-sans font-bold tracking-tight text-foreground mb-carbon-06">
-                            <ScrambleText text="THE_OPERATOR" trigger={scrambleTitle} duration={0.6} />
+                            <ScrambleText text="THE_ARTIST" trigger={scrambleTitle} duration={0.6} />
                         </h2>
 
                         <div className="space-y-carbon-06 text-carbon-05 font-sans leading-relaxed text-muted">
                             <p>
-                                Specializing in the intersection of digital decay and structural permanence. My work focuses on building interfaces that survive the noise, providing clarity in an era of information fragmentation.
+                                M. Fahriza Ansyari is an illustrator and visual artist working across screen printing and spatial media. For over four years, his practice has navigated the tension between material process and conceptual inquiry. By combining tactile print techniques with speculative spatial environments, he constructs visual systems that oscillate between physical presence and metaphysical suggestion.
                             </p>
                             <p>
-                                Drawing inspiration from early cybernetic theories and industrial brutalism, I construct experiences that prioritize function, readability, and a distinct lack of compromise.
+                                His work explores landscape as ideology, memory as fabrication, and image as a site of cultural inheritance. Moving fluidly between craft and speculation, he treats the surface not merely as medium, but as territory.
                             </p>
                         </div>
 
                         <div className="mt-carbon-08 p-carbon-05 bg-surface/30 border border-border/50 rounded-sm">
                             <div className="flex items-center gap-carbon-04 text-carbon-02 font-mono text-secondary uppercase tracking-widest mb-carbon-02">
                                 <span className="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
-                                <span>CURRENT_DIRECTIVE: RECONSTRUCTING_HISTORY</span>
+                                <span>CURRENT_DIRECTIVE: SPECULATIVE_MEMORY_FICTION</span>
                             </div>
                             <p className="text-carbon-03 font-sans text-muted/70 italic">
-                                Operating outside traditional network constraints since 2018.
+                                Navigating the tension between material process and conceptual inquiry.
                             </p>
                         </div>
                     </div>
