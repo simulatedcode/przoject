@@ -53,6 +53,38 @@ function Model({ isLoaded, ...props }: any) {
     return <primitive object={scene} {...props} />;
 }
 
+function TiltGroup({ children }: { children: React.ReactNode }) {
+    const groupRef = useRef<THREE.Group>(null);
+
+    useEffect(() => {
+        const group = groupRef.current;
+        if (!group) return;
+
+        const ctx = gsap.context(() => {
+            gsap.fromTo(
+                group.rotation,
+                { x: 0, y: 0, z: 0 },
+                {
+                    x: 0.25,
+                    y: 0.8,
+                    z: 0.25,
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: document.documentElement,
+                        start: "top top",
+                        end: "bottom bottom",
+                        scrub: true,
+                    }
+                }
+            );
+        });
+
+        return () => ctx.revert();
+    }, []);
+
+    return <group ref={groupRef}>{children}</group>;
+}
+
 
 
 export function Helas() {
@@ -75,8 +107,11 @@ export function Helas() {
                 <CinematicLights />
 
                 <Suspense fallback={null}>
-                    <Model />
-                    <StudioFloor color={themeColor} />
+                    <TiltGroup>
+                        <Model />
+                        <StudioFloor color={themeColor} />
+                    </TiltGroup>
+
                     <CinematicEffects />
                 </Suspense>
 
