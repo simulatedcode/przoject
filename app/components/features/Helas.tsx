@@ -105,10 +105,21 @@ export function Helas() {
                 <CinematicLights />
 
                 <Suspense fallback={null}>
-                    <TiltGroup>
-                        <Model />
+                    <group name="World">
+
+                        {/* SCULPTURE RIG (static pose only) */}
+                        <group
+                            name="SculptureRig"
+                            position={[0, 0, 0]}
+                            rotation={[0.08, 0.08, 0]} // fixed sculptural pose
+                        >
+                            <Model />
+                        </group>
+
+                        {/* FLOOR */}
                         <StudioFloor color={themeColor} />
-                    </TiltGroup>
+
+                    </group>
 
                     <CinematicEffects />
                 </Suspense>
