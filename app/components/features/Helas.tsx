@@ -62,7 +62,7 @@ function TiltGroup({ children }: { children: React.ReactNode }) {
         const group = groupRef.current;
         if (!group) return;
 
-        group.rotation.set(0.08, 0.08, 0.0);
+        group.rotation.set(0, 0, 0.0);
 
         const ctx = gsap.context(() => {
             gsap.to(group.rotation, {
@@ -105,23 +105,25 @@ export function Helas() {
                 <CinematicLights />
 
                 <Suspense fallback={null}>
-                    <group name="World">
+                    <TiltGroup>
+                        <group name="World">
 
-                        {/* SCULPTURE RIG (static pose only) */}
-                        <group
-                            name="SculptureRig"
-                            position={[0, 0, 0]}
-                            rotation={[0.08, 0.08, 0]} // fixed sculptural pose
-                        >
-                            <Model />
+                            {/* SCULPTURE RIG (static pose only) */}
+                            <group
+                                name="SculptureRig"
+                                position={[0, 0, 0]}
+                                rotation={[0, 0, 0]} // fixed sculptural pose
+                            >
+                                <Model />
+                            </group>
+
+                            {/* FLOOR */}
+                            <StudioFloor color={themeColor} />
+
                         </group>
 
-                        {/* FLOOR */}
-                        <StudioFloor color={themeColor} />
-
-                    </group>
-
-                    <CinematicEffects />
+                        <CinematicEffects />
+                    </TiltGroup>
                 </Suspense>
 
                 <CameraControl setCameraData={setCameraData} />
