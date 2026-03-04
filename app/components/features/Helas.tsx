@@ -36,10 +36,12 @@ function Model({ isLoaded, ...props }: any) {
                     color: new THREE.Color("#ffffff"),
                     metalness: 0.8,
                     roughness: 0.3,
-                    iridescence: 4,
-                    iridescenceIOR: 1.3,
+                    iridescence: 4.8,
+                    iridescenceIOR: 2.3,
                     iridescenceThicknessRange: [100, 400],
-                    ior: 1.5,
+                    transmission: 1,
+                    thickness: 1,
+                    ior: 2.5,
                     sheen: 1,
                     sheenRoughness: 0.5,
                     clearcoat: 0.5,
@@ -60,23 +62,19 @@ function TiltGroup({ children }: { children: React.ReactNode }) {
         const group = groupRef.current;
         if (!group) return;
 
+        group.rotation.set(0.08, 0.08, 0.0);
+
         const ctx = gsap.context(() => {
-            gsap.fromTo(
-                group.rotation,
-                { x: 0, y: 0, z: 0 },
-                {
-                    x: 0.25,
-                    y: 0.8,
-                    z: 0.25,
-                    ease: "none",
-                    scrollTrigger: {
-                        trigger: document.documentElement,
-                        start: "top top",
-                        end: "bottom bottom",
-                        scrub: true,
-                    }
+            gsap.to(group.rotation, {
+                y: 0.9,
+                ease: "none",
+                scrollTrigger: {
+                    trigger: document.documentElement,
+                    start: "top top",
+                    end: "bottom bottom",
+                    scrub: true,
                 }
-            );
+            });
         });
 
         return () => ctx.revert();
@@ -90,7 +88,7 @@ function TiltGroup({ children }: { children: React.ReactNode }) {
 export function Helas() {
     const canvasRef = useRef<HTMLDivElement>(null);
     const [themeColor, setThemeColor] = useState("#9FBCAA");
-    const [cameraData, setCameraData] = useState({ polar: 1.18, azimuthal: -2.32, distance: 10.2 });
+    const [cameraData, setCameraData] = useState({ polar: 1.45 + 0.1, azimuthal: -1.02 + 0.1, distance: 10.2 });
 
     useEffect(() => {
         const rootStyle = getComputedStyle(document.documentElement);

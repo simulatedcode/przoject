@@ -29,9 +29,12 @@ export function CameraControl({ setCameraData }: CameraControlProps) {
         const basePolar = 1.45;
         const baseAzimuthal = -1.02;
 
-        // Start camera slightly rotated (hero intro position)
-        controls.setPolarAngle(basePolar);
-        controls.setAzimuthalAngle(baseAzimuthal);
+        // Start camera slightly rotated (hero intro starting position)
+        const startPolar = basePolar + 0.1;
+        const startAzimuthal = baseAzimuthal - 0.8;
+
+        controls.setPolarAngle(startPolar);
+        controls.setAzimuthalAngle(startAzimuthal);
         controls.update();
 
         // -----------------------
@@ -43,9 +46,11 @@ export function CameraControl({ setCameraData }: CameraControlProps) {
             onUpdate: function () {
                 const progress = this.progress();
 
-                const azimuth =
-                    baseAzimuthal - 1.45 + progress * 1.5;
+                // Interpolate precisely from the starting orientation to the base requested coordinates
+                const polar = startPolar + (basePolar - startPolar) * progress;
+                const azimuth = startAzimuthal + (baseAzimuthal - startAzimuthal) * progress;
 
+                controls.setPolarAngle(polar);
                 controls.setAzimuthalAngle(azimuth);
                 controls.update();
             }
@@ -54,20 +59,21 @@ export function CameraControl({ setCameraData }: CameraControlProps) {
         // -----------------------
         // 2️⃣ SCROLL ROTATION
         // -----------------------
-        gsap.to(controls, {
-            scrollTrigger: {
-                trigger: document.documentElement,
-                start: "top top",
-                end: "bottom bottom",
-                scrub: true,
-            },
-            onUpdate: function () {
-                const progress = this.progress();
+        ScrollTrigger.create({
+            trigger: document.documentElement,
+            start: "top top",
+            end: "bottom bottom",
+            scrub: true,
+            onUpdate: function (self) {
+                const progress = self.progress;
 
-                const azimuth =
-                    baseAzimuthal + progress * 1.2;
+                // Pick up exactly where the intro landed (basePolar) and gently drift
+                // Restrict polar drift so it stays under maxPolarAngle (1.64)
+                const scrollPolar = basePolar + progress * 3;
+                const scrollAzimuth = baseAzimuthal + progress * 1.2;
 
-                controls.setAzimuthalAngle(azimuth);
+                controls.setPolarAngle(scrollPolar);
+                controls.setAzimuthalAngle(scrollAzimuth);
                 controls.update();
             }
         });
