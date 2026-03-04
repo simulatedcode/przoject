@@ -24,11 +24,13 @@ export default function StudioFloor({
             {/* Base Floor */}
             <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
                 <planeGeometry args={[size, size]} />
-                <meshStandardMaterial
+                <meshPhysicalMaterial
                     color={color}
-                    roughness={0.8}
-                    metalness={0.1}
-                    envMapIntensity={0.2}
+                    roughness={0.6}
+                    metalness={0.8}
+                    clearcoat={0.2}
+                    clearcoatRoughness={0.6}
+                    envMapIntensity={0.5}
                     side={THREE.DoubleSide}
                 />
             </mesh>
@@ -41,8 +43,8 @@ export default function StudioFloor({
                     cellColor={color}
                     sectionColor={color}
                     fadeDistance={50}
-                    fadeStrength={1}
-                    sectionThickness={0.8}
+                    fadeStrength={0.6}
+                    sectionThickness={0.6}
                     cellThickness={0.4}
                     infiniteGrid
                 />
@@ -51,7 +53,7 @@ export default function StudioFloor({
             {/* Soft Contact Shadows */}
             <ContactShadows
                 position={[0, 0, 0]}
-                opacity={0.065}
+                opacity={0.08}
                 scale={12}
                 blur={8}
                 far={2}
