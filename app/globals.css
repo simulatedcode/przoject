@@ -5,17 +5,17 @@
   --foreground: #f0f4f2;
 
   /* Base Palette Base */
-  --project-50: #F0F4F2;
-  --project-100: #D5E1DB;
-  --project-200: #BACEC3;
-  --project-300: #A0BBAC;
-  --project-400: #7EA48F;
-  --project-500: #6A957D;
-  --project-600: #577A67;
-  --project-700: #445F50;
-  --project-800: #31453A;
-  --project-900: #1E2A23;
-  --project-950: #0B0F0D;
+  --color-50: #F0F4F2;
+  --color-100: #D5E1DB;
+  --color-200: #BACEC3;
+  --color-300: #A0BBAC;
+  --color-400: #7EA48F;
+  --color-500: #6A957D;
+  --color-600: #577A67;
+  --color-700: #445F50;
+  --color-800: #31453A;
+  --color-900: #1E2A23;
+  --color-950: #0B0F0D;
 
   /* Dystopia Core Colors */
   --dystopia-black: var(--color-950);
