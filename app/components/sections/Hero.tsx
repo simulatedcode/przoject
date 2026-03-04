@@ -24,8 +24,8 @@ export function Hero() {
                 scrollTrigger: {
                     trigger: heroRef.current,
                     start: "top top",
-                    end: "+=200%", // Total scroll distance (300dvh total - 100dvh visible)
-                    scrub: 2,
+                    end: "+=300%", // Total scroll distance (300dvh total - 100dvh visible)
+                    scrub: true,
                     pin: contentRef.current,
                     pinSpacing: true,
                 },
@@ -33,17 +33,17 @@ export function Hero() {
 
             // Phase 1: Wait (Exactly 100vh of scroll travel)
             // Background is pinned, no visual change to content
-            tl.to({}, { duration: 1 });
+            tl.to({}, { duration: 0.2 });
 
             // Phase 2: Reveal (Fade content in over 100vh)
             tl.fromTo(contentRef.current, {
                 opacity: 0,
-                ease: "none",
+                ease: "power1.out",
                 duration: 1,
             }, {
                 opacity: 1,
                 ease: "none",
-                duration: 1,
+                duration: 1.8,
             });
 
             // Phase 3: Transition out happens naturally as the pin ends 

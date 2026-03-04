@@ -1,29 +1,29 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0b0f0b;
-  --foreground: #f0f4f1;
+  --background: #0b0f0d;
+  --foreground: #f0f4f2;
 
   /* Base Palette Base */
-  --color-50: #f0f5f2;
-  --color-100: #d5e2da;
-  --color-200: #bacfc2;
-  --color-300: #9fbcaa;
-  --color-400: #84a992;
-  --color-500: #69967a;
-  --color-600: #567b64;
-  --color-700: #43604e;
-  --color-800: #304538;
-  --color-900: #1d2a22;
-  --color-950: #0a0f0c;
+  --project-50: #F0F4F2;
+  --project-100: #D5E1DB;
+  --project-200: #BACEC3;
+  --project-300: #A0BBAC;
+  --project-400: #7EA48F;
+  --project-500: #6A957D;
+  --project-600: #577A67;
+  --project-700: #445F50;
+  --project-800: #31453A;
+  --project-900: #1E2A23;
+  --project-950: #0B0F0D;
 
   /* Dystopia Core Colors */
   --dystopia-black: var(--color-950);
   --dystopia-charcoal: var(--color-900);
   --dystopia-panel: var(--color-800);
-  --dystopia-acid: #b4ff00;
-  --dystopia-warning: #ff3b3b;
-  --dystopia-cyan: #00f0ff;
+  --dystopia-acid: #0061B5;
+  --dystopia-warning: #B50006;
+  --dystopia-cyan: #00B5AE;
 
   /* Semantic UI Tokens derived from tailwind-design-system */
   --color-primary: var(--dystopia-acid);
@@ -130,7 +130,7 @@ body {
 
 .hero {
   position: relative;
-  height: 230dvh;
+  height: 400dvh;
   width: 100%;
 }
 

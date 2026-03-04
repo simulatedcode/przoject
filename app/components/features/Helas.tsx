@@ -33,19 +33,31 @@ function Model({ isLoaded, ...props }: any) {
 
                 child.material = new THREE.MeshPhysicalMaterial({
                     map: texture,
-                    color: new THREE.Color("#ffffff"),
-                    metalness: 0.8,
-                    roughness: 0.3,
-                    iridescence: 4.8,
-                    iridescenceIOR: 2.3,
-                    iridescenceThicknessRange: [100, 400],
-                    transmission: 1,
-                    thickness: 1,
-                    ior: 2.5,
-                    sheen: 1,
-                    sheenRoughness: 0.5,
-                    clearcoat: 0.5,
-                    clearcoatRoughness: 0.2,
+
+                    // Slightly cool industrial tone
+                    color: new THREE.Color("#c9cccf"),
+
+                    // Not fully chrome
+                    metalness: 0.85,
+                    roughness: 0.48,
+
+                    // Subtle thin film aging
+                    iridescence: 0.9,
+                    iridescenceIOR: 1.35,
+                    iridescenceThicknessRange: [200, 450],
+
+                    // No glass behavior
+                    transmission: 0,
+                    thickness: 0,
+                    ior: 1.45,
+
+                    // Soft surface bloom feel
+                    sheen: 0.35,
+                    sheenRoughness: 0.85,
+
+                    // Gentle surface polish
+                    clearcoat: 0.25,
+                    clearcoatRoughness: 0.5,
                 });
             }
         });
@@ -62,7 +74,7 @@ function TiltGroup({ children }: { children: React.ReactNode }) {
         const group = groupRef.current;
         if (!group) return;
 
-        group.rotation.set(0, 0, 0.0);
+        group.rotation.set(0, 0, 0);
 
         const ctx = gsap.context(() => {
             gsap.to(group.rotation, {
@@ -87,20 +99,27 @@ function TiltGroup({ children }: { children: React.ReactNode }) {
 
 export function Helas() {
     const canvasRef = useRef<HTMLDivElement>(null);
-    const [themeColor, setThemeColor] = useState("#9FBCAA");
+    const [themeColor, setThemeColor] = useState("#6A957D");
     const [cameraData, setCameraData] = useState({ polar: 1.45 + 0.1, azimuthal: -1.02 + 0.1, distance: 10.2 });
 
     useEffect(() => {
         const rootStyle = getComputedStyle(document.documentElement);
-        const color = rootStyle.getPropertyValue('--background').trim() || "#9FBCAA";
+        const color = rootStyle.getPropertyValue('--background').trim() || "#6A957D";
         setThemeColor(color);
     }, []);
 
     return (
         <div ref={canvasRef} className="helas pointer-events-none transition-opacity duration-1000">
-            <Canvas shadows camera={{ position: [0, 2, 10], fov: 35 }}>
+            <Canvas
+                frameloop="demand"
+                shadows="soft"
+                gl={{ antialias: true }}
+                camera={{ position: [0, 2, 10], fov: 35, near: 1, far: 100 }}
+                dpr={[1, 1.5]} // limit pixel ratio
+                performance={{ min: 0.5 }}
+            >
                 <color attach="background" args={[themeColor]} />
-                <fog attach="fog" args={[themeColor, 15, 60]} />
+                <fog attach="fog" args={[themeColor, 12, 45]} />
 
                 <CinematicLights />
 
@@ -128,7 +147,7 @@ export function Helas() {
 
                 <CameraControl setCameraData={setCameraData} />
             </Canvas>
-            <div className="fixed top-10 left-10 z-50 flex flex-col gap-1 font-mono text-[9px] uppercase tracking-[0.2em] text-[#84A990]/80 pointer-events-none">
+            <div className="fixed top-10 left-10 z-50 flex flex-col gap-1 font-mono text-[9px] uppercase tracking-[0.2em] text-color-200/80 pointer-events-none">
                 <div className="flex gap-4 items-center">
                     <span className="w-16 opacity-50">Polar</span>
                     <span className="text-white mix-blend-difference">{cameraData.polar.toFixed(4)} <span className="opacity-30">rad</span></span>
