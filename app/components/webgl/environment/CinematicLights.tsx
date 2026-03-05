@@ -6,9 +6,9 @@ export function CinematicLights() {
     return (
         <>
             <ambientLight intensity={0.05} />
-            <pointLight position={[0, 4, 15]} color="#69967a" intensity={2.2} distance={10} decay={2} />
+            <pointLight position={[0, 4, 15]} color="#69967a" intensity={2.2} distance={15} decay={2} />
             <directionalLight
-                position={[38, 8, 0.5]}
+                position={[20, 8, 0.5]}
                 color="#84A990"
                 intensity={2.5}
                 castShadow
@@ -18,7 +18,7 @@ export function CinematicLights() {
             >
                 <orthographicCamera attach="shadow-camera" args={[-12, 12, 12, -12, 1, 100]} />
             </directionalLight>
-            <directionalLight position={[10, 25, -10]} intensity={0.25} color="#69967a" />
+            <directionalLight position={[10, 25, -10]} intensity={0.5} color="#69967a" />
         </>
     );
 }

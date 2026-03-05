@@ -5,7 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { AboutProject } from "../features/AboutProject";
-import { Helas } from "../features/Helas";
+import { HelasScene } from "../webgl/scene/HelasScene";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -57,7 +57,7 @@ export function Hero() {
       {/* Sticky background */}
       <div ref={wrapperRef} className="hero_wrapper z-100">
         <div className="helas pointer-events-none">
-          <Helas />
+          <HelasScene />
         </div>
       </div>
 

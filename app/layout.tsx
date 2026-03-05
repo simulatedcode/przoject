@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { ScanLine } from "./components/ui/ScanLine";
-import { SmoothScroll } from "./components/ui/SmoothScroll";
+import SmoothScroll from "./components/ui/SmoothScroll";
 
 const ibmPlexSans = IBM_Plex_Sans({
   variable: "--font-ibm-plex-sans",
