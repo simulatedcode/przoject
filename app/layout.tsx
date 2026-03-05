@@ -23,12 +23,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${ibmPlexSans.variable} ${ibmPlexMono.variable} antialiased relative selection:bg-primary/30 selection:text-primary`}>
+
         <div className="grain-overlay vignette" aria-hidden="true" />
         <ScanLine />
         <SmoothScroll>

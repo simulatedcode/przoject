@@ -135,7 +135,7 @@ body {
 }
 
 .hero_wrapper {
-  position: relative;
+  position: absolute;
   top: 0;
   height: 100dvh;
   width: 100%;

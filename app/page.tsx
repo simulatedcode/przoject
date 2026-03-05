@@ -15,13 +15,15 @@ export default function Home() {
     <>
       {!isLoaded && <IntroLoader onComplete={() => setIsLoaded(true)} />}
 
-      <main className={`max-w-full mx-auto selection:bg-primary/20 selection:text-primary overflow-x-hidden transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0 h-screen overflow-hidden'}`}>
-        <Hero />
-        <Artist />
-        <HistoryPreview />
-        <Expertise />
-        <Contact />
-      </main>
+      {isLoaded && (
+        <main className="max-w-full mx-auto selection:bg-primary/20 selection:text-primary overflow-x-hidden">
+          <Hero />
+          <Artist />
+          <HistoryPreview />
+          <Expertise />
+          <Contact />
+        </main>
+      )}
     </>
   );
 }
