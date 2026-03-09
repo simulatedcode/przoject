@@ -13,19 +13,19 @@ export default function CanvasRoot() {
         fov: 35,
       }}
       dpr={[1, 1.5]}
-      frameloop="demand"
+      frameloop="always"
       gl={{ antialias: true, powerPreference: 'high-performance' }}
       style={{
         position: 'fixed',
         inset: 0,
-        zIndex: 0,
+        zIndex: -1,
         pointerEvents: 'none'
       }}
     >
       <Suspense fallback={null}>
 
-        <ambientLight intensity={0.5} />
-        <directionalLight position={[8, 5, 5]} />
+        <ambientLight intensity={0.45} />
+        <directionalLight position={[8, 5, 2]} />
         <HelasModel />
 
       </Suspense>
