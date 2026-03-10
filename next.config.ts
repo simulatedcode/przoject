@@ -1,19 +1,17 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   reactStrictMode: true,
   poweredByHeader: false,
-  webpack: (config) => {
+
+  webpack(config) {
     config.module.rules.push({
       test: /\.(glsl|vs|fs|vert|frag)$/,
       exclude: /node_modules/,
-      use: ['raw-loader', 'glslify-loader'],
-    })
-    return config
-  },
-  experimental: {
-    turbo: {},
+      use: ["raw-loader", "glslify-loader"],
+    });
+
+    return config;
   },
 };
 
