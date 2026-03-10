@@ -45,11 +45,11 @@ export default function CanvasRoot() {
         <color attach="background" args={['#0A0F10']} />
         <fog attach="fog" args={['#0A0F10', 10, 50]} />
 
-        <ambientLight intensity={2.2} />
+        <ambientLight intensity={0.4} />
         <directionalLight
           castShadow
           position={[15, 2, 5]}
-          intensity={20}
+          intensity={1}
           shadow-mapSize-width={2048}
           shadow-mapSize-height={2048}
           shadow-camera-left={-10}
@@ -64,16 +64,16 @@ export default function CanvasRoot() {
 
         <EffectComposer enableNormalPass={performance > 0.5}>
           <Bloom
-            intensity={0.8 * performance}
-            luminanceThreshold={0.15}
+            intensity={0.3 * performance}
+            luminanceThreshold={0.4}
             luminanceSmoothing={0.9}
-            mipmapBlur={performance > 0.5}
+            mipmapBlur={performance > 0.05}
           />
-          <Noise opacity={0.05 * performance} />
-          <Scanline opacity={0.1 * performance} density={1.5} />
+          <Noise opacity={0.2 * performance} />
+          <Scanline opacity={0.3 * performance} density={2.0} />
           <Vignette eskil={false} offset={0.1} darkness={0.68} />
           <ChromaticAberration
-            offset={[0.0018 * performance, 0.0018 * performance]}
+            offset={[0.001 * performance, 0.002 * performance]}
             radialModulation={false}
             modulationOffset={0}
           />
