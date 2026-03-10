@@ -20,6 +20,6 @@ export default function CameraRig() {
     })
 
     return (
-        <group ref={rig} position={[0, 1, 4]} />
+        <group ref={rig} position={[0, 1.2, 5]} />
     )
 }

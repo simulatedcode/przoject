@@ -1,24 +1,32 @@
 'use client'
 
 import { Canvas } from '@react-three/fiber'
-import { Suspense } from 'react'
-import HelasModel from './scene/HelasModel'
-import Ground from './scene/Ground'
+import { Suspense, useState } from 'react'
+import { EffectComposer, Bloom, Noise, Vignette, ChromaticAberration, Scanline } from '@react-three/postprocessing'
+import { PerformanceMonitor } from '@react-three/drei'
+import HelasModel from './HelasModel'
+import Ground from './Ground'
 import CameraRig from './CameraRig'
 
 export default function CanvasRoot() {
+  const [dpr, setDpr] = useState(1.5)
+  const [performance, setPerformance] = useState(1) // 0 to 1 scaling factor
 
   return (
     <Canvas
       camera={{
-        position: [1, 2, 10],
-        fov: 45,
+        position: [1, 2, 15],
+        fov: 35,
         near: 0.01,
-        far: 200
+        far: 1000
       }}
-      dpr={[1, 1.5]}
+      dpr={dpr}
       frameloop="always"
-      gl={{ antialias: true, powerPreference: 'high-performance' }}
+      gl={{
+        antialias: true,
+        powerPreference: 'high-performance',
+        alpha: true
+      }}
       shadows
       style={{
         position: 'fixed',
@@ -27,13 +35,21 @@ export default function CanvasRoot() {
         pointerEvents: 'none'
       }}
     >
-      <Suspense fallback={null}>
+      <PerformanceMonitor
+        onIncline={() => setDpr(2)}
+        onDecline={() => setDpr(1)}
+        onChange={({ factor }) => setPerformance(factor)}
+      />
 
-        <ambientLight intensity={0.45} />
+      <Suspense fallback={null}>
+        <color attach="background" args={['#111111']} />
+        <fog attach="fog" args={['#111111', 10, 50]} />
+
+        <ambientLight intensity={2.5} />
         <directionalLight
           castShadow
           position={[15, 2, 5]}
-          intensity={3}
+          intensity={5}
           shadow-mapSize-width={2048}
           shadow-mapSize-height={2048}
           shadow-camera-left={-10}
@@ -45,6 +61,23 @@ export default function CanvasRoot() {
         <CameraRig />
         <Ground />
         <HelasModel />
+
+        <EffectComposer enableNormalPass={performance > 0.5}>
+          <Bloom
+            intensity={1.0 * performance}
+            luminanceThreshold={0.2}
+            luminanceSmoothing={0.9}
+            mipmapBlur={performance > 0.5}
+          />
+          <Noise opacity={0.05 * performance} />
+          <Scanline opacity={0.1 * performance} density={1.5} />
+          <Vignette eskil={false} offset={0.1} darkness={0.68} />
+          <ChromaticAberration
+            offset={[0.0001 * performance, 0.0008 * performance]}
+            radialModulation={false}
+            modulationOffset={0}
+          />
+        </EffectComposer>
 
       </Suspense>
 
