@@ -6,9 +6,9 @@ import { useFrame } from '@react-three/fiber'
 import { gsap } from '@/utils/gsap'
 
 // @ts-ignore
-import vertexShader from '@/shaders/materials/hologram/vertex.glsl'
+import vertexShader from '../../../shaders/materials/hologram/vertex.glsl'
 // @ts-ignore
-import fragmentShader from '@/shaders/materials/hologram/fragment.glsl'
+import fragmentShader from '../../../shaders/materials/hologram/fragment.glsl'
 
 interface HolographicMaterialProps {
     color?: string | THREE.Color
@@ -31,6 +31,7 @@ export default function HolographicMaterial({
         transparent: true,
         depthWrite: false,
         blending: THREE.AdditiveBlending,
+        side: THREE.DoubleSide,
     }), [color])
 
     useEffect(() => {

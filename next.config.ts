@@ -9,10 +9,9 @@ const nextConfig: NextConfig = {
   },
 
   webpack(config) {
-    config.module.rules.push({
+    config.module.rules.unshift({
       test: /\.(glsl|vs|fs|vert|frag)$/,
-      exclude: /node_modules/,
-      use: ["raw-loader", "glslify-loader"],
+      type: 'asset/source'
     });
 
     return config;
