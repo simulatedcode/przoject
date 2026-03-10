@@ -37,8 +37,8 @@ export default function HelasModel() {
     <primitive
       ref={meshRef}
       object={scene}
-      scale={0.12}
-      position={[0, 0, 0]}
+      scale={0.1}
+      position={[0, 0, 2]}
     />
   )
 }

@@ -28,12 +28,15 @@ export default function CanvasRoot() {
       }}
     >
       <Suspense fallback={null}>
+        <color attach="background" args={['#111111']} />
+
+        <fog attach="fog" args={['#111111', 10, 50]} />
 
         <ambientLight intensity={0.1} />
         <directionalLight
           castShadow
           position={[15, 2, 5]}
-          intensity={3}
+          intensity={5}
           shadow-mapSize-width={2048}
           shadow-mapSize-height={2048}
           shadow-camera-left={-10}
