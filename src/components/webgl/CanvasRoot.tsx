@@ -1,13 +1,16 @@
 'use client'
 
 import { Canvas } from '@react-three/fiber'
-import { Suspense } from 'react'
+import { Suspense, useState } from 'react'
 import { EffectComposer, Bloom, Noise, Vignette, ChromaticAberration, Scanline } from '@react-three/postprocessing'
+import { PerformanceMonitor } from '@react-three/drei'
 import HelasModel from './HelasModel'
 import Ground from './Ground'
 import CameraRig from './CameraRig'
 
 export default function CanvasRoot() {
+  const [dpr, setDpr] = useState(1.5)
+  const [performance, setPerformance] = useState(1) // 0 to 1 scaling factor
 
   return (
     <Canvas
@@ -17,10 +20,10 @@ export default function CanvasRoot() {
         near: 0.01,
         far: 1000
       }}
-      dpr={[1, 2]} // Increased dpr for better quality with postprocessing
+      dpr={dpr}
       frameloop="always"
       gl={{
-        antialias: true, // Post-processing usually handles antialiasing or doesn't need it as much
+        antialias: true,
         powerPreference: 'high-performance',
         alpha: true
       }}
@@ -32,6 +35,12 @@ export default function CanvasRoot() {
         pointerEvents: 'none'
       }}
     >
+      <PerformanceMonitor
+        onIncline={() => setDpr(2)}
+        onDecline={() => setDpr(1)}
+        onChange={({ factor }) => setPerformance(factor)}
+      />
+
       <Suspense fallback={null}>
         <color attach="background" args={['#111111']} />
         <fog attach="fog" args={['#111111', 10, 50]} />
@@ -53,18 +62,18 @@ export default function CanvasRoot() {
         <Ground />
         <HelasModel />
 
-        <EffectComposer enableNormalPass>
+        <EffectComposer enableNormalPass={performance > 0.5}>
           <Bloom
-            intensity={1.0}
+            intensity={1.0 * performance}
             luminanceThreshold={0.2}
             luminanceSmoothing={0.9}
-            mipmapBlur
+            mipmapBlur={performance > 0.5}
           />
-          <Noise opacity={0.05} />
-          <Scanline opacity={0.1} density={1.5} />
+          <Noise opacity={0.05 * performance} />
+          <Scanline opacity={0.1 * performance} density={1.5} />
           <Vignette eskil={false} offset={0.1} darkness={0.68} />
           <ChromaticAberration
-            offset={[0.0001, 0.0008]}
+            offset={[0.0001 * performance, 0.0008 * performance]}
             radialModulation={false}
             modulationOffset={0}
           />

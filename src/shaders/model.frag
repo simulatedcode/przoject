@@ -1,4 +1,5 @@
 uniform float uTime;
+uniform float uIntro;
 uniform vec3 uColor;
 
 varying vec2 vUv;
@@ -22,16 +23,18 @@ void main() {
     float scanline = sin(vWorldPosition.y * 50.0 - uTime * 4.0) * 0.1 + 0.9;
     
     // 4. Glitch / Flicker effect
-    float flicker = sin(uTime * 20.0) * 0.02 + 0.98;
+    // Minimize flicker during intro
+    float flickerAmount = mix(0.01, 0.05, uIntro);
+    float flicker = sin(uTime * 20.0) * flickerAmount + (1.0 - flickerAmount);
     
     // Combine everything
     vec3 baseColor = uColor * toon;
-    vec3 emissive = uColor * fresnel * 2.5; // Stronger edge glow
-    vec3 finalColor = (baseColor + emissive) * 1.5; // Overall intensity boost
+    vec3 emissive = uColor * fresnel * (1.5 + uIntro * 1.0); // Grow edge glow
+    vec3 finalColor = (baseColor + emissive) * (0.5 + uIntro * 1.0); // Overall intensity fade
     finalColor *= scanline * flicker;
     
-    // Add a slight transparency gradient
-    float alpha = mix(0.7, 1.0, fresnel);
+    // Smooth digital-in alpha
+    float alpha = mix(0.7, 1.0, fresnel) * uIntro;
     
     gl_FragColor = vec4(finalColor, alpha);
 }
