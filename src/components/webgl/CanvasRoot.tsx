@@ -2,8 +2,8 @@
 
 import { Canvas } from '@react-three/fiber'
 import { Suspense } from 'react'
-import HelasModel from './scene/HelasModel'
-import Ground from './scene/Ground'
+import HelasModel from './HelasModel'
+import Ground from './Ground'
 import CameraRig from './CameraRig'
 
 export default function CanvasRoot() {
@@ -29,7 +29,7 @@ export default function CanvasRoot() {
     >
       <Suspense fallback={null}>
 
-        <ambientLight intensity={0.45} />
+        <ambientLight intensity={0.1} />
         <directionalLight
           castShadow
           position={[15, 2, 5]}

@@ -1,21 +1,17 @@
+import Hero from '@/components/sections/Hero'
+import Prologue from '@/components/sections/Prologue'
+import Landscape from '@/components/sections/Landscape'
+import PseudoMemories from '@/components/sections/PseudoMemories'
+import Helas from '@/components/sections/Helas'
+
 export default function Home() {
   return (
     <main className="scroll-container">
-
-      <section className="relative mx-auto flex items-center justify-center min-h-screen isolate">
-
-        <div className="relative inset-0 text-center max-w-5xl uppercase mix-blend-exclusion">
-          <h1 className="font-extrabold text-8xl leading-relaxed tracking-widest pb-4">
-            speculative future memories
-          </h1>
-
-          <p className="text-4xl font-doto">
-            helas
-          </p>
-        </div>
-
-      </section>
-
+      <Hero />
+      <Prologue />
+      <Landscape />
+      <PseudoMemories />
+      <Helas />
     </main>
   )
 }
