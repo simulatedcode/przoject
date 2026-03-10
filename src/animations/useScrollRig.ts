@@ -17,8 +17,11 @@ export default function useScrollRig(
             scrollTrigger: {
                 trigger: ".hero-wrap",
                 start: "top top",
-                end: "+=2000",
-                scrub: true
+                end: "+=200",
+                scrub: true,
+                pin: true,
+                pinSpacing: false,
+
             }
         })
 

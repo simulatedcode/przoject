@@ -4,16 +4,34 @@ uniform vec3 uColor;
 varying vec2 vUv;
 varying vec3 vPosition;
 varying vec3 vNormal;
+varying vec3 vWorldPosition;
 
 void main() {
-    // Basic Fresnel effect
-    vec3 viewDirection = normalize(vec3(0.0, 0.0, 1.0)); // Simplified view dir
-    float fresnel = pow(1.0 - dot(vNormal, viewDirection), 3.0);
+    // 1. Toon Shading (Cell Shading)
+    vec3 lightDirection = normalize(vec3(5.0, 5.0, 5.0));
+    float diffuse = dot(vNormal, lightDirection);
     
-    // Scanline effect
-    float scanline = sin(vPosition.y * 100.0 + uTime * 5.0) * 0.1 + 0.9;
+    // Discretize the lighting for toon look
+    float toon = smoothstep(0.45, 0.55, diffuse) * 0.5 + 0.5;
     
-    vec3 finalColor = uColor * (fresnel + 0.5) * scanline;
+    // 2. Enhanced Fresnel (for glowy edges)
+    vec3 viewDirection = normalize(cameraPosition - vWorldPosition);
+    float fresnel = pow(1.0 - max(dot(vNormal, viewDirection), 0.0), 3.0);
     
-    gl_FragColor = vec4(finalColor, 1.0);
+    // 3. Scanline effect
+    float scanline = sin(vWorldPosition.y * 50.0 - uTime * 4.0) * 0.1 + 0.9;
+    
+    // 4. Glitch / Flicker effect
+    float flicker = sin(uTime * 20.0) * 0.02 + 0.98;
+    
+    // Combine everything
+    vec3 baseColor = uColor * toon;
+    vec3 emissive = uColor * fresnel * 2.5; // Stronger edge glow
+    vec3 finalColor = (baseColor + emissive) * 1.5; // Overall intensity boost
+    finalColor *= scanline * flicker;
+    
+    // Add a slight transparency gradient
+    float alpha = mix(0.7, 1.0, fresnel);
+    
+    gl_FragColor = vec4(finalColor, alpha);
 }

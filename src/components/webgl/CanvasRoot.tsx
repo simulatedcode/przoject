@@ -2,6 +2,7 @@
 
 import { Canvas } from '@react-three/fiber'
 import { Suspense } from 'react'
+import { EffectComposer, Bloom, Noise, Vignette, ChromaticAberration, Scanline } from '@react-three/postprocessing'
 import HelasModel from './HelasModel'
 import Ground from './Ground'
 import CameraRig from './CameraRig'
@@ -11,14 +12,18 @@ export default function CanvasRoot() {
   return (
     <Canvas
       camera={{
-        position: [1, 2, 10],
+        position: [1, 2, 15],
         fov: 35,
         near: 0.01,
-        far: 200
+        far: 1000
       }}
-      dpr={[1, 1.5]}
+      dpr={[1, 2]} // Increased dpr for better quality with postprocessing
       frameloop="always"
-      gl={{ antialias: true, powerPreference: 'high-performance' }}
+      gl={{
+        antialias: true, // Post-processing usually handles antialiasing or doesn't need it as much
+        powerPreference: 'high-performance',
+        alpha: true
+      }}
       shadows
       style={{
         position: 'fixed',
@@ -29,10 +34,9 @@ export default function CanvasRoot() {
     >
       <Suspense fallback={null}>
         <color attach="background" args={['#111111']} />
-
         <fog attach="fog" args={['#111111', 10, 50]} />
 
-        <ambientLight intensity={0.1} />
+        <ambientLight intensity={2.5} />
         <directionalLight
           castShadow
           position={[15, 2, 5]}
@@ -48,6 +52,23 @@ export default function CanvasRoot() {
         <CameraRig />
         <Ground />
         <HelasModel />
+
+        <EffectComposer enableNormalPass>
+          <Bloom
+            intensity={1.0}
+            luminanceThreshold={0.2}
+            luminanceSmoothing={0.9}
+            mipmapBlur
+          />
+          <Noise opacity={0.05} />
+          <Scanline opacity={0.1} density={1.5} />
+          <Vignette eskil={false} offset={0.1} darkness={0.68} />
+          <ChromaticAberration
+            offset={[0.0001, 0.0008]}
+            radialModulation={false}
+            modulationOffset={0}
+          />
+        </EffectComposer>
 
       </Suspense>
 
