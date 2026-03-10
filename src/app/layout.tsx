@@ -5,19 +5,19 @@ import CanvasRoot from "@/components/webgl/CanvasRoot";
 import LenisProvider from "@/components/dom/LenisProvider";
 import VhsOverlay from "@/components/webgl/VhsOverlay";
 
-const sans = IBM_Plex_Sans({
+const plexSans = IBM_Plex_Sans({
   subsets: ['latin'],
-  weight: ['400'],
-  variable: '--sans'
+  weight: ['200', '300', '400', '500', '600', '700'],
+  variable: '--font-sans'
 })
-const mono = IBM_Plex_Mono({
+const plexMono = IBM_Plex_Mono({
   subsets: ['latin'],
-  weight: '400',
-  variable: '--mono'
+  weight: ['300', '400', '500'],
+  variable: '--font-mono'
 })
 const doto = Doto({
   subsets: ['latin'],
-  variable: '--doto'
+  variable: '--font-doto'
 })
 
 export const metadata: Metadata = {
@@ -35,7 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${sans.variable} ${mono.variable} ${doto.variable} antialiased`}
+        className={`${plexSans.variable} ${plexMono.variable} ${doto.variable} antialiased`}
       >
         <CanvasRoot />
         <LenisProvider>

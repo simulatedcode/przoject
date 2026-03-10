@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 :root {
+
   /* PRIMARY (environment) */
 
   --primary-50: #EFF5F5;
@@ -36,10 +37,30 @@
   --bg-panel: var(--primary-900);
 
   --text-main: var(--primary-50);
-  --text-muted: var(--primary-200);
+  --text-muted: var(--secondary-200);
 
   --accent-primary: var(--primary-500);
   --accent-secondary: var(--secondary-500);
+
+}
+
+@theme inline {
+
+  /* fonts */
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-doto: var(--font-doto);
+
+  /* semantic colors */
+
+  --color-main: var(--text-main);
+  --color-muted: var(--text-muted);
+
+  --color-panel: var(--bg-panel);
+  --color-background: var(--bg-main);
+
+  --color-accent: var(--accent-secondary);
 
 }
 
@@ -53,6 +74,7 @@ body {
 body {
   background: var(--bg-main);
   color: var(--text-main);
+  font-family: var(--font-sans);
   margin: 0;
   padding: 0;
   overflow-x: hidden;
