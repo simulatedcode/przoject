@@ -2,19 +2,24 @@
 
 import { Canvas } from '@react-three/fiber'
 import { Suspense } from 'react'
-import HelasModel from './HelasModel'
+import HelasModel from './scene/HelasModel'
+import Ground from './scene/Ground'
+import CameraRig from './CameraRig'
 
 export default function CanvasRoot() {
 
   return (
     <Canvas
       camera={{
-        position: [0, 0, 5],
-        fov: 35,
+        position: [1, 2, 10],
+        fov: 45,
+        near: 0.01,
+        far: 200
       }}
       dpr={[1, 1.5]}
       frameloop="always"
       gl={{ antialias: true, powerPreference: 'high-performance' }}
+      shadows
       style={{
         position: 'fixed',
         inset: 0,
@@ -25,7 +30,20 @@ export default function CanvasRoot() {
       <Suspense fallback={null}>
 
         <ambientLight intensity={0.45} />
-        <directionalLight position={[8, 5, 2]} />
+        <directionalLight
+          castShadow
+          position={[15, 2, 5]}
+          intensity={3}
+          shadow-mapSize-width={2048}
+          shadow-mapSize-height={2048}
+          shadow-camera-left={-10}
+          shadow-camera-right={10}
+          shadow-camera-top={10}
+          shadow-camera-bottom={-10}
+        />
+
+        <CameraRig />
+        <Ground />
         <HelasModel />
 
       </Suspense>
