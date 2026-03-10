@@ -1,8 +1,46 @@
 @import "tailwindcss";
 
 :root {
-  --background: #111111;
-  --foreground: #FEEBE7;
+  /* PRIMARY (environment) */
+
+  --primary-50: #EFF5F5;
+  --primary-100: #D3E3E4;
+  --primary-200: #B7D0D2;
+  --primary-300: #9BBEC0;
+  --primary-400: #7EACAE;
+  --primary-500: #6EA1A4;
+  --primary-600: #517E81;
+  --primary-700: #3F6264;
+  --primary-800: #2D4748;
+  --primary-900: #1B2B2C;
+  --primary-950: #0A0F10;
+
+  /* SECONDARY (accent) */
+
+  --secondary-50: #FCEEE9;
+  --secondary-100: #F6CFC0;
+  --secondary-200: #F1B098;
+  --secondary-300: #EB906F;
+  --secondary-400: #E67147;
+  --secondary-500: #E0521F;
+  --secondary-600: #BE461A;
+  --secondary-700: #903514;
+  --secondary-800: #67260E;
+  --secondary-900: #3F1709;
+  --secondary-950: #160803;
+
+
+  /* SEMANTIC */
+
+  --bg-main: var(--primary-950);
+  --bg-panel: var(--primary-900);
+
+  --text-main: var(--primary-50);
+  --text-muted: var(--primary-200);
+
+  --accent-primary: var(--primary-500);
+  --accent-secondary: var(--secondary-500);
+
 }
 
 html,
@@ -13,8 +51,8 @@ body {
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--bg-main);
+  color: var(--text-main);
   margin: 0;
   padding: 0;
   overflow-x: hidden;

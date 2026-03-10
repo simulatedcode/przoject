@@ -7,10 +7,10 @@ export default function Ground() {
     const gridConfig = {
         cellSize: 0.1,
         cellThickness: 0.8,
-        cellColor: '#333333',
+        cellColor: '#1B2B2C',
         sectionSize: 0.5,
         sectionThickness: 0.7,
-        sectionColor: '#f7d08a',
+        sectionColor: '#517E81',
         fadeDistance: 30,
         fadeStrength: 1.2,
         followCamera: false,
