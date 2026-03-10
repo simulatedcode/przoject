@@ -45,11 +45,11 @@ export default function CanvasRoot() {
         <color attach="background" args={['#0A0F10']} />
         <fog attach="fog" args={['#0A0F10', 10, 50]} />
 
-        <ambientLight intensity={0.5} />
+        <ambientLight intensity={2.2} />
         <directionalLight
           castShadow
           position={[15, 2, 5]}
-          intensity={8}
+          intensity={20}
           shadow-mapSize-width={2048}
           shadow-mapSize-height={2048}
           shadow-camera-left={-10}
