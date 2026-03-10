@@ -4,6 +4,10 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
 
+  experimental: {
+    webpackBuildWorker: false,
+  },
+
   webpack(config) {
     config.module.rules.push({
       test: /\.(glsl|vs|fs|vert|frag)$/,
