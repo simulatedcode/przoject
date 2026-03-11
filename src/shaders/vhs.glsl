@@ -50,7 +50,7 @@ void main(){
     // Effects
     float scanline = crtScanlines(vUv.y, uTime);
     float grain = analogGrain(uv, uTime);
-    float flicker = 1.0 + (sin(uTime * 40.0) * 0.01 + sin(uTime * 12.0) * 0.015);
+    float flicker = 1.0 + (sin(uTime * 40.0) * 0.01 + sin(uTime * 12.0) * 0.15);
     
     // Rolling refresh bar
     float refresh = smoothstep(0.0, 0.02, abs(fract(uTime * 0.2) - vUv.y)) * 0.03;
