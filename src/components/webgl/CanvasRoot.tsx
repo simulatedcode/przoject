@@ -16,6 +16,7 @@ export default function CanvasRoot() {
   const [performance, setPerformance] = useState(1)
 
   return (
+
     <Canvas
       camera={{
         position: [0, 0.65, 6.5],
@@ -45,27 +46,26 @@ export default function CanvasRoot() {
         onChange={({ factor }) => setPerformance(factor)}
       />
 
+      {/* Camera system (must mount immediately) */}
+      <CameraRig />
+
+      {/* Atmosphere */}
+      <color attach="background" args={['#0A0F10']} />
+      <fog attach="fog" args={['#0A0F10', 8, 35]} />
+
+      {/* Global lighting */}
+      <WorldLighting />
+
+      {/* Scene assets */}
       <Suspense fallback={null}>
-
-        {/* Scene atmosphere */}
-        <color attach="background" args={['#0A0F10']} />
-        <fog attach="fog" args={['#0A0F10', 8, 35]} />
-
-        {/* Camera controller */}
-        <CameraRig />
-
-        {/* Global world lighting */}
-        <WorldLighting />
-
-        {/* Scene objects */}
         <Ground />
         <HelasModel />
-
-        {/* Post effects */}
-        <PostProcessing performance={performance} />
-
       </Suspense>
 
+      {/* Postprocessing */}
+      <PostProcessing performance={performance} />
+
     </Canvas>
+
   )
 }
