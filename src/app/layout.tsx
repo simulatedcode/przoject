@@ -39,7 +39,7 @@ export default function RootLayout({
       >
         <CanvasRoot />
         <LenisProvider>
-          <div className="relative mx-auto min-h-screen inset-0 pointer-events-none">
+          <div className="relative w-full mx-auto min-h-screen inset-0 pointer-events-none">
             {children}
           </div>
           <Footer />

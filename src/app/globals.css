@@ -82,9 +82,8 @@ body {
 }
 
 canvas {
-  position: absolute;
+  position: fixed;
   inset: 0;
-  width: 100%;
   z-index: -10;
   pointer-events: none;
   overscroll-behavior: none;
@@ -93,6 +92,7 @@ canvas {
 .scroll-container {
   inset: 0;
   z-index: 0;
+  width: 100%;
   pointer-events: none;
   overscroll-behavior: none;
 }
@@ -100,6 +100,7 @@ canvas {
 section {
   min-height: 100dvh;
   width: 100%;
+  margin: 0 auto;
 }
 
 .hero-wrap {

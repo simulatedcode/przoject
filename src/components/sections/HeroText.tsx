@@ -4,9 +4,9 @@ import React from 'react'
 
 export default function HeroText() {
     return (
-        <section className="relative flex items-center justify-center">
-            <div className="max-w-full md:max-w-6xl px-4 md:px-0 mx-auto">
-                <h1 className="font-bold uppercase text-[48px] md:text-[124px] text-center tracking-widest md:tracking-[0.2em] leading-[1.4] mix-blend-exclusion text-white">
+        <section className="relative mx-auto h-screen flex items-center justify-center">
+            <div className="flex flex-col items-center justify-center px-8 md:px-16">
+                <h1 className="font-bold uppercase text-4xl md:text-[124px] text-center tracking-[0.25em] mix-blend-exclusion text-white">
                     speculative future memories
                 </h1>
             </div>
