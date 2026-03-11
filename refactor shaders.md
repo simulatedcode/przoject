@@ -1,308 +1,438 @@
-Task: Implement Ghost in the Shell–style cinematic hologram system in React Three Fiber
+# Skill Agent Prompt
 
-Context
+## Advanced Cyberpunk Hologram Rendering System (Three.js / React Three Fiber)
 
-We are building a cinematic cyberpunk WebGL scene inspired by the holographic advertisements seen in the film
-Ghost in the Shell.
+### Objective
 
-The goal is to create large volumetric holographic projections that feel luminous, translucent, and atmospheric.
+Build a **high-end hologram rendering system** for a cinematic cyberpunk WebGL environment.
 
-The hologram must NOT appear like:
+The system should replicate the style of large-scale holographic projections commonly seen in cyberpunk cinema and futuristic city visualizations.
 
-- a flat billboard
-- a solid white mesh
-- a normal transparent texture
+The holograms must feel like **light projected into the air**, not solid geometry or flat billboards.
 
-Instead it should behave like light projected into the air.
+The architecture must support the following hologram techniques:
 
-Technical Stack
+* particle hologram fields
+* LiDAR-style point cloud holograms
+* volumetric raymarch holograms
+* depth-aware cinematic bloom
+* cyberpunk city-scale hologram architecture
 
-Use the following stack:
+The system must run inside a **React Three Fiber scene**.
 
-React
-React Three Fiber
-Drei
-Three.js
-GLSL shaders
-Postprocessing
+---
 
-Libraries:
+# Technology Stack
 
+Use the following libraries:
+
+```
+three
 @react-three/fiber
 @react-three/drei
 postprocessing
-three
-System Architecture
+```
 
-Create the following components:
+Optional utilities:
 
+```
+three-stdlib
+leva
+```
+
+Shaders must be written in **GLSL**.
+
+---
+
+# Project Architecture
+
+Create the following folder structure:
+
+```
 /components/hologram
-    Hologram.tsx
-    HologramMaterial.ts
-    hologram.vert
-    hologram.frag
+    HologramSystem.tsx
+    HologramParticleField.tsx
+    HologramPointCloud.tsx
+    HologramVolume.tsx
+
+/shaders
+    particle.vert
+    particle.frag
+    pointcloud.vert
+    pointcloud.frag
+    raymarch.vert
+    raymarch.frag
 
 /postprocessing
-    BloomPipeline.tsx
-Rendering Pipeline
+    DepthBloomPipeline.tsx
+```
 
-Scene must render in this order:
+The system must be modular so multiple holograms can exist simultaneously across the city environment.
 
+---
+
+# Rendering Pipeline
+
+The rendering pipeline must follow this structure:
+
+```
 Scene
  ↓
-Hologram Mesh
+Particle Hologram Fields
  ↓
-Additive Shader Material
+LiDAR Point Cloud Holograms
  ↓
-Volumetric Billboard Planes
+Volumetric Raymarch Hologram Volumes
  ↓
-Scanline + Fresnel Shader
+Additive Emissive Materials
  ↓
-Bloom Postprocessing
+Depth-Aware Bloom Postprocessing
  ↓
-Fog / Atmosphere
+Atmospheric Fog + Light Scattering
+```
 
-1. Volumetric Billboard Technique
+Each stage contributes to the illusion of **large holographic projections embedded in the city atmosphere**.
 
-Instead of one plane, build multiple stacked planes to simulate hologram volume.
+---
+
+# 1. Particle Hologram Fields
+
+Particle holograms simulate digital projections using thousands of light particles.
+
+Instead of rendering solid geometry, the hologram is composed of **floating particles**.
 
 Implementation requirements:
 
-6–12 planes
+```
+THREE.Points
+BufferGeometry
+ShaderMaterial
+```
 
-slight Z offset
+Particle count:
 
-additive blending
+```
+20000 – 100000 particles
+```
 
-transparent
+Attributes:
 
-depthWrite disabled
+```
+position
+size
+random
+```
 
-Example structure:
+Particles must:
 
-<Hologram>
-   plane z = -0.05
-   plane z = -0.03
-   plane z = -0.01
-   plane z = 0
-   plane z = 0.01
-   plane z = 0.03
-</Hologram>
+* flicker slightly
+* drift slowly
+* pulse in brightness
+* fade near edges
 
-Each plane uses the same shader material.
+Particle size must be perspective-correct.
 
-Purpose:
+Example particle vertex shader concept:
 
-This creates depth parallax and volumetric glow.
+```glsl
+gl_PointSize = size * (300.0 / -mvPosition.z);
+```
 
-2. Hologram Vertex Shader
+Particles must use:
 
-Vertex shader must:
-
-support billboard orientation
-
-add subtle vertex distortion
-
-support time uniform
-
-Example structure:
-
-uniform float uTime;
-
-varying vec2 vUv;
-varying vec3 vWorldPosition;
-
-void main() {
-
-    vUv = uv;
-
-    vec3 pos = position;
-
-    float wave = sin(pos.y * 8.0 + uTime * 2.0) * 0.02;
-    pos.x += wave;
-
-    vec4 worldPos = modelMatrix * vec4(pos,1.0);
-    vWorldPosition = worldPos.xyz;
-
-    gl_Position = projectionMatrix * viewMatrix * worldPos;
-}
-3. Scanline Shader Layer
-
-Create a projection scanline effect.
-
-Requirements:
-
-horizontal scanlines
-
-subtle movement
-
-very low intensity
-
-Example logic:
-
-float scan = sin(vUv.y * 600.0 + uTime * 4.0) * 0.03;
-color += scan;
-
-This simulates projector interference.
-
-4. Fresnel Glow
-
-Add edge glow using a Fresnel effect.
-
-Requirements:
-
-glow strongest at edges
-
-center remains translucent
-
-Example logic:
-
-vec3 viewDir = normalize(cameraPosition - vWorldPosition);
-float fresnel = pow(1.0 - dot(viewDir, normal), 3.0);
-
-Apply to emission:
-
-emission += fresnel * glowStrength
-5. Hologram Fragment Shader
-
-Combine:
-
-texture
-
-scanlines
-
-fresnel glow
-
-pulsing emission
-
-transparency
-
-Example structure:
-
-uniform sampler2D uTexture;
-uniform float uTime;
-
-varying vec2 vUv;
-varying vec3 vWorldPosition;
-
-void main() {
-
-    vec4 tex = texture2D(uTexture, vUv);
-
-    float scan = sin(vUv.y * 600.0 + uTime * 4.0) * 0.03;
-
-    vec3 color = tex.rgb + scan;
-
-    float pulse = sin(uTime * 1.5) * 0.2 + 0.8;
-
-    float fresnel = pow(1.0 - dot(normalize(vWorldPosition), vec3(0,0,1)), 3.0);
-
-    float alpha = tex.a * 0.6;
-
-    gl_FragColor = vec4(color * pulse + fresnel * 0.8, alpha);
-}
-6. Material Settings
-
-Material must use:
-
+```
+AdditiveBlending
 transparent: true
-blending: THREE.AdditiveBlending
 depthWrite: false
-side: THREE.DoubleSide
+```
 
-These are critical for light-based hologram rendering.
+---
 
-7. Cinematic Bloom Pipeline
+# 2. LiDAR-Style Point Cloud Holograms
 
-Create a postprocessing pipeline using Bloom.
+Objects should also be renderable as **point cloud holograms** inspired by LiDAR scanning systems.
 
-File:
+Instead of triangles, the object is displayed as a **cloud of digital scan points**.
 
-/postprocessing/BloomPipeline.tsx
+Pipeline:
 
-Use:
+```
+3D model
+ ↓
+MeshSurfaceSampler
+ ↓
+sample surface points
+ ↓
+create point cloud geometry
+ ↓
+render using shader
+```
 
+Each sampled point becomes a glowing projection particle.
+
+Visual characteristics:
+
+* shimmering scan points
+* animated scan waves
+* depth-based fading
+
+Example scan wave:
+
+```glsl
+float scanWave = sin(position.y * 5.0 + uTime * 2.0);
+brightness += scanWave * 0.3;
+```
+
+Points must glow using **additive blending**.
+
+---
+
+# 3. Volumetric Raymarch Holograms
+
+Large holographic projections such as animals, advertisements, or data clouds should use **raymarched volumetric rendering**.
+
+This simulates **light density inside a 3D volume**.
+
+Concept:
+
+```
+camera ray
+ ↓
+step through volume
+ ↓
+sample density
+ ↓
+accumulate emissive light
+```
+
+Example raymarch loop:
+
+```glsl
+for(int i = 0; i < STEPS; i++) {
+
+    vec3 p = rayOrigin + rayDir * dist;
+
+    float density = sampleVolume(p);
+
+    color += density * lightColor;
+
+    dist += stepSize;
+}
+```
+
+Raymarched holograms should appear:
+
+* soft
+* luminous
+* semi-transparent
+* atmospheric
+
+Common uses:
+
+* giant holographic creatures
+* floating data clouds
+* volumetric advertisements
+
+---
+
+# 4. Depth-Aware Cinematic Bloom
+
+The hologram system must use **depth-aware bloom** to simulate light bleeding into the air.
+
+Use a postprocessing pipeline:
+
+```
 EffectComposer
 Bloom
+Depth buffer
+```
 
-Recommended cinematic settings:
+Recommended parameters:
 
-luminanceThreshold: 0.05
+```
+luminanceThreshold: 0.04
 luminanceSmoothing: 0.9
-intensity: 1.8
-radius: 0.8
+intensity: 2.0
+radius: 1.0
+```
 
-Example:
+Depth-aware bloom ensures:
 
-<EffectComposer>
-   <Bloom
-      luminanceThreshold={0.05}
-      luminanceSmoothing={0.9}
-      intensity={1.8}
-   />
-</EffectComposer>
+* holograms glow strongly
+* nearby objects receive bloom
+* distant objects remain stable
 
-Bloom must make the hologram appear like light bleeding into the air.
+---
 
-8. Scene Atmosphere
+# 5. Cyberpunk City-Scale Hologram Architecture
 
-Add cinematic fog:
+The environment must support **multiple hologram types simultaneously**.
 
-<fog attach="fog" args={["#070707", 6, 28]} />
+Create a central system:
 
-Add low ambient lighting.
+```
+<HologramSystem>
+   <HologramParticleField />
+   <HologramPointCloud />
+   <HologramVolume />
+</HologramSystem>
+```
 
-The hologram should remain the brightest element in the scene.
+Each hologram instance must support:
 
-9. Animation System
+```
+position
+scale
+rotation
+color
+intensity
+animation speed
+```
 
-Animate using useFrame.
+The system should allow **dozens of holograms across a city skyline**.
 
-Update uniforms:
+---
 
-material.uniforms.uTime.value = clock.elapsedTime
-10. Expected Visual Result
+# 6. Environmental Integration
 
-The final hologram should have:
+Holograms must interact visually with the environment.
 
-translucent neon color
+Required environmental effects:
 
-layered volumetric look
+* atmospheric fog
+* parallax movement
+* reflective surfaces
+* light scattering
 
-moving scanlines
+Example fog configuration:
 
-glowing edges
+```
+<fog attach="fog" args={["#080808", 8, 35]} />
+```
 
-cinematic bloom
+The hologram should remain **the brightest emissive object in the scene**.
 
-subtle pulse animation
+---
 
-It should resemble Ghost in the Shell city holograms.
+# 7. Performance Strategy
 
-Final Deliverables
+Large hologram systems must remain performant.
 
-The agent should produce:
+Use the following techniques:
 
-Hologram.tsx
+```
+instancing
+GPU particles
+LOD switching
+texture atlases
+```
 
-HologramMaterial.ts
+Example LOD behavior:
 
-hologram.vert
+Far holograms:
 
-hologram.frag
+```
+billboard sprites
+```
 
-BloomPipeline.tsx
+Mid-distance holograms:
 
-All code must run inside a React Three Fiber scene.
+```
+particle fields
+```
 
-If you want, I can also write the next level version used by award-winning WebGL studios, which adds:
+Near holograms:
 
-true volumetric raymarch holograms
+```
+volumetric raymarch rendering
+```
 
-particle projection fields
+---
 
-depth-aware bloom
+# 8. Animation System
 
-hologram light scattering
+Animate holograms using shader uniforms.
 
-That version is much closer to the real Ghost in the Shell VFX pipeline.
+Uniforms:
+
+```
+uTime
+uPulse
+uScanSpeed
+uNoiseScale
+```
+
+Example pulse animation:
+
+```glsl
+float pulse = sin(uTime * 2.0) * 0.2 + 0.8;
+```
+
+Animations should create:
+
+* scan waves
+* flickering light
+* subtle projection distortion
+
+---
+
+# 9. Cyberpunk Color Design
+
+Use neon cyberpunk colors.
+
+Example palette:
+
+```
+#39E7FF
+#FF3E8A
+#4BE8D3
+#FF9A3C
+```
+
+Visual properties:
+
+* high emissive intensity
+* additive blending
+* soft transparency
+* glowing edges
+
+---
+
+# 10. Expected Visual Result
+
+The final system should support:
+
+* particle-based holographic projections
+* LiDAR-style scanned models
+* volumetric hologram creatures
+* giant city advertisements
+* cinematic atmospheric glow
+
+The holograms must feel like **massive projections of light inside a futuristic city**.
+
+---
+
+# Final Deliverables
+
+The implementation must include:
+
+```
+/components/hologram
+    HologramSystem.tsx
+    HologramParticleField.tsx
+    HologramPointCloud.tsx
+    HologramVolume.tsx
+
+/shaders
+    particle.vert
+    particle.frag
+    pointcloud.vert
+    pointcloud.frag
+    raymarch.vert
+    raymarch.frag
+
+/postprocessing
+    DepthBloomPipeline.tsx
+```
+
+All components must run inside a **React Three Fiber scene architecture**.

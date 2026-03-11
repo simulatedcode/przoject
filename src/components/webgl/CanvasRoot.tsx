@@ -3,7 +3,7 @@
 import { Canvas } from '@react-three/fiber'
 import { Suspense, useState } from 'react'
 import { EffectComposer, Bloom, Noise, Vignette, ChromaticAberration, Scanline } from '@react-three/postprocessing'
-import { PerformanceMonitor } from '@react-three/drei'
+import { Environment, PerformanceMonitor } from '@react-three/drei'
 import HelasModel from './HelasModel'
 import Ground from './Ground'
 import CameraRig from './CameraRig'
@@ -45,17 +45,23 @@ export default function CanvasRoot() {
         <color attach="background" args={['#0A0F10']} />
         <fog attach="fog" args={['#0A0F10', 10, 50]} />
 
+        {/* Lighting */}
+        <Environment preset="dawn" environmentIntensity={0.5} />
+
+
         <ambientLight intensity={0.4} />
         <directionalLight
           castShadow
-          position={[15, 2, 5]}
-          intensity={1}
+          position={[0, 6, -10]}
+          intensity={3.5}
           shadow-mapSize-width={2048}
           shadow-mapSize-height={2048}
-          shadow-camera-left={-10}
-          shadow-camera-right={10}
-          shadow-camera-top={10}
-          shadow-camera-bottom={-10}
+          shadow-camera-far={100}
+          shadow-camera-left={-20}
+          shadow-camera-right={20}
+          shadow-camera-top={20}
+          shadow-camera-bottom={-20}
+          shadow-bias={-0.0001}
         />
 
         <CameraRig />
