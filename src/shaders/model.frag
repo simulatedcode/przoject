@@ -29,12 +29,12 @@ void main() {
     
     // Combine everything
     vec3 baseColor = uColor * toon;
-    vec3 emissive = uColor * fresnel * (1.5 + uIntro * 1.0); // Grow edge glow
-    vec3 finalColor = (baseColor + emissive) * (0.5 + uIntro * 1.0); // Overall intensity fade
+    vec3 emissive = uColor * fresnel * (1.25+ uIntro * 1.0); // Grow edge glow
+    vec3 finalColor = (baseColor + emissive) * (0.25 + uIntro * 1.0); // Overall intensity fade
     finalColor *= scanline * flicker;
     
     // Smooth digital-in alpha
-    float alpha = mix(0.7, 1.0, fresnel) * uIntro;
+    float alpha = mix(0.5, 1.0, fresnel) * uIntro;
     
     gl_FragColor = vec4(finalColor, alpha);
 }
