@@ -2,9 +2,9 @@
 
 import React from 'react'
 
-export default function Hero() {
+export default function HeroText() {
     return (
-        <section className="hero-wrap flex items-center justify-center">
+        <section className="relative flex items-center justify-center">
             <div className="max-w-full md:max-w-6xl px-4 md:px-0 mx-auto">
                 <h1 className="font-bold uppercase text-[48px] md:text-[124px] text-center tracking-widest md:tracking-[0.2em] leading-[1.4] mix-blend-exclusion text-white">
                     speculative future memories

@@ -2,7 +2,7 @@
 
 import React from 'react'
 
-export default function PseudoMemories() {
+export default function MemoriesSection() {
     return (
         <section className="relative flex items-end justify-end min-h-screen px-20 pb-20">
             <div className="max-w-2xl text-right mix-blend-exclusion">

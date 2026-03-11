@@ -2,7 +2,7 @@
 
 import React from 'react'
 
-export default function Helas() {
+export default function HelasSection() {
     return (
         <section className="relative h-screen px-10 flex flex-col justify-end pb-20">
 

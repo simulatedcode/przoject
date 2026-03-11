@@ -2,7 +2,7 @@
 
 import React from 'react'
 
-export default function Landscape() {
+export default function LandscapeSection() {
     return (
         <section className="relative flex items-center justify-start min-h-screen px-10 md:px-20">
             <div className="max-w-4xl">

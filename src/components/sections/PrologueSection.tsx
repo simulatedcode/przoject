@@ -2,7 +2,7 @@
 
 import React from 'react'
 
-export default function Prologue() {
+export default function PrologueSection() {
     return (
         <section className="relative flex items-center justify-center min-h-screen px-10">
             <div className="max-w-2xl text-center mix-blend-exclusion">
