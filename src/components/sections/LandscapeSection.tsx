@@ -11,12 +11,10 @@ export default function LandscapeSection() {
                 </p>
                 <div className="space-y-8">
                     <h2 className="text-5xl md:text-7xl font-bold tracking-tight uppercase">
-                        Infinite<br />Terrains
+                        collective<br />memory
                     </h2>
                     <p className="max-w-md text-md font-mono leading-relaxed opacity-80">
-                        A vast expanse of synthetic soil and digital atmosphere.
-                        The horizon is a mathematical limit, an asymptotic curve
-                        approaching a memory of reality.
+                        While it becomes fiction, the impression as a panorama is so real that it can be confused with reality itself.
                     </p>
                 </div>
             </div>

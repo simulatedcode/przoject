@@ -8,8 +8,9 @@ export default function WorldLighting() {
 
             <directionalLight
                 castShadow
-                position={[4, 6, 5]}
-                intensity={0.8}
+                position={[4, 3, 2]}
+                intensity={2.4}
+                color="#9BBEC0"
                 shadow-mapSize-width={2048}
                 shadow-mapSize-height={2048}
             />

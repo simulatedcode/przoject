@@ -50,8 +50,8 @@ export default function CanvasRoot() {
       <CameraRig />
 
       {/* Atmosphere */}
-      <color attach="background" args={['#0A0F10']} />
-      <fog attach="fog" args={['#0A0F10', 8, 35]} />
+      <color attach="background" args={['#0B0E0D']} />
+      <fog attach="fog" args={['#110A08', 6, 18]} />
 
       {/* Global lighting */}
       <WorldLighting />
