@@ -27,13 +27,13 @@ float noise(vec2 p){
 float analogGrain(vec2 uv, float time){
     float g = hash(uv * 400.0 + time);
     g += hash(uv * 900.0 - time * 0.5);
-    return (g * 0.5 - 0.25) * 0.04;
+    return (g * 0.5 - 0.25) * 0.1;
 }
 
 float crtScanlines(float y, float time){
     float fine = sin(y * 420.0);
     float coarse = sin(y * 60.0 - time * 1.5);
-    return 1.0 - (fine * 0.12 + coarse * 0.08);
+    return 1.0 - (fine * 0.12 + coarse * 0.1);
 }
 
 float signalTear(vec2 uv, float time){
