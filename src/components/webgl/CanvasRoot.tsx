@@ -64,13 +64,13 @@ export default function CanvasRoot() {
 
         <EffectComposer enableNormalPass={performance > 0.5}>
           <Bloom
-            intensity={0.3 * performance}
-            luminanceThreshold={0.4}
+            intensity={0.4 * performance}
+            luminanceThreshold={0.55}
             luminanceSmoothing={0.9}
             mipmapBlur={performance > 0.05}
           />
-          <Noise opacity={0.2 * performance} />
-          <Scanline opacity={0.3 * performance} density={2.0} />
+          <Noise opacity={0.25 * performance} />
+          <Scanline opacity={0.4 * performance} density={2.5} />
           <Vignette eskil={false} offset={0.1} darkness={0.68} />
           <ChromaticAberration
             offset={[0.001 * performance, 0.002 * performance]}

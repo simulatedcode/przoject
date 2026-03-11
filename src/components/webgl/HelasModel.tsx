@@ -26,7 +26,7 @@ export default function HelasModel() {
     if (!mesh) return new THREE.BufferGeometry()
 
     const sampler = new MeshSurfaceSampler(mesh).build()
-    const count = 1000000 // 1 Million Points
+    const count = 700000 // 700k Points
 
     const positions = new Float32Array(count * 3)
     const normals = new Float32Array(count * 3)
@@ -108,8 +108,8 @@ export default function HelasModel() {
       {/* Subtle bottom glow splash */}
       <pointLight
         position={[0, 0.5, 4]}
-        intensity={20}
-        distance={10}
+        intensity={8}
+        distance={15}
         decay={2}
         color="#E0521F"
       />
