@@ -8,7 +8,6 @@ import CameraRig from './camera/CameraRig'
 import WorldLighting from './world/WorldLighting'
 import Ground from './scene/Ground'
 import HelasModel from './scene/HelasModel'
-import PostProcessing from './post/PostProcessing'
 
 export default function CanvasRoot() {
 
@@ -62,8 +61,6 @@ export default function CanvasRoot() {
         <HelasModel />
       </Suspense>
 
-      {/* Postprocessing */}
-      <PostProcessing performance={performance} />
 
     </Canvas>
 
