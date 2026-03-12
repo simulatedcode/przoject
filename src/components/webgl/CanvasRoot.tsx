@@ -7,7 +7,7 @@ import { PerformanceMonitor } from '@react-three/drei'
 import CameraRig from './camera/CameraRig'
 import WorldLighting from './world/WorldLighting'
 import Ground from './scene/Ground'
-import HelasModel from './scene/HelasModel'
+import Model from './scene/Model'
 
 export default function CanvasRoot() {
 
@@ -58,7 +58,7 @@ export default function CanvasRoot() {
       {/* Scene assets */}
       <Suspense fallback={null}>
         <Ground />
-        <HelasModel />
+        <Model />
       </Suspense>
 
 

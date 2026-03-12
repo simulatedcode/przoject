@@ -2,7 +2,7 @@ import { useGLTF } from '@react-three/drei'
 import { useEffect } from 'react'
 import * as THREE from 'three'
 
-export default function HelasModel() {
+export default function Model() {
 
   const { scene } = useGLTF('/models/helas.glb')
 
