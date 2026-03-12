@@ -1,17 +1,19 @@
-import Hero from '@/components/sections/Hero'
-import Prologue from '@/components/sections/Prologue'
-import Landscape from '@/components/sections/Landscape'
-import PseudoMemories from '@/components/sections/PseudoMemories'
-import Helas from '@/components/sections/Helas'
+import HeroText from '@/components/sections/HeroText'
+import PrologueSection from '@/components/sections/PrologueSection'
+import LandscapeSection from '@/components/sections/LandscapeSection'
+import MemoriesSection from '@/components/sections/MemoriesSection'
+import HelasSection from '@/components/sections/HelasSection'
 
 export default function Home() {
   return (
     <main className="scroll-container">
-      <Hero />
-      <Prologue />
-      <Landscape />
-      <PseudoMemories />
-      <Helas />
+      <div className='hero-wrap inset-0'>
+        <HeroText />
+      </div>
+      <PrologueSection />
+      <LandscapeSection />
+      <MemoriesSection />
+      <HelasSection />
     </main>
   )
 }

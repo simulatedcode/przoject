@@ -18,7 +18,7 @@ export default function Ground() {
     }
 
     return (
-        <group position={[0, -0.019, 0]}>
+        <group position={[0, -0.01, 0]}>
             <Grid
                 args={[100, 100]}
                 {...gridConfig}
@@ -40,7 +40,7 @@ export default function Ground() {
                 />
             </mesh>
             <ContactShadows
-                position={[0, -0.19, 0]}
+                position={[0, -0.1, 0]}
                 opacity={1}
                 scale={20}
                 blur={2}

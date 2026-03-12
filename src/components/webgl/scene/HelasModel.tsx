@@ -17,8 +17,8 @@ export default function HelasModel() {
 
         if (child.material instanceof THREE.MeshStandardMaterial) {
 
-          child.material.roughness = 0.45
-          child.material.metalness = 0.1
+          child.material.roughness = 0.55
+          child.material.metalness = 0.05
 
         }
 
@@ -36,20 +36,19 @@ export default function HelasModel() {
 
       {/* Key Light */}
       <spotLight
-        position={[1.6, 1.4, 2.2]}
-        intensity={2.2}
+        position={[0, 3, 2]}
+        intensity={2.4}
         angle={0.45}
-        penumbra={0.6}
+        penumbra={0.7}
         decay={2}
-        color="#E0521F"
-        castShadow
+        color="#6EA1A4"
       />
 
       {/* Rim Light */}
       <spotLight
-        position={[-1.8, 1.2, -2]}
-        intensity={1.5}
-        angle={0.55}
+        position={[-2.2, 1.6, -2.4]}
+        intensity={0.1}
+        angle={0.5}
         penumbra={1}
         decay={2}
         color="#6EA1A4"
@@ -58,19 +57,28 @@ export default function HelasModel() {
       {/* Fill Light */}
       <pointLight
         position={[-1.2, 0.6, 1.4]}
-        intensity={0.4}
-        distance={4}
+        intensity={0.022}
+        distance={6}
         decay={2}
-        color="#EB906F"
+        color="#67260E"
       />
 
       {/* Core Glow */}
       <pointLight
         position={[0, 0.8, 0.3]}
-        intensity={0.25}
-        distance={2}
+        intensity={0.035}
+        distance={4}
         decay={2}
-        color="#EB906F"
+        color="#BE461A"
+      />
+
+      {/* FLOOR BOUNCE (subtle cinematic reflection) */}
+      <pointLight
+        position={[0, -0.7, 0.6]}
+        intensity={0.035}
+        distance={3}
+        decay={2}
+        color="#BE461A"
       />
 
     </group>

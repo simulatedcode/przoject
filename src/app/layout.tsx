@@ -3,7 +3,6 @@ import { IBM_Plex_Sans, IBM_Plex_Mono, Doto } from "next/font/google";
 import "./globals.css";
 import CanvasRoot from "@/components/webgl/CanvasRoot";
 import LenisProvider from "@/components/dom/LenisProvider";
-import VhsOverlay from "@/components/webgl/VhsOverlay";
 
 const plexSans = IBM_Plex_Sans({
   subsets: ['latin'],
@@ -39,12 +38,12 @@ export default function RootLayout({
       >
         <CanvasRoot />
         <LenisProvider>
-          <div className="relative min-h-screen">
+          <div className="relative w-full mx-auto min-h-screen inset-0 pointer-events-none">
             {children}
           </div>
           <Footer />
         </LenisProvider>
-        <VhsOverlay />
+
       </body>
     </html>
   );
