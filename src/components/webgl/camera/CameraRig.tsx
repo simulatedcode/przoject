@@ -1,26 +1,29 @@
 'use client'
 
-import { useRef } from "react"
-import { Group, Vector3 } from "three"
-import { useThree, useFrame } from "@react-three/fiber"
+import { useThree, useFrame } from '@react-three/fiber'
+import { useControls } from 'leva'
+import { Vector3 } from 'three'
 
 export default function CameraRig() {
 
-    const rig = useRef<Group>(null)
     const { camera } = useThree()
-    const target = useRef(new Vector3(0.1, 0.7, 0))
+
+    const { x, y, z, tx, ty, tz } = useControls('Camera', {
+        x: { value: 0, min: -10, max: 10, step: 0.01 },
+        y: { value: 0.65, min: -5, max: 5, step: 0.01 },
+        z: { value: 6.5, min: 1, max: 20, step: 0.01 },
+
+        tx: { value: 0.1, min: -5, max: 5, step: 0.01 },
+        ty: { value: 0.7, min: -5, max: 5, step: 0.01 },
+        tz: { value: 0, min: -5, max: 5, step: 0.01 },
+    })
 
     useFrame(() => {
 
-        if (!rig.current) return
-
-        camera.position.lerp(rig.current.position, 0.05)
-
-        camera.lookAt(target.current)
+        camera.position.set(x, y, z)
+        camera.lookAt(new Vector3(tx, ty, tz))
 
     })
 
-    return (
-        <group ref={rig} position={[0, 0.65, 6.5]} />
-    )
+    return null
 }

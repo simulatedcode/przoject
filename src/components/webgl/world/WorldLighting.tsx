@@ -39,7 +39,7 @@ export default function WorldLighting() {
 
             {/* FRONT FILL LIGHT */}
             <pointLight
-                position={[0, 1.8, 3]}
+                position={[0, 2, 3]}
                 intensity={0.7}
                 distance={8}
                 decay={2}

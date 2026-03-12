@@ -2,7 +2,7 @@
 
 import { Canvas } from '@react-three/fiber'
 import { Suspense, useState } from 'react'
-import { PerformanceMonitor } from '@react-three/drei'
+import { OrbitControls, PerformanceMonitor } from '@react-three/drei'
 
 import CameraRig from './camera/CameraRig'
 import WorldLighting from './world/WorldLighting'
@@ -33,8 +33,8 @@ export default function CanvasRoot() {
       style={{
         position: 'fixed',
         inset: 0,
-        zIndex: -1,
-        pointerEvents: 'none'
+        zIndex: 0,
+        pointerEvents: 'auto'
       }}
     >
 
@@ -45,7 +45,15 @@ export default function CanvasRoot() {
         onChange={({ factor }) => setPerformance(factor)}
       />
 
-      {/* Camera system (must mount immediately) */}
+      {/* DEBUG CAMERA */}
+      <OrbitControls
+        target={[0.0, 0.7, 0]}
+        enablePan={true}
+        minDistance={4}
+        maxDistance={10}
+        enableZoom={false}
+      />
+
       <CameraRig />
 
       {/* Atmosphere */}

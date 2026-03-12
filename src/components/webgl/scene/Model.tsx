@@ -42,7 +42,7 @@ export default function Model() {
 
         // Fallback: convert unsupported materials to PBR
         return new THREE.MeshStandardMaterial({
-          color: (material as any).color ?? new THREE.Color('#D35E3A'),
+          color: (material as any).color ?? new THREE.Color('#B3D4D6'),
           map: (material as any).map ?? null,
           transparent: material.transparent,
           opacity: material.opacity,

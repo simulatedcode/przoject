@@ -6,7 +6,7 @@ export default function MemoriesSection() {
     return (
         <section className="relative flex items-end justify-end min-h-screen px-20 pb-20">
             <div className="max-w-2xl text-right mix-blend-exclusion">
-                <p className="font-doto text-sm tracking-[0.3em] mb-12 text-muted uppercase">
+                <p className="font-departure text-sm tracking-[0.3em] mb-12 text-muted uppercase">
                     03 // pseudo memories
                 </p>
                 <div className="space-y-[20px]">
@@ -16,7 +16,7 @@ export default function MemoriesSection() {
 
                         {/* LEFT : TEXT */}
                         <div className="max-w-[24ch]">
-                            <span className="font-mono text-[10px] opacity-30 uppercase tracking-[0.2em]">
+                            <span className="font-departure text-[10px] opacity-30 uppercase tracking-[0.2em]">
                                 [ fragment_01 ]
                             </span>
 
@@ -44,7 +44,7 @@ export default function MemoriesSection() {
 
                         {/* LEFT : TEXT */}
                         <div className="max-w-[24ch]">
-                            <span className="font-mono text-[10px] opacity-30 uppercase tracking-[0.2em]">
+                            <span className="font-departure text-[10px] opacity-30 uppercase tracking-[0.2em]">
                                 [ fragment_02 ]
                             </span>
 
