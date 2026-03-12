@@ -4,8 +4,8 @@ import React from 'react'
 
 export default function PrologueSection() {
     return (
-        <section className="relative flex items-center justify-center min-h-screen bg-black/5 backdrop-blur-md">
-            <div className="max-w-2xl text-center">
+        <section className="relative flex items-center justify-center min-h-screen">
+            <div className="max-w-2xl text-center mix-blend-exclusion">
                 <p className="font-mono text-sm tracking-[0.25em] text-center mb-8 opacity-50 uppercase">
                     [ prologue ]
                 </p>
