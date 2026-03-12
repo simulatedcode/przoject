@@ -6,7 +6,7 @@ import { PerformanceMonitor } from '@react-three/drei'
 
 import CameraRig from './camera/CameraRig'
 import WorldLighting from './world/WorldLighting'
-import Ground from './scene/Ground'
+import Ground from './world/Ground'
 import Model from './scene/Model'
 
 export default function CanvasRoot() {
@@ -50,7 +50,7 @@ export default function CanvasRoot() {
 
       {/* Atmosphere */}
       <color attach="background" args={['#0B0E0D']} />
-      <fog attach="fog" args={['#110A08', 6, 18]} />
+      <fog attach="fog" args={['#110A08', 8, 20]} />
 
       {/* Global lighting */}
       <WorldLighting />

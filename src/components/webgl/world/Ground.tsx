@@ -28,19 +28,8 @@ export default function Ground() {
                 <planeGeometry args={[100, 100]} />
                 <shadowMaterial transparent opacity={0.6} />
             </mesh>
-            {/* Light absorption layer */}
-            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.019, 0]}>
-                <planeGeometry args={[100, 100]} />
-                <meshStandardMaterial
-                    color="#070a0b"
-                    roughness={0.95}
-                    metalness={0.01}
-                    transparent
-                    opacity={0.15}
-                />
-            </mesh>
             <ContactShadows
-                position={[0, -0.1, 0]}
+                position={[0, -0.01, 0]}
                 opacity={1}
                 scale={20}
                 blur={2}

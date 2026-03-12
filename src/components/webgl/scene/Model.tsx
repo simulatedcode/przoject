@@ -10,81 +10,57 @@ export default function Model() {
 
     scene.traverse((child) => {
 
-      if (child instanceof THREE.Mesh) {
+      if (!(child instanceof THREE.Mesh)) return
 
-        child.castShadow = true
-        child.receiveShadow = true
+      child.castShadow = true
+      child.receiveShadow = true
 
-        if (child.material instanceof THREE.MeshStandardMaterial) {
+      const materials = Array.isArray(child.material)
+        ? child.material
+        : [child.material]
 
-          child.material.roughness = 0.55
-          child.material.metalness = 0.05
+      const processed = materials.map((material) => {
 
+        // Clone material to avoid modifying shared instances
+        const mat = material.clone()
+
+        if (
+          mat instanceof THREE.MeshStandardMaterial ||
+          mat instanceof THREE.MeshPhysicalMaterial
+        ) {
+
+          if (child.name === 'Body') {
+            mat.roughness = 0.25
+          }
+
+          if (child.name === 'MetalFrame') {
+            mat.metalness = 0.08
+          }
+
+          return mat
         }
 
-      }
+        // Fallback: convert unsupported materials to PBR
+        return new THREE.MeshStandardMaterial({
+          color: (material as any).color ?? new THREE.Color('#D35E3A'),
+          map: (material as any).map ?? null,
+          transparent: material.transparent,
+          opacity: material.opacity,
+        })
+
+      })
+
+      child.material = processed.length === 1 ? processed[0] : processed
 
     })
 
   }, [scene])
 
   return (
-
-    <group position={[0, 0, 0]} scale={0.14}>
-
+    <group scale={0.12}>
       <primitive object={scene} />
-
-      {/* Key Light */}
-      <spotLight
-        position={[0, 3, 2]}
-        intensity={2.4}
-        angle={0.45}
-        penumbra={0.7}
-        decay={2}
-        color="#6EA1A4"
-      />
-
-      {/* Rim Light */}
-      <spotLight
-        position={[-2.2, 1.6, -2.4]}
-        intensity={0.1}
-        angle={0.5}
-        penumbra={1}
-        decay={2}
-        color="#6EA1A4"
-      />
-
-      {/* Fill Light */}
-      <pointLight
-        position={[-1.2, 0.6, 1.4]}
-        intensity={0.022}
-        distance={6}
-        decay={2}
-        color="#67260E"
-      />
-
-      {/* Core Glow */}
-      <pointLight
-        position={[0, 0.8, 0.3]}
-        intensity={0.035}
-        distance={4}
-        decay={2}
-        color="#BE461A"
-      />
-
-      {/* FLOOR BOUNCE (subtle cinematic reflection) */}
-      <pointLight
-        position={[0, -0.7, 0.6]}
-        intensity={0.035}
-        distance={3}
-        decay={2}
-        color="#BE461A"
-      />
-
     </group>
-
   )
-
 }
 
 useGLTF.preload('/models/helas.glb')
