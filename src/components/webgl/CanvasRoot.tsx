@@ -2,12 +2,12 @@
 
 import { Canvas } from '@react-three/fiber'
 import { Suspense, useState } from 'react'
-import { PerformanceMonitor } from '@react-three/drei'
+import { OrbitControls, PerformanceMonitor } from '@react-three/drei'
 
 import CameraRig from './camera/CameraRig'
 import WorldLighting from './world/WorldLighting'
-import Ground from './scene/Ground'
-import HelasModel from './scene/HelasModel'
+import Ground from './world/Ground'
+import Model from './scene/Model'
 
 export default function CanvasRoot() {
 
@@ -33,8 +33,8 @@ export default function CanvasRoot() {
       style={{
         position: 'fixed',
         inset: 0,
-        zIndex: -1,
-        pointerEvents: 'none'
+        zIndex: 0,
+        pointerEvents: 'auto'
       }}
     >
 
@@ -45,12 +45,20 @@ export default function CanvasRoot() {
         onChange={({ factor }) => setPerformance(factor)}
       />
 
-      {/* Camera system (must mount immediately) */}
+      {/* DEBUG CAMERA */}
+      <OrbitControls
+        target={[0.0, 0.7, 0]}
+        enablePan={true}
+        minDistance={4}
+        maxDistance={10}
+        enableZoom={false}
+      />
+
       <CameraRig />
 
       {/* Atmosphere */}
       <color attach="background" args={['#0B0E0D']} />
-      <fog attach="fog" args={['#110A08', 6, 18]} />
+      <fog attach="fog" args={['#110A08', 8, 20]} />
 
       {/* Global lighting */}
       <WorldLighting />
@@ -58,7 +66,7 @@ export default function CanvasRoot() {
       {/* Scene assets */}
       <Suspense fallback={null}>
         <Ground />
-        <HelasModel />
+        <Model />
       </Suspense>
 
 

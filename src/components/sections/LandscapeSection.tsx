@@ -6,7 +6,7 @@ export default function LandscapeSection() {
     return (
         <section className="relative flex items-center justify-start min-h-screen px-10 md:px-20">
             <div className="max-w-4xl">
-                <p className="font-doto text-sm tracking-[0.3em] mb-12 text-muted uppercase">
+                <p className="font-departure text-sm tracking-[0.3em] mb-12 text-muted uppercase">
                     02 // in a landscape
                 </p>
                 <div className="space-y-8">

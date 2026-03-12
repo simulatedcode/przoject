@@ -1,8 +1,14 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans, IBM_Plex_Mono, Doto } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import CanvasRoot from "@/components/webgl/CanvasRoot";
 import LenisProvider from "@/components/dom/LenisProvider";
+
+const departureMono = localFont({
+  src: '../../public/fonts/DepartureMono-Regular.woff',
+  variable: '--font-departure',
+});
 
 const plexSans = IBM_Plex_Sans({
   subsets: ['latin'],
@@ -34,7 +40,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${plexSans.variable} ${plexMono.variable} ${doto.variable} antialiased`}
+        className={`${plexSans.variable} ${plexMono.variable} ${doto.variable} ${departureMono.variable} antialiased`}
       >
         <CanvasRoot />
         <LenisProvider>
@@ -43,7 +49,6 @@ export default function RootLayout({
           </div>
           <Footer />
         </LenisProvider>
-
       </body>
     </html>
   );
