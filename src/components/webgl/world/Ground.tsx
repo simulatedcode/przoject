@@ -1,22 +1,21 @@
 'use client'
 
-import { Grid, ContactShadows } from '@react-three/drei'
+import { Grid } from '@react-three/drei'
 
 export default function Ground() {
 
     const gridConfig = {
         cellSize: 0.25,
-        cellThickness: 0.7,
-        cellColor: '#1B2B2C',
+        cellThickness: 0.6,
+        cellColor: '#2D4748',
         sectionSize: 0.5,
-        sectionThickness: 0.7,
-        sectionColor: '#517E81',
+        sectionThickness: 0.8,
+        sectionColor: '#1B2B2C',
         fadeDistance: 30,
         fadeStrength: 1,
         followCamera: false,
         infiniteGrid: true
     }
-
     return (
         <group>
 
@@ -27,25 +26,20 @@ export default function Ground() {
                 position={[0, 0, 0]}
             />
 
-            {/* Shadow receiver slightly below */}
+            {/* Shadow receiver plane for real light shadows */}
             <mesh
                 position={[0, 0, 0]}
                 rotation={[-Math.PI / 2, 0, 0]}
                 receiveShadow
             >
                 <planeGeometry args={[100, 100]} />
-                <shadowMaterial transparent opacity={0.6} />
+                <shadowMaterial
+                    transparent
+                    opacity={0.45}
+                    polygonOffsetFactor={1}
+                    polygonOffsetUnits={1}
+                />
             </mesh>
-
-            {/* Contact shadow lowest */}
-            <ContactShadows
-                position={[0, -0.019, 0]}
-                opacity={0.8}
-                scale={20}
-                blur={2}
-                far={10}
-                resolution={1024}
-            />
 
         </group>
     )

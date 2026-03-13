@@ -15,14 +15,27 @@ export default function Model() {
       child.castShadow = true
       child.receiveShadow = true
 
+      if (!child.userData.__originalMaterials) {
+        child.userData.__originalMaterials = Array.isArray(child.material)
+          ? child.material
+          : [child.material]
+      }
+
       const materials = Array.isArray(child.material)
         ? child.material
         : [child.material]
 
       const processed = materials.map((material) => {
+        if ((material as THREE.Material).userData?.__isCodexClone) {
+          return material
+        }
 
         // Clone material to avoid modifying shared instances
         const mat = material.clone()
+        mat.userData = {
+          ...mat.userData,
+          __isCodexClone: true,
+        }
 
         if (
           mat instanceof THREE.MeshStandardMaterial ||
@@ -41,12 +54,17 @@ export default function Model() {
         }
 
         // Fallback: convert unsupported materials to PBR
-        return new THREE.MeshStandardMaterial({
+        const fallback = new THREE.MeshStandardMaterial({
           color: (material as any).color ?? new THREE.Color('#B3D4D6'),
           map: (material as any).map ?? null,
           transparent: material.transparent,
           opacity: material.opacity,
         })
+        fallback.userData = {
+          ...fallback.userData,
+          __isCodexClone: true,
+        }
+        return fallback
 
       })
 
@@ -54,10 +72,27 @@ export default function Model() {
 
     })
 
+    return () => {
+      scene.traverse((child) => {
+        if (!(child instanceof THREE.Mesh)) return
+        const materials = Array.isArray(child.material)
+          ? child.material
+          : [child.material]
+        const originals = child.userData.__originalMaterials as THREE.Material[] | undefined
+        materials.forEach((material) => {
+          if (material.userData?.__isCodexClone) {
+            material.dispose()
+          }
+        })
+        if (originals && originals.length > 0) {
+          child.material = originals.length === 1 ? originals[0] : originals
+        }
+      })
+    }
   }, [scene])
 
   return (
-    <group scale={0.12}>
+    <group position={[0, -0.001, 0]} scale={0.12}>
       <primitive object={scene} />
     </group>
   )

@@ -49,16 +49,16 @@ export default function CanvasRoot() {
       <OrbitControls
         target={[0.0, 0.7, 0]}
         enablePan={true}
-        minDistance={4}
-        maxDistance={10}
+        minDistance={1}
+        maxDistance={100}
         enableZoom={false}
       />
 
       <CameraRig />
 
       {/* Atmosphere */}
-      <color attach="background" args={['#0B0E0D']} />
-      <fog attach="fog" args={['#110A08', 8, 20]} />
+      <color attach="background" args={['#0A0F10']} />
+      <fog attach="fog" args={['#1B2B2C', 12, 24]} />
 
       {/* Global lighting */}
       <WorldLighting />
