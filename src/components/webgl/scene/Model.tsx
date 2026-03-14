@@ -4,7 +4,7 @@ import * as THREE from 'three'
 
 export default function Model() {
 
-  const { scene } = useGLTF('/models/helas.glb')
+  const { scene } = useGLTF('/models/h3las.glb')
 
   useEffect(() => {
 
@@ -92,10 +92,10 @@ export default function Model() {
   }, [scene])
 
   return (
-    <group position={[0, -0.001, 0]} scale={0.12}>
+    <group position={[0, -0.001, 0]} scale={1}>
       <primitive object={scene} />
     </group>
   )
 }
 
-useGLTF.preload('/models/helas.glb')
+useGLTF.preload('/models/h3las.glb')
