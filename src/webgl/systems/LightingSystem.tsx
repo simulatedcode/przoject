@@ -6,14 +6,15 @@ export default function LightingSystem() {
     return (
         <>
             {/* Ambient base */}
-            <ambientLight intensity={0.5} />
+            <ambientLight intensity={0.2} />
 
             {/* Directional sunlight (global shadows) */}
             <directionalLight
                 castShadow
-                position={[4, 2.2, 4]}
-                intensity={1.2}
+                position={[-6, 0, 0]}
+                intensity={6.2}
                 color="#FF8C37"
+                shadow-darkness={8}
 
                 shadow-mapSize-width={2048}
                 shadow-mapSize-height={2048}
@@ -31,12 +32,12 @@ export default function LightingSystem() {
             {/* HDR reflections */}
             <Environment
                 preset="city"
-                environmentIntensity={0.1}
+                environmentIntensity={0.08}
             />
 
             {/* KEY LIGHT (primary sculpting light) */}
             <spotLight
-                position={[3.5, 3, 2]}
+                position={[-3.5, 3, 2]}
                 intensity={4.8}
                 angle={0.42}
                 penumbra={0.9}
@@ -51,7 +52,7 @@ export default function LightingSystem() {
 
             {/* FRONT FILL (soft texture visibility) */}
             <pointLight
-                position={[4, 2, 3]}
+                position={[-4, 2, 3]}
                 intensity={0.2}
                 distance={8}
                 decay={2}
