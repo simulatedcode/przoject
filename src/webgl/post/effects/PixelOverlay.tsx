@@ -1,0 +1,15 @@
+import React, { forwardRef, useMemo } from 'react'
+import { PixelOverlayEffect } from './PixelOverlayEffect'
+
+interface PixelOverlayProps {
+  pixelSize?: number
+  gridThickness?: number
+  opacity?: number
+}
+
+export const PixelOverlay = forwardRef<any, PixelOverlayProps>(({ pixelSize = 6.0, gridThickness = 0.05, opacity = 0.5 }, ref) => {
+  const effect = useMemo(() => new PixelOverlayEffect({ pixelSize, gridThickness, opacity }), [pixelSize, gridThickness, opacity])
+  return <primitive ref={ref} object={effect} dispose={null} />
+})
+
+PixelOverlay.displayName = 'PixelOverlay'

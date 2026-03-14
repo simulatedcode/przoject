@@ -4,10 +4,8 @@ import { Canvas } from '@react-three/fiber'
 import { Suspense, useState } from 'react'
 import { OrbitControls, PerformanceMonitor } from '@react-three/drei'
 
-import CameraRig from './camera/CameraRig'
-import WorldLighting from './world/WorldLighting'
-import Ground from './world/Ground'
-import Model from './scene/Model'
+import SceneManager from '@/webgl/core/SceneManager'
+import RenderPipeline from '@/webgl/post/RenderPipeline'
 
 export default function CanvasRoot() {
 
@@ -45,7 +43,17 @@ export default function CanvasRoot() {
         onChange={({ factor }) => setPerformance(factor)}
       />
 
-      {/* DEBUG CAMERA */}
+      {/* Orchestration */}
+      <SceneManager />
+
+      {/* Render Pipeline */}
+      <RenderPipeline />
+
+      {/* Atmosphere */}
+      <color attach="background" args={['#0A0F10']} />
+      <fog attach="fog" args={['#0A0F10', 5, 18]} />
+
+      {/* DEBUG TOOLS */}
       <OrbitControls
         target={[0.0, 0.7, 0]}
         enablePan={true}
@@ -53,22 +61,6 @@ export default function CanvasRoot() {
         maxDistance={100}
         enableZoom={false}
       />
-
-      <CameraRig />
-
-      {/* Atmosphere */}
-      <color attach="background" args={['#0A0F10']} />
-      <fog attach="fog" args={['#1B2B2C', 12, 24]} />
-
-      {/* Global lighting */}
-      <WorldLighting />
-
-      {/* Scene assets */}
-      <Suspense fallback={null}>
-        <Ground />
-        <Model />
-      </Suspense>
-
 
     </Canvas>
 

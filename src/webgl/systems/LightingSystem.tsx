@@ -2,18 +2,18 @@
 
 import { Environment } from '@react-three/drei'
 
-export default function WorldLighting() {
+export default function LightingSystem() {
     return (
         <>
             {/* Ambient base */}
-            <ambientLight intensity={0.38} />
+            <ambientLight intensity={0.5} />
 
             {/* Directional sunlight (global shadows) */}
             <directionalLight
                 castShadow
                 position={[4, 2.2, 4]}
-                intensity={0.6}
-                color="#6EA1A4"
+                intensity={1.2}
+                color="#FF8C37"
 
                 shadow-mapSize-width={2048}
                 shadow-mapSize-height={2048}
@@ -37,11 +37,11 @@ export default function WorldLighting() {
             {/* KEY LIGHT (primary sculpting light) */}
             <spotLight
                 position={[3.5, 3, 2]}
-                intensity={1.4}
+                intensity={4.8}
                 angle={0.42}
                 penumbra={0.9}
                 decay={2}
-                color="#7EACAE"
+                color="#FFAA5E"
 
                 shadow-mapSize-width={2048}
                 shadow-mapSize-height={2048}
@@ -52,29 +52,29 @@ export default function WorldLighting() {
             {/* FRONT FILL (soft texture visibility) */}
             <pointLight
                 position={[4, 2, 3]}
-                intensity={0.35}
+                intensity={0.2}
                 distance={8}
                 decay={2}
-                color="#7EACAE"
+                color="#43C6C9"
             />
 
             {/* RIM LIGHT (silhouette highlight) */}
             <spotLight
                 position={[-2.4, 2.8, -2.6]}
-                intensity={0.55}
+                intensity={8.5}
                 angle={0.55}
                 penumbra={1}
                 decay={2}
-                color="#EB906F"
+                color="#00EEFF"
             />
 
             {/* FLOOR BOUNCE LIGHT */}
             <pointLight
                 position={[0, -0.8, 0.7]}
-                intensity={0.14}
+                intensity={2.2}
                 distance={3}
                 decay={2}
-                color="#903514"
+                color="#FF4D00"
             />
         </>
     )

@@ -1,10 +1,11 @@
 import { useGLTF } from '@react-three/drei'
 import { useEffect } from 'react'
 import * as THREE from 'three'
+import { ASSETS } from '../core/AssetLoader'
 
 export default function Model() {
 
-  const { scene } = useGLTF('/models/h3las.glb')
+  const { scene } = useGLTF(ASSETS.models.hero)
 
   useEffect(() => {
 
@@ -43,11 +44,11 @@ export default function Model() {
         ) {
 
           if (child.name === 'Body') {
-            mat.roughness = 0.25
+            mat.roughness = 0.2
           }
 
           if (child.name === 'MetalFrame') {
-            mat.metalness = 0.08
+            mat.metalness = 0.02
           }
 
           return mat
@@ -97,5 +98,3 @@ export default function Model() {
     </group>
   )
 }
-
-useGLTF.preload('/models/h3las.glb')
