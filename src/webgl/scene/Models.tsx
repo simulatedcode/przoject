@@ -50,7 +50,7 @@ export default function Model() {
           }
 
           // Improve reflections
-          mat.envMapIntensity = 0.2
+          mat.envMapIntensity = 6.2
 
           // Normal strength
           if (mat.normalMap) {

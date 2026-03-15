@@ -2,7 +2,7 @@ import { useGLTF } from '@react-three/drei'
 
 export const ASSETS = {
   models: {
-    hero: '/models/h3las.glb',
+    hero: '/models/helas_final.gltf',
   },
 }
 
