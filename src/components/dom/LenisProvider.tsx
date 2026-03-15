@@ -6,7 +6,7 @@ import Lenis from "lenis"
 import { useWebGLStore } from "@/store/useWebGLStore"
 
 export default function LenisProvider({ children }: { children: ReactNode }) {
-  const setProgress = useWebGLStore((state) => state.setProgress)
+  const setScrollProgress = useWebGLStore((state) => state.setScrollProgress)
 
   useEffect(() => {
     const prefersReducedMotion =
@@ -26,7 +26,7 @@ export default function LenisProvider({ children }: { children: ReactNode }) {
     }
 
     lenis.on('scroll', (e: any) => {
-      setProgress(e.progress)
+      setScrollProgress(e.progress)
     })
 
     rafId = requestAnimationFrame(raf)
@@ -35,7 +35,7 @@ export default function LenisProvider({ children }: { children: ReactNode }) {
       cancelAnimationFrame(rafId)
       lenis.destroy()
     }
-  }, [setProgress])
+  }, [setScrollProgress])
 
   return children
 }
