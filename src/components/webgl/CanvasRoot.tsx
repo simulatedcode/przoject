@@ -9,7 +9,7 @@ import RenderPipeline from '@/webgl/post/RenderPipeline'
 
 export default function CanvasRoot() {
 
-  const [dpr, setDpr] = useState(1.5)
+  const [dpr, setDpr] = useState(1.2)
   const [performance, setPerformance] = useState(1)
 
   return (
@@ -17,7 +17,7 @@ export default function CanvasRoot() {
     <Canvas
       camera={{
         position: [0, 0.65, 6.5],
-        fov: 30,
+        fov: 45,
         near: 0.1,
         far: 100
       }}
