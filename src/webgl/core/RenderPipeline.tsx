@@ -4,7 +4,7 @@ import { useControls } from 'leva'
 import { useFrame } from '@react-three/fiber'
 import { useState } from 'react'
 import { useWebGLStore } from '@/store/useWebGLStore'
-import { PixelOverlay } from './effects/PixelOverlay'
+import { PixelOverlay } from '../post/effects/PixelOverlay'
 
 export default function RenderPipeline() {
   const intensity = useWebGLStore((state) => state.postFXIntensity)

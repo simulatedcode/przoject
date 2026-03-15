@@ -5,7 +5,7 @@ import { Suspense, useState } from 'react'
 import { OrbitControls, PerformanceMonitor } from '@react-three/drei'
 
 import SceneManager from '@/webgl/core/SceneManager'
-import RenderPipeline from '@/webgl/post/RenderPipeline'
+import RenderPipeline from '@/webgl/core/RenderPipeline'
 
 export default function CanvasRoot() {
 

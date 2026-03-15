@@ -1,6 +1,5 @@
 'use client'
 
-import { Environment } from '@react-three/drei'
 
 export default function LightingSystem() {
     return (
@@ -60,8 +59,6 @@ export default function LightingSystem() {
                 decay={2}
                 color="#772C1A"
             />
-
-            <Environment preset="night" environmentIntensity={0.4} />
         </>
     )
 }
