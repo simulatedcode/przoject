@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-interface WebGLState {
+export interface WebGLState {
     progress: number
     setProgress: (progress: number) => void
     scrollProgress: number

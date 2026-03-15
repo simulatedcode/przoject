@@ -5,7 +5,7 @@ import { Suspense, useState } from 'react'
 import { OrbitControls, PerformanceMonitor } from '@react-three/drei'
 
 import SceneManager from '@/webgl/core/SceneManager'
-import RenderPipeline from '@/webgl/post/RenderPipeline'
+import RenderPipeline from '@/webgl/core/RenderPipeline'
 
 export default function CanvasRoot() {
 
@@ -16,8 +16,7 @@ export default function CanvasRoot() {
 
     <Canvas
       camera={{
-        position: [0, 0.65, 6.5],
-        fov: 30,
+        fov: 40,
         near: 0.1,
         far: 100
       }}
