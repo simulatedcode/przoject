@@ -2,7 +2,7 @@
 
 import { Canvas } from '@react-three/fiber'
 import { Suspense, useState } from 'react'
-import { OrbitControls, PerformanceMonitor } from '@react-three/drei'
+import { Environment, OrbitControls, PerformanceMonitor } from '@react-three/drei'
 
 import SceneManager from '@/webgl/core/SceneManager'
 import RenderPipeline from '@/webgl/core/RenderPipeline'
@@ -25,6 +25,7 @@ export default function CanvasRoot() {
       gl={{
         antialias: true,
         powerPreference: 'high-performance',
+        toneMappingExposure: 1.25,
         alpha: true
       }}
       style={{
@@ -50,7 +51,8 @@ export default function CanvasRoot() {
 
       {/* Atmosphere */}
       <color attach="background" args={['#0A0F10']} />
-      <fog attach="fog" args={['#0A0F10', 5, 18]} />
+      <fog attach="fog" args={['#0A0F10', 10, 30]} />
+      <Environment preset="night" />
 
       {/* DEBUG TOOLS */}
       <OrbitControls

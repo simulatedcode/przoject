@@ -14,7 +14,7 @@ export default function Model() {
       if (!(child instanceof THREE.Mesh)) return
 
       child.castShadow = true
-      child.receiveShadow = true
+      child.receiveShadow = false
 
       if (!child.userData.__originalMaterials) {
         child.userData.__originalMaterials = Array.isArray(child.material)
@@ -65,7 +65,7 @@ export default function Model() {
 
           if (child.name === 'MetalFrame') {
             mat.roughness = 0.2
-            mat.metalness = 0.8
+            mat.metalness = 0.08
           }
 
           return mat
