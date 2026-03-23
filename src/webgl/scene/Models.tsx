@@ -1,4 +1,4 @@
-import { useGLTF, Environment } from '@react-three/drei'
+import { useGLTF } from '@react-three/drei'
 import { useEffect } from 'react'
 import * as THREE from 'three'
 import { ASSETS } from '../core/AssetLoader'
