@@ -6,7 +6,7 @@ import { Environment } from "@react-three/drei"
 export default function LightingSystem() {
   return (
     <>
-      <ambientLight intensity={1} color="#E3694A" />
+      <ambientLight intensity={0.35} color="#E3694A" />
 
       {/* Global world fill */}
       <hemisphereLight
@@ -18,7 +18,7 @@ export default function LightingSystem() {
       <directionalLight
         castShadow
         position={[-10, 2, 0]}
-        intensity={6.0}
+        intensity={2.5}
         color="#9AC0C1"
 
         shadow-mapSize-width={2048}
@@ -37,7 +37,7 @@ export default function LightingSystem() {
 
       <spotLight
         position={[-6, 2, 2]}
-        intensity={5.2}
+        intensity={2.0}
         angle={0.42}
         penumbra={1}
         decay={2}
@@ -53,7 +53,7 @@ export default function LightingSystem() {
       {/* RIM LIGHT (edge highlight from back left) */}
       <spotLight
         position={[6, 3, -3]}
-        intensity={6}
+        intensity={2.5}
         angle={0.6}
         penumbra={1}
         decay={2}
@@ -63,13 +63,13 @@ export default function LightingSystem() {
       {/* FLOOR BOUNCE (warm ground reflection) */}
       <pointLight
         position={[0, -0.7, 0.8]}
-        intensity={1.6}
+        intensity={0.8}
         distance={3}
         decay={2}
         color="#772C1A"
       />
 
-      <Environment preset="studio" environmentIntensity={0.7} />
+      <Environment preset="studio" environmentIntensity={0.3} />
     </>
   )
 }

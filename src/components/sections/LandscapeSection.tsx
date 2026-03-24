@@ -4,9 +4,9 @@ import React from 'react'
 
 export default function LandscapeSection() {
     return (
-        <section className="relative flex items-center justify-start min-h-screen px-10 md:px-20">
+        <section className="relative flex items-center justify-start min-h-screen px-[var(--section-px)]">
             <div className="max-w-4xl">
-                <p className="font-departure text-sm tracking-[0.3em] mb-12 text-muted uppercase">
+                <p className="font-departure text-[clamp(0.6rem,2vw,0.875rem)] tracking-[0.3em] mb-12 text-muted uppercase">
                     02 // in a landscape
                 </p>
                 <div className="space-y-8">

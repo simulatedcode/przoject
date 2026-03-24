@@ -4,12 +4,12 @@ import React from 'react'
 
 export default function MemoriesSection() {
     return (
-        <section className="relative flex items-end justify-end min-h-screen px-20 pb-20">
+        <section className="relative flex items-end justify-end min-h-screen px-[var(--section-px)] pb-[var(--section-pb)]">
             <div className="max-w-2xl text-right mix-blend-exclusion">
-                <p className="font-departure text-sm tracking-[0.3em] mb-12 text-muted uppercase">
+                <p className="font-departure text-[clamp(0.6rem,2vw,0.875rem)] tracking-[0.3em] mb-12 text-muted uppercase">
                     03 // pseudo memories
                 </p>
-                <div className="space-y-[20px]">
+                <div className="space-y-[clamp(1rem,4vw,2rem)]">
 
                     {/* FRAGMENT 01 */}
                     <div className="flex items-center gap-12">

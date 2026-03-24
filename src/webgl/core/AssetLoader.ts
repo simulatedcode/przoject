@@ -7,7 +7,7 @@ interface AssetRegistry {
 
 export const ASSETS: AssetRegistry = {
   models: {
-    hero: '/models/rz02.gltf',
+    hero: '/models/helas-fragment.glb',
   },
   textures: {
     // Add textures here as needed

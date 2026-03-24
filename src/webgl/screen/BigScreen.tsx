@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useMemo } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { useTexture } from '@react-three/drei'
 import * as THREE from 'three'
 import { ScreenMaterial } from './ScreenMaterial'
@@ -14,8 +14,8 @@ extend({ ScreenMaterial, GlassMaterial })
 
 const IMAGES = [
   '/images/panorama.png',
-  '/images/ohm.png'
-
+  '/images/ohm.png',
+  'images/helas.png'
 ]
 
 // 🛠️ CONFIG: 2044 Panoramic Proportions
@@ -35,12 +35,17 @@ export default function BigScreen() {
   const textures = useTexture(IMAGES)
 
   // 🛠️ CONFIG: Calculate Dynamic Panoramic Proportions
+  const { viewport } = useFrame((state) => state) as any // Fallback if needed, but we'll use useThree
+  const { size } = useThree()
+  const aspect = size.width / size.height
+  const isMobile = aspect < 1.0
+
   const firstTexture = textures[0] as THREE.Texture
   const { width, height } = (firstTexture.image as any) || { width: 1920, height: 1080 }
   const textureRatio = width / height
-  
-  // We keep a base HEIGHT and adjust WIDTH to match ratio
-  const BASE_HEIGHT = 7.5
+
+  // Scale based on device
+  const BASE_HEIGHT = isMobile ? 4.5 : 7.5
   const dynamicWidth = BASE_HEIGHT * textureRatio
   const dynamicHeight = BASE_HEIGHT
 
@@ -68,7 +73,7 @@ export default function BigScreen() {
   })
 
   return (
-    <group position={[0, 2.5, -12]}>
+    <group position={[0, 3.8, -16]}>
       {/* 🔮 THE CORE: Floating Digital Surface */}
       <mesh position={[0, 0, 0]}>
         <planeGeometry args={[dynamicWidth, dynamicHeight]} />
@@ -76,7 +81,7 @@ export default function BigScreen() {
         <screenMaterial
           ref={shaderRef}
           transparent
-          uResolution={[1920, 1080]}
+          uResolution={[1280, 720]}
           side={THREE.DoubleSide}
         />
       </mesh>
@@ -86,8 +91,8 @@ export default function BigScreen() {
         <planeGeometry args={[dynamicWidth * 1.05, dynamicHeight * 1.05]} />
         <meshBasicMaterial
           transparent
-          opacity={0.08}
-          color="#4488ff"
+          opacity={0.04}
+          color="#aaccff"
           blending={THREE.AdditiveBlending}
         />
       </mesh>
@@ -99,9 +104,9 @@ export default function BigScreen() {
         <glassMaterial
           ref={glassRef}
           transparent
-          uColor="#aaddff"
-          uOpacity={0.15}
-          uResolution={[1920, 1080]}
+          uColor="#ccddff"
+          uOpacity={0.08}
+          uResolution={[1280, 720]}
         />
       </mesh>
 
@@ -111,7 +116,7 @@ export default function BigScreen() {
         position={[0, 0, 0.5]}
         width={dynamicWidth}
         height={dynamicHeight}
-        intensity={15}
+        intensity={35}
         color="#ffffff"
       />
 

@@ -50,14 +50,15 @@ export default function CanvasRoot() {
       <RenderPipeline />
 
       {/* Atmosphere */}
-      <color attach="background" args={['#0A0F10']} />
-      <fog attach="fog" args={['#0A0F10', 10, 30]} />
+      <color attach="background" args={['#050608']} />
+      <fog attach="fog" args={['#050608', 10, 30]} />
       <Environment preset="night" />
 
       {/* DEBUG TOOLS */}
       <OrbitControls
         target={[0.0, 0.7, 0]}
         enablePan={true}
+        enableRotate={false}
         minDistance={1}
         maxDistance={100}
         enableZoom={false}

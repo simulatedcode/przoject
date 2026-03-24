@@ -29,5 +29,20 @@ export class CameraController {
         // Smoothly interpolate
         camera.position.lerp(this.targetPos, 0.05)
         camera.lookAt(new Vector3(tx, ty, tz))
+
+        // Adaptive FOV for mobile (portrait)
+        if ('aspect' in camera) {
+            const aspect = (camera as any).aspect
+            const isMobile = aspect < 1.0
+            const baseFov = 40
+            const mobileFov = 60
+            
+            // Smoothly interpolate FOV if it was a perspective camera
+            const targetFov = isMobile ? mobileFov : baseFov
+            if ((camera as any).fov !== undefined) {
+                (camera as any).fov += (targetFov - (camera as any).fov) * 0.05
+                ;(camera as any).updateProjectionMatrix()
+            }
+        }
     }
 }
