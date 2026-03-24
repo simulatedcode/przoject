@@ -1,17 +1,17 @@
 'use client'
 
-import { Grid } from '@react-three/drei'
+import { Grid, MeshReflectorMaterial } from '@react-three/drei'
 
 export default function Ground() {
 
   const gridConfig = {
-    cellSize: 0.25,
-    cellThickness: 0.6,
+    cellSize: 0.5,
+    cellThickness: 0.5,
     cellColor: '#2D4748',
-    sectionSize: 0.5,
-    sectionThickness: 0.8,
+    sectionSize: 2,
+    sectionThickness: 0.6,
     sectionColor: '#1B2B2C',
-    fadeDistance: 30,
+    fadeDistance: 25,
     fadeStrength: 1,
     followCamera: false,
     infiniteGrid: true
@@ -21,16 +21,25 @@ export default function Ground() {
 
       <Grid {...gridConfig} position={[0, 0, 0]} />
 
-      {/* subtle base surface */}
+      {/* 🔮 REFLECTIVE SURFACE: The foundation of the visual depth */}
       <mesh
         rotation={[-Math.PI / 2, 0, 0]}
         position={[0, -0.001, 0]}
         receiveShadow
       >
         <planeGeometry args={[100, 100]} />
-        <meshStandardMaterial
-          color="#0a0f10"
-          roughness={0.9}
+        <MeshReflectorMaterial
+          blur={[300, 100]}
+          resolution={1024}
+          mixBlur={1}
+          mixStrength={15}
+          roughness={1}
+          depthScale={1.2}
+          minDepthThreshold={0.4}
+          maxDepthThreshold={1.4}
+          color="#151515"
+          metalness={0.8}
+          mirror={0.8}
         />
       </mesh>
 
