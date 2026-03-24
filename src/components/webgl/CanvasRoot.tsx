@@ -6,6 +6,7 @@ import { Environment, OrbitControls, PerformanceMonitor } from '@react-three/dre
 
 import SceneManager from '@/webgl/core/SceneManager'
 import RenderPipeline from '@/webgl/core/RenderPipeline'
+import { MouseTracker } from '@/hooks/useMousePosition'
 
 export default function CanvasRoot() {
 
@@ -32,7 +33,7 @@ export default function CanvasRoot() {
         position: 'fixed',
         inset: 0,
         zIndex: 0,
-        pointerEvents: 'auto'
+        pointerEvents: 'none'
       }}
     >
 
@@ -44,6 +45,7 @@ export default function CanvasRoot() {
       />
 
       {/* Orchestration */}
+      <MouseTracker />
       <SceneManager />
 
       {/* Render Pipeline */}

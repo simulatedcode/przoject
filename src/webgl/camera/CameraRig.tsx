@@ -16,14 +16,15 @@ const CAMERA_CONFIG = {
 }
 
 export default function CameraRig() {
-
+ 
   const { camera } = useThree()
   const scrollProgress = useWebGLStore((state: any) => state.scrollProgress)
+  const mouse = useWebGLStore((state: any) => state.mouse)
   const controller = useMemo(() => new CameraController(), [])
-
-  useFrame((state) => {
-    controller.update(camera, state.mouse, scrollProgress, CAMERA_CONFIG)
+ 
+  useFrame(() => {
+    controller.update(camera, mouse, scrollProgress, CAMERA_CONFIG)
   })
-
+ 
   return null
 }

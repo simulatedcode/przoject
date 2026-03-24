@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import CanvasRoot from "@/components/webgl/CanvasRoot";
 import LenisProvider from "@/components/dom/LenisProvider";
+import CustomCursor from "@/components/ui/CustomCursor";
 
 const departureMono = localFont({
   src: '../../public/fonts/DepartureMono-Regular.woff',
@@ -41,8 +42,9 @@ export default function RootLayout({
         className={`${plexSans.variable} ${plexMono.variable} ${doto.variable} ${departureMono.variable} antialiased`}
       >
         <CanvasRoot />
+        <CustomCursor />
         <LenisProvider>
-          <div className="relative w-full mx-auto min-h-screen inset-0 pointer-events-none">
+          <div className="relative w-full mx-auto min-h-screen inset-0">
             {children}
           </div>
         </LenisProvider>

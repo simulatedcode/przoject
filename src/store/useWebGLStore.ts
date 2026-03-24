@@ -11,6 +11,8 @@ export interface WebGLState {
     setPostFXIntensity: (postFXIntensity: number) => void
     sceneIndex: number
     setSceneIndex: (sceneIndex: number) => void
+    mouse: { x: number; y: number }
+    setMouse: (mouse: { x: number; y: number }) => void
 }
 
 export const useWebGLStore = create<WebGLState>((set) => ({
@@ -20,6 +22,8 @@ export const useWebGLStore = create<WebGLState>((set) => ({
     setScrollProgress: (scrollProgress) => set({ scrollProgress }),
     mode: 'BOOT',
     setMode: (mode) => set({ mode }),
+    mouse: { x: 0, y: 0 },
+    setMouse: (mouse) => set({ mouse }),
     postFXIntensity: 1,
     setPostFXIntensity: (postFXIntensity) => set({ postFXIntensity }),
     sceneIndex: 0,
