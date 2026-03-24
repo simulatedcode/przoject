@@ -35,8 +35,7 @@ export default function BigScreen() {
   const textures = useTexture(IMAGES)
 
   // 🛠️ CONFIG: Calculate Dynamic Panoramic Proportions
-  const { viewport } = useFrame((state) => state) as any // Fallback if needed, but we'll use useThree
-  const { size } = useThree()
+  const { size, viewport } = useThree()
   const aspect = size.width / size.height
   const isMobile = aspect < 1.0
 
