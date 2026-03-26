@@ -1,5 +1,6 @@
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+import { useMemo } from 'react'
 
 /**
  * useScreenPlayback
@@ -7,9 +8,11 @@ import * as THREE from 'three'
  */
 export function useScreenPlayback(textures: THREE.Texture[], shaderRef: React.RefObject<any>) {
   const glitchDuration = 0.5 // seconds of glitch per transition
+  const timer = useMemo(() => new THREE.Timer(), [])
 
-  useFrame((state) => {
-    const t = state.clock.elapsedTime
+  useFrame(() => {
+    timer.update()
+    const t = timer.getElapsed()
     const duration = 24 // Seconds per image
 
     const index = Math.floor(t / duration) % textures.length
@@ -37,6 +40,6 @@ export function useScreenPlayback(textures: THREE.Texture[], shaderRef: React.Re
     shaderRef.current.uniforms.uTime.value = t
     shaderRef.current.uniforms.uGlitch.value = glitchIntensity
 
-    shaderRef.current.uniforms.uBrightness.value = 0.1
+    shaderRef.current.uniforms.uBrightness.value = 0.8
   })
 }

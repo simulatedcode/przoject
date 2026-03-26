@@ -1,5 +1,4 @@
 import { Vector3, Camera } from 'three'
-import { WebGLState } from '@/store/useWebGLStore'
 
 export class CameraController {
     private targetPos = new Vector3()
@@ -36,12 +35,12 @@ export class CameraController {
             const isMobile = aspect < 1.0
             const baseFov = 40
             const mobileFov = 60
-            
+
             // Smoothly interpolate FOV if it was a perspective camera
             const targetFov = isMobile ? mobileFov : baseFov
             if ((camera as any).fov !== undefined) {
                 (camera as any).fov += (targetFov - (camera as any).fov) * 0.05
-                ;(camera as any).updateProjectionMatrix()
+                    ; (camera as any).updateProjectionMatrix()
             }
         }
     }

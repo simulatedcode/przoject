@@ -1,7 +1,6 @@
 import * as THREE from 'three'
 import { shaderMaterial } from '@react-three/drei'
 import { extend } from '@react-three/fiber'
-import { ThreeElement } from '@react-three/fiber'
 
 /**
  * ScreenMaterial
@@ -39,6 +38,7 @@ export const ScreenMaterial = shaderMaterial(
   uniform float uTime;
   uniform vec2 uResolution;
   uniform float uGlitch;
+  uniform float uBrightness;
 
   varying vec2 vUv;
 
@@ -208,6 +208,7 @@ export const ScreenMaterial = shaderMaterial(
 
     // Final Gain & Tonemapping
     color *= 1.15;
+    color += uBrightness * 0.1;
     color = clamp(color, 0.0, 1.0);
 
     gl_FragColor = vec4(color, alpha);
@@ -217,12 +218,3 @@ export const ScreenMaterial = shaderMaterial(
 
 // Register the material with R3F
 extend({ ScreenMaterial })
-
-// Add type for JSX
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      screenMaterial: ThreeElement<typeof ScreenMaterial>
-    }
-  }
-}

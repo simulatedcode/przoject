@@ -1,8 +1,9 @@
 'use client'
 
 import { Canvas } from '@react-three/fiber'
-import { Suspense, useState } from 'react'
-import { Environment, OrbitControls, PerformanceMonitor } from '@react-three/drei'
+import { useState, useMemo } from 'react'
+import { Environment, PerformanceMonitor } from '@react-three/drei'
+import * as THREE from 'three'
 
 import SceneManager from '@/webgl/core/SceneManager'
 import RenderPipeline from '@/webgl/core/RenderPipeline'
@@ -11,7 +12,17 @@ import { MouseTracker } from '@/hooks/useMousePosition'
 export default function CanvasRoot() {
 
   const [dpr, setDpr] = useState(1.5)
-  const [performance, setPerformance] = useState(1)
+
+  const glConfig = useMemo(() => ({
+    antialias: false,
+    powerPreference: 'high-performance' as WebGLPowerPreference,
+    toneMapping: THREE.ACESFilmicToneMapping,
+    toneMappingExposure: 1.25,
+    alpha: true,
+    stencil: false,
+    depth: true,
+    failIfMajorPerformanceCaveat: false,
+  }), [])
 
   return (
 
@@ -22,13 +33,8 @@ export default function CanvasRoot() {
         far: 100
       }}
       dpr={dpr}
-      shadows
-      gl={{
-        antialias: true,
-        powerPreference: 'high-performance',
-        toneMappingExposure: 1.25,
-        alpha: true
-      }}
+      shadows={{ type: THREE.PCFShadowMap }}
+      gl={glConfig}
       style={{
         position: 'fixed',
         inset: 0,
@@ -39,9 +45,9 @@ export default function CanvasRoot() {
 
       {/* Performance scaling */}
       <PerformanceMonitor
-        onIncline={() => setDpr(2)}
+        onIncline={() => setDpr(Math.min(window.devicePixelRatio, 2))}
         onDecline={() => setDpr(1)}
-        onChange={({ factor }) => setPerformance(factor)}
+        flipflops={3}
       />
 
       {/* Orchestration */}
@@ -54,17 +60,7 @@ export default function CanvasRoot() {
       {/* Atmosphere */}
       <color attach="background" args={['#050608']} />
       <fog attach="fog" args={['#050608', 10, 30]} />
-      <Environment preset="night" />
-
-      {/* DEBUG TOOLS */}
-      <OrbitControls
-        target={[0.0, 0.7, 0]}
-        enablePan={true}
-        enableRotate={false}
-        minDistance={1}
-        maxDistance={100}
-        enableZoom={false}
-      />
+      <Environment preset="studio" />
 
     </Canvas>
 

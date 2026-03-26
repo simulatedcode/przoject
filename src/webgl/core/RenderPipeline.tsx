@@ -1,29 +1,23 @@
 import { EffectComposer, Bloom, Noise, Vignette, ChromaticAberration, Scanline } from '@react-three/postprocessing'
 import { BlendFunction } from 'postprocessing'
-import { useFrame } from '@react-three/fiber'
-import { useState } from 'react'
+import { useThree } from '@react-three/fiber'
 import { useWebGLStore } from '@/store/useWebGLStore'
 
 export default function RenderPipeline() {
   const intensity = useWebGLStore((state) => state.postFXIntensity)
-
-  const [dynamicNoiseOpacity, setDynamicNoiseOpacity] = useState(0.22)
-
-  useFrame((state) => {
-    const time = state.clock.elapsedTime
-    setDynamicNoiseOpacity(0.32 + Math.sin(time * 2) * 0.02)
-  })
+  const { gl } = useThree()
 
   return (
-    <EffectComposer enableNormalPass>
+    <EffectComposer enableNormalPass multisampling={gl.xr?.isPresenting ? 0 : 4}>
       <Bloom
         intensity={1.2 * intensity}
-        luminanceThreshold={0.5}
+        luminanceThreshold={0.6}
         mipmapBlur
+        luminanceSmoothing={0.9}
       />
 
       <ChromaticAberration
-        offset={[0.0002, 0.0002]}
+        offset={[0.00015 * intensity, 0.00015 * intensity]}
         blendFunction={BlendFunction.NORMAL}
       />
 
@@ -34,7 +28,7 @@ export default function RenderPipeline() {
       />
 
       <Noise
-        opacity={dynamicNoiseOpacity}
+        opacity={0.32}
         premultiply
         blendFunction={BlendFunction.SCREEN}
       />
