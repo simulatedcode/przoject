@@ -1,17 +1,29 @@
 'use client'
 
-import React from 'react'
+import { useSectionProgress } from '@/webgl/scene/utils/useSectionProgress'
 
 export default function HeroText() {
-    return (
-        <section className="relative mx-auto h-screen flex items-center justify-center">
-            <div className="flex flex-col items-center justify-center">
-                <h1 className="font-bold uppercase text-7xl text-center tracking-[0.25em] leading-[1.4] mix-blend-exclusion text-white">
-                    speculative
-                    <p className="text-7xl">future</p>
-                    <p className="text-7xl">memories</p>
-                </h1>
-            </div>
-        </section>
-    )
+  const t = useSectionProgress('hero')
+
+  const opacity = t
+  const y = 30 * (1 - t)
+  const blur = (1 - t) * 8
+
+  return (
+    <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-6 mix-blend-exclusion">
+      <div
+        style={{
+          opacity,
+          transform: `translateY(${y}px)`,
+          filter: `blur(${blur}px)`,
+          transition: 'none',
+        }}
+        className="text-center mix-blend-exclusion"
+      >
+        <h1 className="font-departure text-3xl md:text-5xl lg:text-6xl uppercase tracking-widest text-white/90 mix-blend-exclusion">
+          Speculative Future Memories
+        </h1>
+      </div>
+    </div>
+  )
 }

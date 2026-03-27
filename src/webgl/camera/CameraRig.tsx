@@ -2,31 +2,35 @@
 
 import { useMemo } from 'react'
 import { useThree, useFrame } from '@react-three/fiber'
-import { useControls } from 'leva'
 import { useWebGLStore } from '@/store/useWebGLStore'
 import { CameraController } from './CameraController'
+import { useActiveSection } from '../scene/scroll/useActiveSection'
+import { getSectionState } from '../scene/director/getSectionState'
 
 export default function CameraRig() {
+  const { camera } = useThree()
+  const scrollProgress = useWebGLStore((state: any) => state.scrollProgress)
+  const mouse = useWebGLStore((state: any) => state.mouse)
+  const introState = useWebGLStore((state: any) => state.introState)
+  const controller = useMemo(() => new CameraController(), [])
+  const section = useActiveSection(['hero', 'prologue', 'landscape', 'memories'])
 
-    const { camera } = useThree()
-    const scrollProgress = useWebGLStore((state: any) => state.scrollProgress)
-    const controller = useMemo(() => new CameraController(), [])
+  useFrame(() => {
+    const { index, progress } = section.current
+    const state = getSectionState(index, progress)
 
-    const config = useControls('Camera', {
-        x: { value: 0, min: -10, max: 10, step: 0.01 },
-        y: { value: 0.65, min: -5, max: 5, step: 0.01 },
-        z: { value: 4, min: 1, max: 20, step: 0.01 },
+    const dynamicConfig = {
+      x: state.camera.position[0],
+      y: state.camera.position[1],
+      z: state.camera.position[2],
+      tx: state.camera.target[0],
+      ty: state.camera.target[1],
+      tz: state.camera.target[2],
+      parallaxFactor: 0.15,
+    }
 
-        tx: { value: 0.1, min: -5, max: 5, step: 0.01 },
-        ty: { value: 0.65, min: -5, max: 5, step: 0.01 },
-        tz: { value: 0, min: -5, max: 5, step: 0.01 },
+    controller.update(camera, mouse, scrollProgress, dynamicConfig, introState)
+  })
 
-        parallaxFactor: { value: 0.35, min: 0, max: 2, step: 0.01 },
-    })
-
-    useFrame((state) => {
-        controller.update(camera, state.mouse, scrollProgress, config)
-    })
-
-    return null
+  return null
 }

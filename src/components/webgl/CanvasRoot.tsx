@@ -1,65 +1,66 @@
 'use client'
 
 import { Canvas } from '@react-three/fiber'
-import { Suspense, useState } from 'react'
-import { OrbitControls, PerformanceMonitor } from '@react-three/drei'
+import { useState, useMemo } from 'react'
+import { Environment, PerformanceMonitor } from '@react-three/drei'
+import * as THREE from 'three'
 
 import SceneManager from '@/webgl/core/SceneManager'
 import RenderPipeline from '@/webgl/core/RenderPipeline'
+import { MouseTracker } from '@/hooks/useMousePosition'
 
 export default function CanvasRoot() {
 
   const [dpr, setDpr] = useState(1.5)
-  const [performance, setPerformance] = useState(1)
+
+  const glConfig = useMemo(() => ({
+    antialias: false,
+    powerPreference: 'high-performance' as WebGLPowerPreference,
+    toneMapping: THREE.ACESFilmicToneMapping,
+    toneMappingExposure: 1.25,
+    alpha: true,
+    stencil: false,
+    depth: true,
+    failIfMajorPerformanceCaveat: false,
+  }), [])
 
   return (
 
     <Canvas
       camera={{
-        fov: 40,
+        fov: 35,
         near: 0.1,
         far: 100
       }}
       dpr={dpr}
-      shadows
-      gl={{
-        antialias: true,
-        powerPreference: 'high-performance',
-        alpha: true
-      }}
+      shadows={{ type: THREE.PCFShadowMap }}
+      gl={glConfig}
       style={{
         position: 'fixed',
         inset: 0,
         zIndex: 0,
-        pointerEvents: 'auto'
+        pointerEvents: 'none'
       }}
     >
 
       {/* Performance scaling */}
       <PerformanceMonitor
-        onIncline={() => setDpr(2)}
+        onIncline={() => setDpr(Math.min(window.devicePixelRatio, 2))}
         onDecline={() => setDpr(1)}
-        onChange={({ factor }) => setPerformance(factor)}
+        flipflops={3}
       />
 
       {/* Orchestration */}
+      <MouseTracker />
       <SceneManager />
 
       {/* Render Pipeline */}
       <RenderPipeline />
 
       {/* Atmosphere */}
-      <color attach="background" args={['#0A0F10']} />
-      <fog attach="fog" args={['#0A0F10', 5, 18]} />
-
-      {/* DEBUG TOOLS */}
-      <OrbitControls
-        target={[0.0, 0.7, 0]}
-        enablePan={true}
-        minDistance={1}
-        maxDistance={100}
-        enableZoom={false}
-      />
+      <color attach="background" args={['#050608']} />
+      <fog attach="fog" args={['#050608', 10, 30]} />
+      <Environment preset="studio" />
 
     </Canvas>
 
