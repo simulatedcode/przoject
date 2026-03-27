@@ -1,11 +1,26 @@
 'use client'
 
 import React from 'react'
+import { useSectionProgress } from '@/webgl/scene/utils/useSectionProgress'
 
 export default function PrologueSection() {
+    const t = useSectionProgress('prologue')
+
+    const opacity = t
+    const y = 30 * (1 - t)
+    const blur = (1 - t) * 8
+
     return (
         <section className="relative flex items-center justify-center min-h-screen">
-            <div className="relative max-w-lg bg-white/3 backdrop-blur-xl border border-white/10 p-12 md:p-16 rounded-sm shadow-2xl overflow-hidden">
+            <div
+                className="relative max-w-lg bg-white/3 backdrop-blur-xl border border-white/10 p-12 md:p-16 rounded-sm shadow-2xl overflow-hidden"
+                style={{
+                    opacity,
+                    transform: `translateY(${y}px)`,
+                    filter: `blur(${blur}px)`,
+                    transition: 'none',
+                }}
+            >
                 {/* DECORATIVE TERMINAL HEADER */}
                 <div className="absolute top-0 left-0 right-0 h-6 bg-white/5 border-b border-white/10 flex items-center px-4 justify-between">
                     <p className="font-departure text-[8px] uppercase tracking-widest text-white/20 mt-2">

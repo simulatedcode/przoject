@@ -1,5 +1,3 @@
-'use client'
-
 import { Suspense } from 'react'
 import Models from './Models'
 import Ground from './Ground'

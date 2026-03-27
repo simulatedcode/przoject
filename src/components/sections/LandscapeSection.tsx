@@ -1,11 +1,26 @@
 'use client'
 
 import React from 'react'
+import { useSectionProgress } from '@/webgl/scene/utils/useSectionProgress'
 
 export default function LandscapeSection() {
+    const t = useSectionProgress('landscape')
+
+    const opacity = t
+    const y = 30 * (1 - t)
+    const blur = (1 - t) * 8
+
     return (
         <section className="relative flex items-center justify-center min-h-screen">
-            <div className="relative max-w-lg bg-white/3 backdrop-blur-xl border border-white/10 p-12 md:p-16 rounded-sm shadow-2xl overflow-hidden">
+            <div
+                className="relative max-w-lg bg-white/3 backdrop-blur-xl border border-white/10 p-12 md:p-16 rounded-sm shadow-2xl overflow-hidden"
+                style={{
+                    opacity,
+                    transform: `translateY(${y}px)`,
+                    filter: `blur(${blur}px)`,
+                    transition: 'none',
+                }}
+            >
                 {/* DECORATIVE TERMINAL HEADER */}
                 <div className="absolute top-0 left-0 right-0 h-6 bg-white/5 border-b border-white/10 flex items-center px-4 justify-between">
                     <p className="font-departure text-[8px] uppercase tracking-widest text-white/20 mt-2">
@@ -37,7 +52,7 @@ export default function LandscapeSection() {
                         </div>
                         <div className="border-t mb-2 border-white/10 pt-4">
                             <p className="text-[11px] leading-relaxed tracking-wide font-light text-white/90 font-departure">
-                                "While it becomes fiction, the landscape is what we already have as a memory. It’s what stays."
+                                "While it becomes fiction, the landscape is what we already have as a memory. It's what stays."
                             </p>
                         </div>
                         <div className="w-6 h-px mb-2 bg-white/20" />
@@ -61,6 +76,6 @@ export default function LandscapeSection() {
                 {/* SCANLINE OVERLAY */}
                 <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))] bg-size-[100%_2px,3px_100%] z-10 opacity-30" />
             </div>
-        </section >
+        </section>
     )
 }
