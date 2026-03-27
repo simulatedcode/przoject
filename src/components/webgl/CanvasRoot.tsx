@@ -28,7 +28,7 @@ export default function CanvasRoot() {
 
     <Canvas
       camera={{
-        fov: 40,
+        fov: 35,
         near: 0.1,
         far: 100
       }}

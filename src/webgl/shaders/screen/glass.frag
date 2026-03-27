@@ -12,14 +12,10 @@ uniform float uMetallic;
 uniform float uSignal;      // glitch/signal strength
 uniform float uBrightness;  // screen brightness
 
-varying vec2 vUv;
-varying vec3 vNormal;
 varying vec3 vViewDir;
-varying vec3 vWorldPos;
 varying vec3 vWorldNormal;
 
 void main() {
-  vec2 uv = vUv;
 
   vec3 N = normalize(vWorldNormal);
   vec3 V = normalize(vViewDir);

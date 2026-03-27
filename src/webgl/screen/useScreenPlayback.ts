@@ -1,20 +1,24 @@
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useMemo } from 'react'
+import { ShaderMaterial } from 'three'
 
 export function useScreenPlayback(
   textures: THREE.Texture[],
-  shaderRef: React.RefObject<any>
+  shaderRef: React.RefObject<ShaderMaterial | null>,
+  enabled: boolean = true
 ) {
   const timer = useMemo(() => new THREE.Timer(), [])
 
   const system = {
-    duration: 8,          // ⚡ faster cycle
-    transition: 1.2,      // glitch window
+    duration: 8,
+    transition: 1.2,
     strength: 1.2,
   }
 
   useFrame(() => {
+    if (!enabled) return
+
     timer.update()
     const t = timer.getElapsed()
 

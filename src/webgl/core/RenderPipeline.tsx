@@ -13,11 +13,11 @@ export default function RenderPipeline() {
         intensity={1.2 * intensity}
         luminanceThreshold={0.6}
         mipmapBlur
-        luminanceSmoothing={0.9}
+        luminanceSmoothing={0.98}
       />
 
       <ChromaticAberration
-        offset={[0.00015 * intensity, 0.00015 * intensity]}
+        offset={[0.0002 * intensity, 0.0002 * intensity]}
         blendFunction={BlendFunction.NORMAL}
       />
 

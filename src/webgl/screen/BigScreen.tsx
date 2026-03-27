@@ -1,12 +1,14 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState, useMemo } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useTexture } from '@react-three/drei'
 import * as THREE from 'three'
 import { ScreenMaterial } from './ScreenMaterial'
 import { GlassMaterial } from './GlassMaterial'
 import { useScreenPlayback } from './useScreenPlayback'
+import { useIntroSequence } from './useIntroSequence'
+import { useWebGLStore } from '@/store/useWebGLStore'
 import { extend } from '@react-three/fiber'
 
 extend({ ScreenMaterial, GlassMaterial })
@@ -47,15 +49,46 @@ export default function BigScreen() {
     })
   }, [textures])
 
-  useScreenPlayback(textures, shaderRef)
+  const introState = useIntroSequence(shaderRef)
+  const setIntroState = useWebGLStore((s) => s.setIntroState)
 
-  useFrame(({ clock }) => {
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const s = introState.current
+      setIntroState({
+        phase: s.phase,
+        progress: s.progress,
+        glitch: s.glitch,
+        flash: s.flash,
+        done: s.done,
+      })
+    }, 50)
+    return () => clearInterval(interval)
+  }, [introState, setIntroState])
+
+  const [playbackEnabled, setPlaybackEnabled] = useState(false)
+
+  useEffect(() => {
+    const handle = setInterval(() => {
+      if (introState.current.done && !playbackEnabled) {
+        setPlaybackEnabled(true)
+      }
+    }, 100)
+    return () => clearInterval(handle)
+  }, [introState, playbackEnabled])
+
+  useScreenPlayback(textures, shaderRef, playbackEnabled)
+
+  const timer = useMemo(() => new THREE.Timer(), [])
+
+  useFrame(() => {
+    timer.update()
     if (!shaderRef.current || !lightRef.current) return
     const brightness = shaderRef.current.uniforms.uBrightness.value || 1.8
     lightRef.current.intensity = 2.0 + brightness * 1.0
 
     if (glassRef.current) {
-      glassRef.current.uniforms.uTime.value = clock.elapsedTime
+      glassRef.current.uniforms.uTime.value = timer.getElapsed()
     }
   }, 1)
 

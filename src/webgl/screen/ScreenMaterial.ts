@@ -43,6 +43,11 @@ export const ScreenMaterial = shaderMaterial(
     // 📼 future controls
     uScanDistort: 0.0,
     uBloom: 0.25,
+
+    // 🎬 INTRO SEQUENCE
+    uIntroProgress: 0.0,
+    uFlash: 0.0,
+    uDistortion: 0.0,
   },
   screenVertexShader,
   screenFragmentShader
