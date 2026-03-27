@@ -5,6 +5,7 @@ import "./globals.css";
 import CanvasRoot from "@/components/webgl/CanvasRoot";
 import LenisProvider from "@/components/dom/LenisProvider";
 import CustomCursor from "@/components/ui/CustomCursor";
+import Header from "@/components/ui/Header";
 
 const departureMono = localFont({
   src: '../../public/fonts/DepartureMono-Regular.woff',
@@ -44,6 +45,7 @@ export default function RootLayout({
         <CanvasRoot />
         <CustomCursor />
         <LenisProvider>
+          <Header />
           <div className="relative w-full mx-auto min-h-screen inset-0">
             {children}
           </div>

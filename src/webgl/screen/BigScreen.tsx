@@ -29,7 +29,7 @@ export default function BigScreen() {
   const isMobile = aspect < 1.0
 
   const firstTexture = textures[0] as THREE.Texture
-  const { width, height } = (firstTexture.image as any) || { width: 1920, height: 1080 }
+  const { width, height } = (firstTexture.image as any) || { width: 3840, height: 1100 }
   const textureRatio = width / height
 
   const BASE_HEIGHT = isMobile ? 4.5 : 7.5
@@ -66,7 +66,7 @@ export default function BigScreen() {
         <screenMaterial
           ref={shaderRef}
           transparent
-          uResolution={[1280, 720]}
+          uResolution={[3840, 1100]}
           side={THREE.DoubleSide}
         />
       </mesh>

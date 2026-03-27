@@ -2,44 +2,79 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useMemo } from 'react'
 
-/**
- * useScreenPlayback
- * Manages the timing and blending of screen textures with random glitch during transitions.
- */
-export function useScreenPlayback(textures: THREE.Texture[], shaderRef: React.RefObject<any>) {
-  const glitchDuration = 0.5 // seconds of glitch per transition
+export function useScreenPlayback(
+  textures: THREE.Texture[],
+  shaderRef: React.RefObject<any>
+) {
   const timer = useMemo(() => new THREE.Timer(), [])
+
+  const system = {
+    duration: 8,          // ⚡ faster cycle
+    transition: 1.2,      // glitch window
+    strength: 1.2,
+  }
 
   useFrame(() => {
     timer.update()
     const t = timer.getElapsed()
-    const duration = 24 // Seconds per image
 
-    const index = Math.floor(t / duration) % textures.length
+    const index = Math.floor(t / system.duration) % textures.length
     const nextIndex = (index + 1) % textures.length
-    const blend = (t % duration) / duration
 
-    // Check if we're in transition zone (start of new cycle)
-    const cycleTime = t % duration
-    const inGlitchZone = cycleTime < glitchDuration
+    const cycleTime = t % system.duration
+    const progress = cycleTime / system.duration
 
-    // Random glitch intensity based on transition timing
+    //
+    // 🎬 FAST, CLEAN TRANSITION
+    //
+    const blend = THREE.MathUtils.smoothstep(progress, 0.0, 1.0)
+
+    //
+    // ⚡ HOLOGRAM GLITCH (SHARP SIGNAL)
+    //
     let glitchIntensity = 0
-    if (inGlitchZone) {
-      // More intense at the very start, fades out
-      const glitchFade = 0.5 - (cycleTime / glitchDuration)
-      // Random glitch spikes
-      glitchIntensity = glitchFade * glitchFade * (Math.random() > 0.7 ? 0.8 : 0.3)
+
+    if (cycleTime < system.transition) {
+      const p = cycleTime / system.transition
+
+      const envelope = Math.pow(1.0 - p, 3.0)
+
+      const pulse =
+        (Math.sin(t * 80.0) > 0.7 ? 1 : 0) +
+        (Math.sin(t * 120.0) > 0.8 ? 1 : 0)
+
+      const jitter = Math.sin(t * 200.0) * 0.2
+
+      const signal = pulse * 0.8 + jitter
+
+      glitchIntensity = envelope * signal * system.strength
     }
+    //
+    // 🔥 OPTIONAL: add tiny residual flicker (feels alive)
+    //
+    glitchIntensity += Math.sin(t * 30.0) * 0.03
 
     if (!shaderRef.current) return
 
-    shaderRef.current.uniforms.uTextureA.value = textures[index]
-    shaderRef.current.uniforms.uTextureB.value = textures[nextIndex]
-    shaderRef.current.uniforms.uBlend.value = blend
-    shaderRef.current.uniforms.uTime.value = t
-    shaderRef.current.uniforms.uGlitch.value = glitchIntensity
+    const uniforms = shaderRef.current.uniforms
 
-    shaderRef.current.uniforms.uBrightness.value = 0.8
+    uniforms.uTextureA.value = textures[index]
+    uniforms.uTextureB.value = textures[nextIndex]
+
+    uniforms.uBlend.value = blend
+    uniforms.uTime.value = t
+
+    // ⚡ glitch system
+    uniforms.uGlitch.value = glitchIntensity
+    uniforms.uSignal.value = glitchIntensity
+
+    if (uniforms.uGlitchStrength)
+      uniforms.uGlitchStrength.value = 1.0
+
+    if (uniforms.uGlitchFrequency)
+      uniforms.uGlitchFrequency.value = 80.0
+
+    // 🔆 hologram looks better slightly brighter
+    uniforms.uBrightness.value = 1.4
   })
 }
