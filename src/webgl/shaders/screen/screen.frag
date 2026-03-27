@@ -14,12 +14,15 @@ uniform float uBrightness;
 uniform float uGlitchStrength;
 uniform float uGlitchFrequency;
 
+// 🔥 NEW: control LED size
+uniform float uLedScale;
+
 varying vec2 vUv;
 
 #define random(st) fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123)
 
 //
-// 🧠 memory field (soft fragmented zones)
+// 🧠 memory field
 //
 float memoryField(vec2 uv) {
   vec2 grid = floor(uv * vec2(10.0, 6.0));
@@ -28,7 +31,7 @@ float memoryField(vec2 uv) {
 }
 
 //
-// 🌫 subtle drift (emotional, not wavy)
+// 🌫 drift
 //
 vec2 drift(vec2 uv) {
   float t = uTime * 0.3;
@@ -40,7 +43,7 @@ vec2 drift(vec2 uv) {
 }
 
 //
-// 👻 memory persistence
+// 👻 persistence
 //
 vec3 persistence(vec2 uv) {
   vec2 shift = vec2(0.002 * sin(uTime * 0.8), 0.0);
@@ -52,33 +55,21 @@ vec3 persistence(vec2 uv) {
 }
 
 //
-// ✨ soft spectral (hologram-like)
+// ✨ spectral
 //
 vec3 spectral(vec2 uv) {
   float offset = 0.002 + uGlitch * 0.004;
 
   vec3 col;
-  col.r = mix(
-    texture(uTextureA, uv + vec2(offset, 0.0)).r,
-    texture(uTextureB, uv + vec2(offset, 0.0)).r,
-    uBlend
-  );
-  col.g = mix(
-    texture(uTextureA, uv).g,
-    texture(uTextureB, uv).g,
-    uBlend
-  );
-  col.b = mix(
-    texture(uTextureA, uv - vec2(offset, 0.0)).b,
-    texture(uTextureB, uv - vec2(offset, 0.0)).b,
-    uBlend
-  );
+  col.r = mix(texture(uTextureA, uv + vec2(offset, 0.0)).r, texture(uTextureB, uv + vec2(offset, 0.0)).r, uBlend);
+  col.g = mix(texture(uTextureA, uv).g, texture(uTextureB, uv).g, uBlend);
+  col.b = mix(texture(uTextureA, uv - vec2(offset, 0.0)).b, texture(uTextureB, uv - vec2(offset, 0.0)).b, uBlend);
 
   return col;
 }
 
 //
-// 📺 soft scanlines
+// 📺 scanlines
 //
 float scanlines(vec2 uv) {
   return 0.97 + 0.03 * sin(uv.y * uResolution.y * 0.9);
@@ -100,29 +91,46 @@ vec3 tone(vec3 color) {
   return color / (1.0 + color);
 }
 
-//
-// 📺 subtle phosphor (highlight-only, cinematic)
-//
+// Define the palette as a constant outside the function for better performance.
+const vec3 LED_PALETTE[3] = vec3[](
+    vec3(1.0, 0.0, 0.0), // Red
+    vec3(0.0, 1.0, 0.0), // Green
+    vec3(0.0, 0.0, 1.0)  // Blue
+);
+
 vec3 phosphorMask(vec2 uv, vec2 res, vec3 color) {
-  vec2 gridScale = res * 0.38;
-  vec2 grid = fract(uv * gridScale);
-  vec2 sub = fract(grid * vec2(3.0, 1.0));
+    // 1. INPUT GAMMA: If input is sRGB, convert to linear for accurate math
+    color = pow(color, vec3(2.2)); 
 
-  float d = length((sub - 0.5) * vec2(1.0, 1.2));
-  float diode = smoothstep(0.65, 0.4, d);
+    float scale = min(res.x, res.y) * uLedScale;
+    vec2 gridUV = uv * scale;
+    vec2 cell   = fract(gridUV);
 
-  vec3 mask = vec3(1.0);
-  if (sub.x < 0.33) mask = vec3(1.0, 0.96, 0.96);
-  else if (sub.x < 0.66) mask = vec3(0.96, 1.0, 0.96);
-  else mask = vec3(1.0, 0.96, 0.96);
+    // 2. STABLE INDEXING: Use an integer for the array index
+    int index = int(clamp(floor(cell.x * 3.0), 0.0, 2.0));
+    vec3 subColor = LED_PALETTE[index];
 
-  vec3 phosphor = mix(vec3(1.0), mask * diode, 0.2);
+    vec2 sub = fract(cell * vec2(3.0, 1.0));
+    float d  = length(sub - 0.5);
 
-  // ✨ only visible in highlights
-  float luma = dot(color, vec3(0.299, 0.587, 0.114));
-  float highlight = smoothstep(0.4, 1.0, luma);
+    // 3. ANTI-ALIASING: Use fwidth to soften edges and reduce moiré shimmer
+    float delta = fwidth(d);
+    float ledDot  = smoothstep(0.35 + delta, 0.35 - delta, d);
+    float ledGlow = smoothstep(0.8, 0.2, d);
 
-  return mix(color, color * phosphor, highlight * 0.50);
+    float brightness = dot(color, subColor);
+    // Adjusting power for the mask weight
+    brightness = pow(brightness, 0.8);
+
+    vec3 emission = subColor * brightness * (ledDot + ledGlow * 0.25);
+    
+    // 4. AMBIENT BOOST: Prevents the screen from going completely black
+    vec3 ambient  = color * 0.15; 
+
+    vec3 result = ambient + emission;
+
+    // 5. OUTPUT GAMMA: Convert back to sRGB for display
+    return pow(result, vec3(1.0 / 2.2));
 }
 
 //
@@ -131,48 +139,33 @@ vec3 phosphorMask(vec2 uv, vec2 res, vec3 color) {
 void main() {
   vec2 uv = vUv;
 
-  // 🌫 drift
   uv = drift(uv);
 
   float dist = length(uv - 0.5);
-
-  // 🧠 memory zones
   float field = memoryField(uv);
 
-  // base textures
   vec3 colA = texture(uTextureA, uv).rgb;
   vec3 colB = texture(uTextureB, uv).rgb;
 
-  // present vs past
   vec3 present = mix(colA, colB, uBlend);
   vec3 past = persistence(uv);
 
-  // 🧠 memory invasion
   vec3 memoryMix = mix(present, past, field * (1.0 - uBlend));
-
-  // ✨ spectral softness
   vec3 color = mix(memoryMix, spectral(uv), 0.4);
 
-  // 👻 extra ghost layer
   color = mix(color, past, 0.15);
-
-  // 🌫 slight desaturation (anime feel)
   color = mix(color, vec3(dot(color, vec3(0.333))), 0.08);
 
-  // 📺 scanlines
   color *= scanlines(uv);
 
-  // 🌫 bloom + tone
+  // 🔥 APPLY LCD BEFORE BLOOM
+  color = phosphorMask(uv, uResolution, color);
+
   color = bloom(color);
   color = tone(color);
 
-  // 📺 subtle phosphor (after lighting)
-  color = phosphorMask(uv, uResolution, color);
-
-  // 🔆 brightness
   color *= uBrightness;
 
-  // 🎯 vignette
   float vignette = smoothstep(0.95, 0.65, dist);
   color *= vignette;
 

@@ -31,7 +31,7 @@ export function useScreenPlayback(
     //
     // 🎬 FAST, CLEAN TRANSITION
     //
-    const blend = THREE.MathUtils.smoothstep(progress, 0.0, 1.0)
+    const blend = THREE.MathUtils.smoothstep(progress, 0.98, 1.0)
 
     //
     // ⚡ HOLOGRAM GLITCH (SHARP SIGNAL)
