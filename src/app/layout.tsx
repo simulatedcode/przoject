@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Sans, IBM_Plex_Mono, Doto } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
-import CanvasRoot from "@/components/webgl/CanvasRoot";
+import CanvasRoot from "@/components/canvas/core/CanvasRoot";
 import LenisProvider from "@/components/dom/LenisProvider";
 import Header from "@/components/ui/Header";
 

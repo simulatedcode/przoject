@@ -1,7 +1,7 @@
 import { Effect } from 'postprocessing'
 import { Uniform } from 'three'
 
-import fragmentShader from '../../shaders/PixelOverlay.frag'
+import fragmentShader from '../../../shaders/PixelOverlay.frag'
 
 export class PixelOverlayEffect extends Effect {
   constructor({ pixelSize = 4.0, gridThickness = 0.1, opacity = 1.0 } = {}) {

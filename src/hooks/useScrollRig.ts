@@ -3,7 +3,7 @@
 import { useEffect } from "react"
 import { MutableRefObject } from "react"
 import { Group } from "three"
-import { gsap } from "@/utils/gsap"
+import { gsap } from "@/lib/gsap"
 
 export default function useScrollRig(
     rig: MutableRefObject<Group | null>

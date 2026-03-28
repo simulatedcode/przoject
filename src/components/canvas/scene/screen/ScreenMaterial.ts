@@ -1,8 +1,8 @@
 import * as THREE from 'three'
 import { shaderMaterial } from '@react-three/drei'
 import { extend } from '@react-three/fiber'
-import screenVertexShader from '@/webgl/shaders/screen/screen.vert?raw'
-import screenFragmentShader from '@/webgl/shaders/screen/screen.frag?raw'
+import screenVertexShader from '@/shaders/screen/screen.vert?raw'
+import screenFragmentShader from '@/shaders/screen/screen.frag?raw'
 
 /**
  * ScreenMaterial

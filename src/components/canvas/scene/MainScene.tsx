@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
 import Models from './Models'
 import Ground from './Ground'
-import BigScreen from '../screen/BigScreen'
+import BigScreen from '@/components/canvas/scene/screen/BigScreen'
 import Environment from './Environment'
 
 export default function MainScene() {

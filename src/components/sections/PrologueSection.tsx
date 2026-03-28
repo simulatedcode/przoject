@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { useSectionProgress } from '@/webgl/scene/utils/useSectionProgress'
+import { useSectionProgress } from '@/components/canvas/scene/utils/useSectionProgress'
 
 export default function PrologueSection() {
     const t = useSectionProgress('prologue')

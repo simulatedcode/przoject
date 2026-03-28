@@ -5,8 +5,8 @@ import { useState, useMemo } from 'react'
 import { Environment, PerformanceMonitor } from '@react-three/drei'
 import * as THREE from 'three'
 
-import SceneManager from '@/webgl/core/SceneManager'
-import RenderPipeline from '@/webgl/core/RenderPipeline'
+import SceneManager from './SceneManager'
+import RenderPipeline from './RenderPipeline'
 import { MouseTracker } from '@/hooks/useMousePosition'
 
 function setupShaderDebugging(gl: THREE.WebGLRenderer) {
