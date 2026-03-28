@@ -1,8 +1,5 @@
 'use client'
 
-import { Box, Cylinder } from '@react-three/drei'
-import * as THREE from 'three'
-
 /**
  * CinemaEnvironment
  * A presentation hall environment matching the technical 'Truss' aesthetic.

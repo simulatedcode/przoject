@@ -13,6 +13,11 @@ export const ScreenMaterial = shaderMaterial(
 
     uLedScale: 0.25,
 
+    // 📐 curve bending
+    uCurveRadius: 12.0,
+    uCurveAmount: 2.5,
+    uTension: 0.3,
+
     // 🎞 textures
     uTextureA: null,
     uTextureB: null,

@@ -13,6 +13,11 @@ export const GlassMaterial = shaderMaterial(
     // ⏱ time
     uTime: 0,
 
+    // 📐 curve bending
+    uCurveRadius: 12.0,
+    uCurveAmount: 2.5,
+    uTension: 0.3,
+
     // 📺 match screen resolution (IMPORTANT)
     uResolution: new THREE.Vector2(1920, 1080),
 

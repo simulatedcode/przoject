@@ -3,15 +3,16 @@
 import { useMemo } from 'react'
 import { useThree, useFrame } from '@react-three/fiber'
 import { useWebGLStore } from '@/store/useWebGLStore'
+import type { WebGLState } from '@/store/useWebGLStore'
 import { CameraController } from './CameraController'
 import { useActiveSection } from '../scene/scroll/useActiveSection'
 import { getSectionState } from '../scene/director/getSectionState'
 
 export default function CameraRig() {
   const { camera } = useThree()
-  const scrollProgress = useWebGLStore((state: any) => state.scrollProgress)
-  const mouse = useWebGLStore((state: any) => state.mouse)
-  const introState = useWebGLStore((state: any) => state.introState)
+  const scrollProgress = useWebGLStore((state: WebGLState) => state.scrollProgress)
+  const mouse = useWebGLStore((state: WebGLState) => state.mouse)
+  const introState = useWebGLStore((state: WebGLState) => state.introState)
   const controller = useMemo(() => new CameraController(), [])
   const section = useActiveSection(['hero', 'prologue', 'landscape', 'memories'])
 

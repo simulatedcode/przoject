@@ -7,28 +7,26 @@ import { useWebGLStore } from '@/store/useWebGLStore'
 export default function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null)
   const mouse = useWebGLStore((state) => state.mouse)
-  const setterRef = useRef<{ x: Function, y: Function } | null>(null)
+  const setX = useRef<((val: number) => void) | null>(null)
+  const setY = useRef<((val: number) => void) | null>(null)
 
   useEffect(() => {
     if (!cursorRef.current) return
 
-    // Create high-performance setters
-    setterRef.current = {
-      x: gsap.quickSetter(cursorRef.current, 'x', 'px'),
-      y: gsap.quickSetter(cursorRef.current, 'y', 'px')
-    }
+    const xSetter = gsap.quickSetter(cursorRef.current, 'x', 'px')
+    const ySetter = gsap.quickSetter(cursorRef.current, 'y', 'px')
+    setX.current = xSetter as (val: number) => void
+    setY.current = ySetter as (val: number) => void
   }, [])
 
   useEffect(() => {
-    if (!setterRef.current) return
+    if (!setX.current || !setY.current) return
 
-    // Map normalized -1/1 back to screen coordinates
     const x = (mouse.x + 1) * window.innerWidth / 2
     const y = (-mouse.y + 1) * window.innerHeight / 2
 
-    // Direct update via quickSetter (bypasses full GSAP engine overhead)
-    setterRef.current.x(x)
-    setterRef.current.y(y)
+    setX.current(x)
+    setY.current(y)
   }, [mouse])
 
   return (

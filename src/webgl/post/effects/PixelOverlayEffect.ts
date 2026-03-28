@@ -14,7 +14,6 @@ export class PixelOverlayEffect extends Effect {
     })
   }
 
-  update(renderer: any, inputBuffer: any, deltaTime: any) {
-    // Uniforms are automatically handled if set in constructor Map
+  update(): void {
   }
 }

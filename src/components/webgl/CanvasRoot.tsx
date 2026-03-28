@@ -9,6 +9,34 @@ import SceneManager from '@/webgl/core/SceneManager'
 import RenderPipeline from '@/webgl/core/RenderPipeline'
 import { MouseTracker } from '@/hooks/useMousePosition'
 
+function setupShaderDebugging(gl: THREE.WebGLRenderer) {
+  const glContext = gl.getContext()
+  if (!glContext) return
+
+  const originalShaderSource = glContext.shaderSource.bind(glContext)
+  const originalCompileShader = glContext.compileShader.bind(glContext)
+
+  glContext.shaderSource = function(shader: WebGLShader, source: string) {
+    return originalShaderSource(shader, source)
+  }
+
+  glContext.compileShader = function(shader: WebGLShader) {
+    const result = originalCompileShader(shader)
+    const status = glContext.getShaderParameter(shader, glContext.COMPILE_STATUS)
+    
+    if (!status) {
+      const type = glContext.getShaderParameter(shader, glContext.SHADER_TYPE)
+      const typeStr = type === glContext.VERTEX_SHADER ? 'Vertex' : 'Fragment'
+      const log = glContext.getShaderInfoLog(shader)
+      
+      console.error(`[Shader Error] ${typeStr} Shader:`)
+      console.error('Log:', log)
+    }
+    
+    return result
+  }
+}
+
 export default function CanvasRoot() {
 
   const [dpr, setDpr] = useState(1.5)
@@ -35,6 +63,9 @@ export default function CanvasRoot() {
       dpr={dpr}
       shadows={{ type: THREE.PCFShadowMap }}
       gl={glConfig}
+      onCreated={({ gl }) => {
+        setupShaderDebugging(gl)
+      }}
       style={{
         position: 'fixed',
         inset: 0,

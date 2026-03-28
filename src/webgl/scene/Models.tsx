@@ -46,39 +46,34 @@ export default function Model() {
           mat instanceof THREE.MeshPhysicalMaterial
         ) {
 
-          // Correct color space
           if (mat.map) {
             mat.map.colorSpace = THREE.SRGBColorSpace
           }
 
-          // Improve reflections
-          mat.envMapIntensity = 6.2
+          mat.envMapIntensity = 7.2
 
-          // Normal strength
           if (mat.normalMap) {
-            mat.normalScale.set(1, 1)
+            mat.normalScale.set(2, 1)
           }
 
-          // Natural material presets
           if (child.name === 'Body') {
-            mat.roughness = 0.5
-            mat.metalness = 0
+            mat.roughness = 1.5
+            mat.metalness = 1
           }
 
           if (child.name === 'MetalFrame') {
-            mat.roughness = 0.2
-            mat.metalness = 0.08
+            mat.roughness = 1.2
+            mat.metalness = 1.08
           }
 
           return mat
         }
 
-        // Fallback → convert to PBR material
         const fallback = new THREE.MeshStandardMaterial({
-          color: (material as any).color ?? new THREE.Color('#B3D4D6'),
-          map: (material as any).map ?? null,
-          roughness: 0.6,
-          metalness: 0.0,
+          color: (material as THREE.MeshStandardMaterial).color ?? new THREE.Color('#B4D4D6'),
+          map: (material as THREE.MeshStandardMaterial).map ?? null,
+          roughness: 1.6,
+          metalness: 1.0,
           transparent: material.transparent,
           opacity: material.opacity,
         })
@@ -93,32 +88,6 @@ export default function Model() {
 
       child.material = processed.length === 1 ? processed[0] : processed
     })
-
-    return () => {
-
-      scene.traverse((child) => {
-
-        if (!(child instanceof THREE.Mesh)) return
-
-        const materials = Array.isArray(child.material)
-          ? child.material
-          : [child.material]
-
-        const originals = child.userData.__originalMaterials as THREE.Material[] | undefined
-
-        materials.forEach((material) => {
-          if (material.userData?.__isCodexClone) {
-            material.dispose()
-          }
-        })
-
-        if (originals && originals.length > 0) {
-          child.material = originals.length === 1 ? originals[0] : originals
-        }
-
-      })
-
-    }
 
   }, [scene])
 

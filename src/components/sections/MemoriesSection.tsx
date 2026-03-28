@@ -48,19 +48,19 @@ export default function MemoriesSection() {
                         <div className="border-t border-white/10 pt-4">
                             <span className="font-departure text-[9px] text-white/40 block mb-1">[FRAGMENT:01]</span>
                             <p className="text-[11px] font-departure leading-relaxed text-white/90">
-                                "The smell of rain on a highway that doesn't exist anymore."
+                                &quot;The smell of rain on a highway that doesn&apos;t exist anymore.&quot;
                             </p>
                         </div>
                         <div className="border-t border-white/10 pt-4">
                             <span className="font-departure text-[9px] text-white/40 block mb-1">[FRAGMENT:02]</span>
                             <p className="text-[11px] font-departure leading-relaxed text-white/70">
-                                "A flickering neon light from a storefront selling dreams."
+                                &quot;A flickering neon light from a storefront selling dreams.&quot;
                             </p>
                         </div>
                         <div className="border-t border-white/10 pt-4">
                             <span className="font-departure text-[9px] text-white/40 block mb-1">[FRAGMENT:03]</span>
                             <p className="text-[11px] font-departure leading-relaxed text-white/60">
-                                "Voices of friends echoed in a room that was never built."
+                                &quot;Voices of friends echoed in a room that was never built.&quot;
                             </p>
                         </div>
                     </div>

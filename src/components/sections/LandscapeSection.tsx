@@ -52,7 +52,7 @@ export default function LandscapeSection() {
                         </div>
                         <div className="border-t mb-2 border-white/10 pt-4">
                             <p className="text-[11px] leading-relaxed tracking-wide font-light text-white/90 font-departure">
-                                "While it becomes fiction, the landscape is what we already have as a memory. It's what stays."
+                                &quot;While it becomes fiction, the landscape is what we already have as a memory. It&apos;s what stays.&quot;
                             </p>
                         </div>
                         <div className="w-6 h-px mb-2 bg-white/20" />
