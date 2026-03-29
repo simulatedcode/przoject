@@ -1,40 +1,76 @@
 'use client'
 
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { Text } from '@react-three/drei'
+import { EffectComposer, Bloom } from '@react-three/postprocessing'
+import * as THREE from 'three'
 import { useWebGLStore } from '@/store/useWebGLStore'
-import { useEffect, useRef, useState } from 'react'
+
+import crtVert from '@/shaders/screen/crt.vert?raw'
+import crtFrag from '@/shaders/screen/crt.frag?raw'
+
+/* =========================
+   CRT SHADER PASS (POST-FX)
+========================= */
+const CRTShaderPass = () => {
+  const meshRef = useRef<THREE.Mesh>(null)
+  const { size } = useThree()
+
+  const uniforms = useMemo(
+    () => ({
+      uTime: { value: 0 },
+      uResolution: { value: new THREE.Vector2(size.width, size.height) },
+      tDiffuse: { value: null },
+    }),
+    [size]
+  )
+
+  useFrame((state) => {
+    if (meshRef.current) {
+      ; (meshRef.current.material as THREE.ShaderMaterial).uniforms.uTime.value =
+        state.clock.elapsedTime
+    }
+  })
+
+  return (
+    <mesh ref={meshRef}>
+      <planeGeometry args={[2, 2]} />
+      <shaderMaterial
+        vertexShader={crtVert}
+        fragmentShader={crtFrag}
+        uniforms={uniforms}
+        transparent
+      />
+    </mesh>
+  )
+}
 
 export default function LoadingScreen() {
   const progress = useWebGLStore((s) => s.progress)
+  const setLoadingFinished = useWebGLStore((s) => s.setLoadingFinished)
+  const loadingFinished = useWebGLStore((s) => s.loadingFinished)
 
   const [displayProgress, setDisplayProgress] = useState(0)
 
   const progressRef = useRef(progress)
   const startTime = useRef<number | null>(null)
 
-  const setLoadingFinished = useWebGLStore((s) => s.setLoadingFinished)
-  const loadingFinished = useWebGLStore((s) => s.loadingFinished)
-
-  // keep latest real progress
+  // keep latest progress
   useEffect(() => {
     progressRef.current = progress
   }, [progress])
 
-  // detect visual completion
-  useEffect(() => {
-    if (progress === 100 && displayProgress >= 99.9 && !loadingFinished) {
-      setLoadingFinished(true)
-    }
-  }, [progress, displayProgress, loadingFinished, setLoadingFinished])
-
-  // smooth + time-based loop
+  // smooth cinematic progression
   useEffect(() => {
     let raf: number
 
     const update = () => {
-      // safe initialization (no impure render)
       if (startTime.current === null) {
         startTime.current = performance.now()
       }
+
+      let currentProgress = 0
 
       setDisplayProgress((prev) => {
         const elapsed =
@@ -42,38 +78,35 @@ export default function LoadingScreen() {
             ? (performance.now() - startTime.current) / 1000
             : 0
 
-        // time-driven progress (0 → 95 over ~1.2s)
         const timeProgress = Math.min((elapsed / 1.2) * 95, 95)
 
-        // combine real + time
         const target =
-          progressRef.current === 100
+          progressRef.current >= 100
             ? 100
             : Math.max(progressRef.current, timeProgress)
 
-        const diff = target - prev
+        const next = THREE.MathUtils.lerp(prev, target, 0.08)
+        currentProgress = next
 
-        // snap when close
-        if (Math.abs(diff) < 0.1) return target
+        if (Math.abs(target - next) < 0.1) return target
 
-        return prev + diff * 0.08
+        return next
       })
+
+      // Trigger store side-effect outside the state updater
+      if (currentProgress > 99.9 && progressRef.current === 100 && !loadingFinished) {
+        setLoadingFinished(true)
+      }
 
       raf = requestAnimationFrame(update)
     }
 
     update()
-
     return () => cancelAnimationFrame(raf)
-  }, [])
-
-  const clamped =
-    progress === 100
-      ? 100
-      : Math.min(displayProgress, 99)
+  }, [loadingFinished, setLoadingFinished])
 
   const BAR_LENGTH = 30
-  const activeChars = Math.floor((clamped / 100) * BAR_LENGTH)
+  const activeChars = Math.floor((displayProgress / 100) * BAR_LENGTH)
 
   const getStatus = (p: number) => {
     if (p < 25) return 'INITIALIZING_KERNEL...'
@@ -84,37 +117,96 @@ export default function LoadingScreen() {
   }
 
   return (
-    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black text-white font-mono uppercase tracking-widest text-[11px]">
-      {/* SCANLINE OVERLAY */}
-      <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))] z-101 bg-size-[100%_2px,3px_100%] opacity-20" />
+    <div className="fixed inset-0 z-100 bg-background overflow-hidden">
+      <Canvas camera={{ position: [0, 0, 5], fov: 70 }} dpr={[1, 1.5]}>
+        <color attach="background" args={['#0A0F10']} />
 
-      <div className="w-80 space-y-4">
-        <div className="flex justify-between items-end border-b border-white/10 pb-1 opacity-60">
-          <span>PRZOJECT</span>
-          <span></span>
-        </div>
+        <group scale={1.2}>
+          {/* HEADER */}
+          <Text
+            position={[-1.5, 1.0, 0]}
+            fontSize={0.07}
+            fillOpacity={0.6}
+            anchorX="left"
+            font="/fonts/DepartureMono-Regular.woff"
+          >
+            PRZOJECT_OS_V1.6.1 // SYSTEM_INIT
+          </Text>
 
-        <div className="space-y-1">
-          <div className="flex justify-between items-center text-white/40">
-            <span>{getStatus(clamped)}</span>
-            <span>{Math.floor(clamped)}%</span>
-          </div>
+          {/* STATUS LOG */}
+          <Text
+            position={[-1.5, 0.5, 0]}
+            fontSize={0.10}
+            fillOpacity={0.4}
+            anchorX="left"
+            font="/fonts/DepartureMono-Regular.woff"
+          >
+            {getStatus(displayProgress)}
+          </Text>
 
-          <div className="text-[13px] drop-shadow-[0_0_8px_rgba(255,255,255,0.3)] font-mono">
-            <span className="text-white/90">
-              [{'⠶'.repeat(activeChars)}
-            </span>
-            <span className="text-white/20">
-              {'⠶'.repeat(BAR_LENGTH - activeChars)}]
-            </span>
-          </div>
-        </div>
+          {/* PERCENTAGE */}
+          <Text
+            position={[1.5, 0.5, 0]}
+            fontSize={0.10}
+            fillOpacity={0.4}
+            anchorX="right"
+            font="/fonts/DepartureMono-Regular.woff"
+          >
+            {Math.floor(displayProgress)}%
+          </Text>
 
-        <div className="text-white/20 pt-2 flex items-center gap-1">
-          <span className="animate-pulse">_</span>
-          <span>AWAITING_INPUT</span>
-        </div>
-      </div>
+          {/* PROGRESS BAR (Refined Spacing) */}
+          <group position={[-1.5, 0.1, 0]}>
+            {/* Outline / Empty Bar */}
+            <Text
+              fontSize={0.16}
+              fillOpacity={0.05}
+              anchorX="left"
+              font="/fonts/DepartureMono-Regular.woff"
+            >
+              [{'⠶'.repeat(BAR_LENGTH)}]
+            </Text>
+
+            {/* Filled Part */}
+            <Text
+              fontSize={0.16}
+              fillOpacity={0.9}
+              anchorX="left"
+              font="/fonts/DepartureMono-Regular.woff"
+            >
+              {'⠶'.repeat(activeChars)}
+            </Text>
+
+            {/* The leading '[' needs to be accounted for if it's the same color */}
+            {/* Actually, let's keep it simple: */}
+            <Text
+              fontSize={0.16}
+              fillOpacity={1.0}
+              anchorX="left"
+              font="/fonts/DepartureMono-Regular.woff"
+              position={[-0.1, 0, 0]} // Nudge to match outline
+            >
+              [
+            </Text>
+          </group>
+
+          {/* FOOTER */}
+          <Text
+            position={[-1.5, -0.6, 0]}
+            fontSize={0.07}
+            fillOpacity={0.15}
+            anchorX="left"
+            font="/fonts/DepartureMono-Regular.woff"
+          >
+            _ AWAITING_INPUT_SEQUENCE...
+          </Text>
+        </group>
+
+        <EffectComposer multisampling={0}>
+          <Bloom intensity={0.5} luminanceThreshold={0.4} radius={0.7} />
+          <CRTShaderPass />
+        </EffectComposer>
+      </Canvas>
     </div>
   )
 }
