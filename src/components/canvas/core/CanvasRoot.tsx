@@ -5,10 +5,9 @@ import { useState, useMemo } from 'react'
 import { PerformanceMonitor } from '@react-three/drei'
 import * as THREE from 'three'
 
-import SceneManager from './SceneManager'
 import RenderPipeline from './RenderPipeline'
 import { MouseTracker } from '@/hooks/useMousePosition'
-import LoadingBridge from './LoadingBridge'
+import SceneManager from './SceneManager'
 
 function setupShaderDebugging(gl: THREE.WebGLRenderer) {
   const glContext = gl.getContext()
@@ -74,7 +73,7 @@ export default function CanvasRoot() {
         pointerEvents: 'none'
       }}
     >
-      <LoadingBridge />
+
 
       {/* Performance scaling */}
       <PerformanceMonitor

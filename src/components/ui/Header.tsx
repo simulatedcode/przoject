@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useWebGLStore } from '@/store/useWebGLStore'
 
 const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()'
@@ -46,6 +46,12 @@ function useTextScramble(
 
   const hasRun = useRef(false)
   const frameRef = useRef<number | null>(null)
+  const onCompleteRef = useRef(onComplete)
+
+  // keep latest onComplete callback
+  useEffect(() => {
+    onCompleteRef.current = onComplete
+  }, [onComplete])
 
   useEffect(() => {
     if (!start || hasRun.current) return
@@ -73,8 +79,8 @@ function useTextScramble(
         frameRef.current = requestAnimationFrame(animate)
       } else {
         // ✅ SAFE CALLBACK (prevents render-phase update error)
-        if (onComplete) {
-          setTimeout(onComplete, 0)
+        if (onCompleteRef.current) {
+          setTimeout(onCompleteRef.current, 0)
         }
       }
     }
@@ -84,7 +90,7 @@ function useTextScramble(
     return () => {
       if (frameRef.current) cancelAnimationFrame(frameRef.current)
     }
-  }, [start, text, duration, onComplete])
+  }, [start, text, duration])
 
   return displayText
 }
@@ -111,16 +117,19 @@ export default function Header() {
     }
   }, [phase, headerStarted, startHeader])
 
+  // 🔥 STABLE CALLBACK
+  const handleComplete = useCallback(() => {
+    if (!headerComplete) {
+      completeHeader()
+    }
+  }, [headerComplete, completeHeader])
+
   // 🔥 SCRAMBLE TEXT (CONTROLLED)
   const displayText = useTextScramble(
     'PRZOJECT',
     1200,
     headerStarted,
-    () => {
-      if (!headerComplete) {
-        completeHeader()
-      }
-    }
+    handleComplete
   )
 
   return (
