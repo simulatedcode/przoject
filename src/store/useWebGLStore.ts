@@ -12,6 +12,8 @@ export interface WebGLState {
   // 🔴 MASTER FLOW CONTROL
   phase: Phase
   setPhase: (phase: Phase) => void
+  headerAnimationComplete: boolean
+  setHeaderAnimationComplete: (complete: boolean) => void
 
   // 🟢 LOADING
   progress: number
@@ -46,6 +48,8 @@ export const useWebGLStore = create<WebGLState>((set) => ({
   // 🔴 MASTER FLOW CONTROL
   phase: 'loading',
   setPhase: (phase) => set({ phase }),
+  headerAnimationComplete: false,
+  setHeaderAnimationComplete: (complete) => set({ headerAnimationComplete: complete }),
 
   // 🟢 LOADING
   progress: 0,

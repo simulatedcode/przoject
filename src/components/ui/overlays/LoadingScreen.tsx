@@ -63,7 +63,7 @@ export default function LoadingScreen() {
       : Math.min(displayProgress, 99)
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black text-white">
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black text-white">
       <div className="w-75">
         <p className="mb-2 text-sm opacity-70">INITIALIZING SYSTEM</p>
 

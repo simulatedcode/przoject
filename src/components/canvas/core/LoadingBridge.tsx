@@ -10,17 +10,18 @@ export default function LoadingBridge() {
   const setProgress = useWebGLStore((s) => s.setProgress)
   const setPhase = useWebGLStore((s) => s.setPhase)
   const phase = useWebGLStore((s) => s.phase)
+  const headerAnimationComplete = useWebGLStore((s) => s.headerAnimationComplete)
 
   const triggered = useRef(false)
 
   useEffect(() => {
     setProgress(progress)
 
-    if (progress >= 100 && phase === 'loading' && !triggered.current) {
+    if (progress >= 100 && phase === 'loading' && headerAnimationComplete && !triggered.current) {
       triggered.current = true
       setPhase('intro')
     }
-  }, [progress, phase, setProgress, setPhase])
+  }, [progress, phase, headerAnimationComplete, setProgress, setPhase])
 
   return null
 }

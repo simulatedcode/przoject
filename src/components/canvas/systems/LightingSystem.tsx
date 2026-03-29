@@ -24,12 +24,12 @@ export default function LightingSystem() {
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
 
-        shadow-camera-left={-10}
-        shadow-camera-right={10}
+        shadow-camera-left={-20}
+        shadow-camera-right={20}
         shadow-camera-top={10}
         shadow-camera-bottom={-10}
-        shadow-camera-near={1}
-        shadow-camera-far={30}
+        shadow-camera-near={4}
+        shadow-camera-far={80}
 
         shadow-radius={4}
         shadow-bias={-0.0003}
