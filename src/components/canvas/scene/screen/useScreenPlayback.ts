@@ -78,7 +78,11 @@ export function useScreenPlayback(
     if (uniforms.uGlitchFrequency)
       uniforms.uGlitchFrequency.value = 80.0
 
-    // 🔆 hologram looks better slightly brighter
-    uniforms.uBrightness.value = 1.4
+    // 🔆 hologram looks better slightly brighter (smooth fade in)
+    uniforms.uBrightness.value = THREE.MathUtils.lerp(
+      uniforms.uBrightness.value || 0,
+      1.4,
+      0.05
+    )
   })
 }

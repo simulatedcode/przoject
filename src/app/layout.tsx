@@ -5,6 +5,8 @@ import "./globals.css";
 import CanvasRoot from "@/components/canvas/core/CanvasRoot";
 import LenisProvider from "@/components/dom/LenisProvider";
 import Header from "@/components/ui/Header";
+import AppOverlay from "@/components/ui/overlays/AppOverlay";
+import IntroController from "@/components/animations/sequences/IntroController";
 
 const departureMono = localFont({
   src: '../../public/fonts/DepartureMono-Regular.woff',
@@ -48,6 +50,8 @@ export default function RootLayout({
             {children}
           </div>
         </LenisProvider>
+        <AppOverlay />
+        <IntroController />
       </body>
     </html>
   );

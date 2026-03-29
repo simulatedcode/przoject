@@ -7,7 +7,7 @@ import * as THREE from 'three'
 import { ScreenMaterial } from './ScreenMaterial'
 import { GlassMaterial } from './GlassMaterial'
 import { useScreenPlayback } from './useScreenPlayback'
-import { useIntroSequence } from './useIntroSequence'
+import { useScreenIntro } from './useScreenIntro'
 import { useWebGLStore } from '@/store/useWebGLStore'
 import { extend } from '@react-three/fiber'
 
@@ -54,33 +54,16 @@ export default function BigScreen() {
     })
   }, [textures])
 
-  const introState = useIntroSequence(shaderRef)
-  const setIntroState = useWebGLStore((s) => s.setIntroState)
+  const introState = useScreenIntro(shaderRef)
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const s = introState.current
-      setIntroState({
-        phase: s.phase,
-        progress: s.progress,
-        glitch: s.glitch,
-        flash: s.flash,
-        done: s.done,
-      })
-    }, 50)
-    return () => clearInterval(interval)
-  }, [introState, setIntroState])
-
+  const phase = useWebGLStore((s) => s.phase)
   const [playbackEnabled, setPlaybackEnabled] = useState(false)
 
-  useEffect(() => {
-    const handle = setInterval(() => {
-      if (introState.current.done && !playbackEnabled) {
-        setPlaybackEnabled(true)
-      }
-    }, 100)
-    return () => clearInterval(handle)
-  }, [introState, playbackEnabled])
+  useFrame(() => {
+    if (phase === 'landing' && !playbackEnabled) {
+      setPlaybackEnabled(true)
+    }
+  })
 
   useScreenPlayback(textures, shaderRef, playbackEnabled)
 

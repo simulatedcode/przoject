@@ -3,11 +3,9 @@ import { create } from 'zustand'
 export type Phase = 'loading' | 'intro' | 'landing'
 
 export interface IntroState {
-  phase: number
   progress: number
   glitch: number
   flash: number
-  done: boolean
 }
 
 export interface WebGLState {
@@ -39,9 +37,9 @@ export interface WebGLState {
   mouse: { x: number; y: number }
   setMouse: (mouse: { x: number; y: number }) => void
 
-  // 🎞 INTRO MICRO STATE (shader / animation level)
+  // 🎞 INTRO MICRO STATE
   introState: IntroState
-  setIntroState: (introState: IntroState) => void
+  setIntroState: (introState: Partial<IntroState>) => void
 }
 
 export const useWebGLStore = create<WebGLState>((set) => ({
@@ -51,7 +49,8 @@ export const useWebGLStore = create<WebGLState>((set) => ({
 
   // 🟢 LOADING
   progress: 0,
-  setProgress: (progress) => set({ progress }),
+  setProgress: (progress) =>
+    set({ progress: Math.min(Math.max(progress, 0), 100) }),
 
   // 🟡 SCROLL
   scrollProgress: 0,
@@ -75,11 +74,12 @@ export const useWebGLStore = create<WebGLState>((set) => ({
 
   // 🎞 INTRO
   introState: {
-    phase: 0,
     progress: 0,
     glitch: 0,
     flash: 0,
-    done: false,
   },
-  setIntroState: (introState) => set({ introState }),
+  setIntroState: (introState) =>
+    set((state) => ({
+      introState: { ...state.introState, ...introState },
+    })),
 }))

@@ -12,6 +12,8 @@ export default function CameraRig() {
   const { camera } = useThree()
   const scrollProgress = useWebGLStore((state: WebGLState) => state.scrollProgress)
   const mouse = useWebGLStore((state: WebGLState) => state.mouse)
+  const phase = useWebGLStore((state: WebGLState) => state.phase)
+  const mode = useWebGLStore((state: WebGLState) => state.mode)
   const introState = useWebGLStore((state: WebGLState) => state.introState)
   const controller = useMemo(() => new CameraController(), [])
   const section = useActiveSection(['hero', 'prologue', 'landscape', 'memories'])
@@ -30,7 +32,7 @@ export default function CameraRig() {
       parallaxFactor: 0.15,
     }
 
-    controller.update(camera, mouse, scrollProgress, dynamicConfig, introState)
+    controller.update(camera, mouse, scrollProgress, dynamicConfig, introState, mode, phase)
   })
 
   return null

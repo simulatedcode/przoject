@@ -1,16 +1,10 @@
 import { Vector3, Camera, PerspectiveCamera } from 'three'
+import type { Phase, IntroState, WebGLState } from '@/store/useWebGLStore'
 
 export interface CameraConfig {
   x: number; y: number; z: number;
   tx: number; ty: number; tz: number;
   parallaxFactor: number;
-}
-
-export interface IntroCameraState {
-  phase: number
-  progress: number
-  glitch: number
-  done: boolean
 }
 
 export class CameraController {
@@ -22,17 +16,21 @@ export class CameraController {
     mouse: { x: number; y: number },
     scrollProgress: number,
     config: CameraConfig,
-    introState?: IntroCameraState
+    introState: IntroState,
+    mode: WebGLState['mode'],
+    phase: Phase
   ) {
     const { x, y, z, tx, ty, tz, parallaxFactor } = config
 
     this.targetPos.set(x, y, z)
 
-    if (introState && !introState.done) {
+    if (phase !== 'landing') {
       const pushIn = introState.progress * 2.0
       const glitchPunch = introState.glitch * (Math.random() * 0.5 + 0.5) * 0.8
 
-      const microShake = introState.phase <= 3 ?
+      const isHighIntensity = mode === 'BOOT' || mode === 'LANDSCAPE_ANALYSIS'
+      
+      const microShake = isHighIntensity ?
         (Math.random() - 0.5) * 0.03 * (1 - introState.progress) :
         0
 
