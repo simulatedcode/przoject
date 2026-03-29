@@ -11,10 +11,20 @@ export default function LoadingScreen() {
   const progressRef = useRef(progress)
   const startTime = useRef<number | null>(null)
 
+  const setLoadingFinished = useWebGLStore((s) => s.setLoadingFinished)
+  const loadingFinished = useWebGLStore((s) => s.loadingFinished)
+
   // keep latest real progress
   useEffect(() => {
     progressRef.current = progress
   }, [progress])
+
+  // detect visual completion
+  useEffect(() => {
+    if (progress === 100 && displayProgress >= 99.9 && !loadingFinished) {
+      setLoadingFinished(true)
+    }
+  }, [progress, displayProgress, loadingFinished, setLoadingFinished])
 
   // smooth + time-based loop
   useEffect(() => {

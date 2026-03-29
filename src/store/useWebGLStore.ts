@@ -12,19 +12,29 @@ export interface WebGLState {
   // 🔴 MASTER FLOW CONTROL
   phase: Phase
   setPhase: (phase: Phase) => void
+
+  headerStarted: boolean
   headerAnimationComplete: boolean
-  setHeaderAnimationComplete: (complete: boolean) => void
+  startHeader: () => void
+  completeHeader: () => void
 
   // 🟢 LOADING
   progress: number
   setProgress: (progress: number) => void
+  loadingFinished: boolean
+  setLoadingFinished: (finished: boolean) => void
 
   // 🟡 SCROLL / INTERACTION
   scrollProgress: number
   setScrollProgress: (scrollProgress: number) => void
 
   // 🧠 NARRATIVE MODE
-  mode: 'BOOT' | 'LANDSCAPE_ANALYSIS' | 'SUBJECT_DETECTION' | 'MEMORY_RECONSTRUCTION' | 'SYSTEM_COLLAPSE'
+  mode:
+  | 'BOOT'
+  | 'LANDSCAPE_ANALYSIS'
+  | 'SUBJECT_DETECTION'
+  | 'MEMORY_RECONSTRUCTION'
+  | 'SYSTEM_COLLAPSE'
   setMode: (mode: WebGLState['mode']) => void
 
   // 🎛 POST FX
@@ -48,13 +58,27 @@ export const useWebGLStore = create<WebGLState>((set) => ({
   // 🔴 MASTER FLOW CONTROL
   phase: 'loading',
   setPhase: (phase) => set({ phase }),
+
+  headerStarted: false,
   headerAnimationComplete: false,
-  setHeaderAnimationComplete: (complete) => set({ headerAnimationComplete: complete }),
+
+  startHeader: () =>
+    set((state) =>
+      state.headerStarted ? state : { headerStarted: true }
+    ),
+
+  completeHeader: () =>
+    set((state) =>
+      state.headerAnimationComplete
+        ? state
+        : { headerAnimationComplete: true }
+    ),
 
   // 🟢 LOADING
   progress: 0,
-  setProgress: (progress) =>
-    set({ progress: Math.min(Math.max(progress, 0), 100) }),
+  setProgress: (progress) => set({ progress }),
+  loadingFinished: false,
+  setLoadingFinished: (loadingFinished) => set({ loadingFinished }),
 
   // 🟡 SCROLL
   scrollProgress: 0,
@@ -64,10 +88,6 @@ export const useWebGLStore = create<WebGLState>((set) => ({
   mode: 'BOOT',
   setMode: (mode) => set({ mode }),
 
-  // 🖱 INPUT
-  mouse: { x: 0, y: 0 },
-  setMouse: (mouse) => set({ mouse }),
-
   // 🎛 POST FX
   postFXIntensity: 1,
   setPostFXIntensity: (postFXIntensity) => set({ postFXIntensity }),
@@ -75,6 +95,10 @@ export const useWebGLStore = create<WebGLState>((set) => ({
   // 🎬 SCENE
   sceneIndex: 0,
   setSceneIndex: (sceneIndex) => set({ sceneIndex }),
+
+  // 🖱 INPUT
+  mouse: { x: 0, y: 0 },
+  setMouse: (mouse) => set({ mouse }),
 
   // 🎞 INTRO
   introState: {
