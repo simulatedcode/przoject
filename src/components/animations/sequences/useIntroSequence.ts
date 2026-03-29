@@ -8,6 +8,7 @@ export function useIntroSequence() {
   const phase = useWebGLStore((s) => s.phase)
   const setPhase = useWebGLStore((s) => s.setPhase)
   const setMode = useWebGLStore((s) => s.setMode)
+  const setIntroState = useWebGLStore((s) => s.setIntroState)
 
   useEffect(() => {
     if (phase !== 'intro') return
@@ -18,20 +19,42 @@ export function useIntroSequence() {
       },
     })
 
-    // 🎬 STORY TIMELINE (you will refine later)
-
+    // 🎬 STORY TIMELINE
+    // 0.0s: BOOT
     tl.call(() => setMode('BOOT'), [], 0)
+    
+    // Glitch Burst at BOOT
+    tl.to({}, {
+      duration: 0.4,
+      onStart: () => setIntroState({ glitch: 1 }),
+      onComplete: () => setIntroState({ glitch: 0 })
+    }, 0.1)
 
-    tl.call(() => setMode('LANDSCAPE_ANALYSIS'), [], 0.02)
+    // 1.5s: ANALYSIS
+    tl.call(() => setMode('ANALYSIS'), [], 1.5)
+    
+    // Quick Glitch at transition
+    tl.to({}, {
+      duration: 0.1,
+      onStart: () => setIntroState({ glitch: 0.5 }),
+      onComplete: () => setIntroState({ glitch: 0 })
+    }, 1.5)
 
-    tl.call(() => setMode('SUBJECT_DETECTION'), [], 0.15)
+    // 3.0s: MEMORY
+    tl.call(() => setMode('MEMORY'), [], 3.0)
 
-    tl.call(() => setMode('MEMORY_RECONSTRUCTION'), [], 0.3)
-
-    tl.call(() => setMode('SYSTEM_COLLAPSE'), [], 0.45)
+    // 4.5s: COLLAPSE
+    tl.call(() => setMode('COLLAPSE'), [], 4.5)
+    
+    // Long glitch burst during COLLAPSE
+    tl.to({}, {
+      duration: 0.8,
+      onStart: () => setIntroState({ glitch: 1 }),
+      onComplete: () => setIntroState({ glitch: 0 })
+    }, 4.6)
 
     return () => {
       tl.kill()
     }
-  }, [phase, setPhase, setMode])
+  }, [phase, setPhase, setMode, setIntroState])
 }

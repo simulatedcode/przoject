@@ -7,44 +7,7 @@ import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import * as THREE from 'three'
 import { useWebGLStore } from '@/store/useWebGLStore'
 
-import crtVert from '@/shaders/screen/crt.vert?raw'
-import crtFrag from '@/shaders/screen/crt.frag?raw'
-
-/* =========================
-   CRT SHADER PASS (POST-FX)
-========================= */
-const CRTShaderPass = () => {
-  const meshRef = useRef<THREE.Mesh>(null)
-  const { size } = useThree()
-
-  const uniforms = useMemo(
-    () => ({
-      uTime: { value: 0 },
-      uResolution: { value: new THREE.Vector2(size.width, size.height) },
-      tDiffuse: { value: null },
-    }),
-    [size]
-  )
-
-  useFrame((state) => {
-    if (meshRef.current) {
-      ; (meshRef.current.material as THREE.ShaderMaterial).uniforms.uTime.value =
-        state.clock.elapsedTime
-    }
-  })
-
-  return (
-    <mesh ref={meshRef}>
-      <planeGeometry args={[2, 2]} />
-      <shaderMaterial
-        vertexShader={crtVert}
-        fragmentShader={crtFrag}
-        uniforms={uniforms}
-        transparent
-      />
-    </mesh>
-  )
-}
+import CRTShaderPass from '@/components/canvas/post/CRTShaderPass'
 
 export default function LoadingScreen() {
   const progress = useWebGLStore((s) => s.progress)
@@ -204,7 +167,7 @@ export default function LoadingScreen() {
 
         <EffectComposer multisampling={0}>
           <Bloom intensity={0.05} luminanceThreshold={0.4} radius={0.7} />
-          <CRTShaderPass />
+          <CRTShaderPass  intensity={0.095}/>
         </EffectComposer>
       </Canvas>
     </div>

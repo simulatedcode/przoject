@@ -29,12 +29,7 @@ export interface WebGLState {
   setScrollProgress: (scrollProgress: number) => void
 
   // 🧠 NARRATIVE MODE
-  mode:
-  | 'BOOT'
-  | 'LANDSCAPE_ANALYSIS'
-  | 'SUBJECT_DETECTION'
-  | 'MEMORY_RECONSTRUCTION'
-  | 'SYSTEM_COLLAPSE'
+  mode: 'BOOT' | 'ANALYSIS' | 'MEMORY' | 'COLLAPSE'
   setMode: (mode: WebGLState['mode']) => void
 
   // 🎛 POST FX

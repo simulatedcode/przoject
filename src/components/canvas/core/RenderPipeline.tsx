@@ -2,6 +2,7 @@ import { EffectComposer, Bloom, Noise, Vignette, ChromaticAberration, Scanline }
 import { BlendFunction } from 'postprocessing'
 import { useThree } from '@react-three/fiber'
 import { useWebGLStore } from '@/store/useWebGLStore'
+import CRTShaderPass from '../post/CRTShaderPass'
 
 export default function RenderPipeline() {
   const intensity = useWebGLStore((state) => state.postFXIntensity)
@@ -38,6 +39,8 @@ export default function RenderPipeline() {
         offset={0.45}
         darkness={0.6}
       />
+
+      <CRTShaderPass intensity={0.098} />
     </EffectComposer>
   )
 }
