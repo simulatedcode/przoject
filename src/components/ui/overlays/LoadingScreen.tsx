@@ -117,11 +117,11 @@ export default function LoadingScreen() {
   }
 
   return (
-    <div className="fixed inset-0 z-100 bg-background overflow-hidden">
-      <Canvas camera={{ position: [0, 0, 5], fov: 70 }} dpr={[1, 1.5]}>
+    <div className="fixed inset-0 z-100 bg-[#0A0F10] overflow-hidden">
+      <Canvas camera={{ position: [0, 0, 4], fov: 70 }} dpr={[1, 1.5]}>
         <color attach="background" args={['#0A0F10']} />
 
-        <group scale={1.2}>
+        <group scale={1}>
           {/* HEADER */}
           <Text
             position={[-1.5, 1.0, 0]}
@@ -203,7 +203,7 @@ export default function LoadingScreen() {
         </group>
 
         <EffectComposer multisampling={0}>
-          <Bloom intensity={0.5} luminanceThreshold={0.4} radius={0.7} />
+          <Bloom intensity={0.05} luminanceThreshold={0.4} radius={0.7} />
           <CRTShaderPass />
         </EffectComposer>
       </Canvas>
