@@ -32,8 +32,8 @@ export const GlassMaterial = shaderMaterial(
     uMetallic: 0.02,
 
     // 🔌 NEW: sync with screen system
-    uSignal: 0.1,        // glitch / signal strength
-    uBrightness: 1.35,   // screen brightness
+    uSignal: 0.05,        // glitch / signal strength
+    uBrightness: 1.85,   // screen brightness
   },
   glassVertexShader,
   glassFragmentShader

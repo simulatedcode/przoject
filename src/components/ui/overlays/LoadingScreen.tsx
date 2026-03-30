@@ -166,8 +166,8 @@ export default function LoadingScreen() {
         </group>
 
         <EffectComposer multisampling={0}>
-          <Bloom intensity={0.05} luminanceThreshold={0.4} radius={0.7} />
-          <CRTShaderPass  intensity={0.095}/>
+          <Bloom intensity={3.0} luminanceThreshold={0.4} radius={0.7} />
+          <CRTShaderPass intensity={0.095} />
         </EffectComposer>
       </Canvas>
     </div>

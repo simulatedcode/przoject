@@ -30,13 +30,13 @@ export const ScreenMaterial = shaderMaterial(
     uResolution: new THREE.Vector2(1920, 1080),
 
     // 🔆 brightness
-    uBrightness: 1.35,
+    uBrightness: 1.80,
 
     // ⚡ main glitch signal
-    uGlitch: 0.5,
+    uGlitch: 0.05,
 
     // 🎛 legacy controls (still useful)
-    uGlitchStrength: 0.8,
+    uGlitchStrength: 0.08,
     uGlitchFrequency: 60.0,
 
     // 🔌 system signal (sync with glass etc.)
@@ -50,7 +50,7 @@ export const ScreenMaterial = shaderMaterial(
 
     // 📼 future controls
     uScanDistort: 0.25,
-    uBloom: 0.25,
+    uBloom: 1.85,
 
     // 🎬 INTRO SEQUENCE
     uIntroProgress: 0.1,

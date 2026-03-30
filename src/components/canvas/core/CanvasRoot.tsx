@@ -7,7 +7,9 @@ import * as THREE from 'three'
 
 import RenderPipeline from './RenderPipeline'
 import { MouseTracker } from '@/hooks/useMousePosition'
+import { ViewportTracker } from '@/hooks/useViewport'
 import SceneManager from './SceneManager'
+import { useWebGLStore } from '@/store/useWebGLStore'
 
 function setupShaderDebugging(gl: THREE.WebGLRenderer) {
   const glContext = gl.getContext()
@@ -38,7 +40,7 @@ function setupShaderDebugging(gl: THREE.WebGLRenderer) {
 }
 
 export default function CanvasRoot() {
-
+  const viewport = useWebGLStore((s) => s.viewport)
   const [dpr, setDpr] = useState(1.5)
 
   const glConfig = useMemo(() => ({
@@ -77,12 +79,13 @@ export default function CanvasRoot() {
 
       {/* Performance scaling */}
       <PerformanceMonitor
-        onIncline={() => setDpr(Math.min(window.devicePixelRatio, 2))}
+        onIncline={() => setDpr(Math.min(viewport.dpr, 2))}
         onDecline={() => setDpr(1)}
         flipflops={3}
       />
 
       {/* Orchestration */}
+      <ViewportTracker />
       <MouseTracker />
       <SceneManager />
 

@@ -26,9 +26,11 @@ export default function BigScreen() {
 
   const textures = useTexture(IMAGES)
 
+  const viewport = useWebGLStore((s) => s.viewport)
   const { size } = useThree()
-  const aspect = size.width / size.height
-  const isMobile = aspect < 1.0
+
+  const breakpoint = viewport.breakpoint
+  const isMobile = breakpoint === 'mobile'
 
   const firstTexture = textures[0] as THREE.Texture
   const { width, height } = (firstTexture.image as HTMLImageElement) || { width: 3840, height: 1100 }
@@ -54,7 +56,6 @@ export default function BigScreen() {
     })
   }, [textures])
 
-  const introState = useScreenIntro(shaderRef)
 
   const phase = useWebGLStore((s) => s.phase)
   const [playbackEnabled, setPlaybackEnabled] = useState(false)
@@ -73,7 +74,7 @@ export default function BigScreen() {
     timer.update()
     if (!shaderRef.current || !lightRef.current) return
 
-    const brightness = shaderRef.current.uniforms.uBrightness.value || 1.8
+    const brightness = shaderRef.current.uniforms.uBrightness.value || 2.8
     lightRef.current.intensity = 2.0 + brightness
 
     if (glassRef.current) {
@@ -90,7 +91,7 @@ export default function BigScreen() {
         <screenMaterial
           ref={shaderRef}
           transparent
-          uResolution={[1920, 1080]}
+          uResolution={[size.width * viewport.dpr, size.height * viewport.dpr]}
           uCurveRadius={curveRadius}
           uCurveAmount={curveAmount}
           uTension={tension}
@@ -117,7 +118,7 @@ export default function BigScreen() {
           transparent
           uColor="#ccddff"
           uOpacity={0.08}
-          uResolution={[1920, 1080]}
+          uResolution={[size.width * viewport.dpr, size.height * viewport.dpr]}
           uCurveRadius={curveRadius}
           uCurveAmount={curveAmount}
           uTension={tension}

@@ -86,5 +86,7 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor)
 
     color.rgb *= maskEdge;
 
+    color.rgb *= 0.4;
+
     outputColor = color;
 }

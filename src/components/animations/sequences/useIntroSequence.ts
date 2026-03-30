@@ -26,7 +26,7 @@ export function useIntroSequence() {
     // Glitch Burst at BOOT
     tl.to({}, {
       duration: 0.4,
-      onStart: () => setIntroState({ glitch: 1 }),
+      onStart: () => setIntroState({ glitch: 0.4 }),
       onComplete: () => setIntroState({ glitch: 0 })
     }, 0.1)
 
@@ -36,7 +36,7 @@ export function useIntroSequence() {
     // Quick Glitch at transition
     tl.to({}, {
       duration: 0.1,
-      onStart: () => setIntroState({ glitch: 0.5 }),
+      onStart: () => setIntroState({ glitch: 0.2 }),
       onComplete: () => setIntroState({ glitch: 0 })
     }, 1.5)
 
@@ -49,7 +49,7 @@ export function useIntroSequence() {
     // Long glitch burst during COLLAPSE
     tl.to({}, {
       duration: 0.8,
-      onStart: () => setIntroState({ glitch: 1 }),
+      onStart: () => setIntroState({ glitch: 0.4 }),
       onComplete: () => setIntroState({ glitch: 0 })
     }, 4.6)
 

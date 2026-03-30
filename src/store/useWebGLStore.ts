@@ -8,10 +8,23 @@ export interface IntroState {
   flash: number
 }
 
+export type Breakpoint = 'mobile' | 'tablet' | 'desktop'
+
+export interface Viewport {
+  width: number
+  height: number
+  dpr: number
+  breakpoint: Breakpoint
+}
+
 export interface WebGLState {
   // 🔴 MASTER FLOW CONTROL
   phase: Phase
   setPhase: (phase: Phase) => void
+
+  // 📐 VIEWPORT
+  viewport: Viewport
+  setViewport: (viewport: Partial<Viewport>) => void
 
   headerStarted: boolean
   headerAnimationComplete: boolean
@@ -29,7 +42,7 @@ export interface WebGLState {
   setScrollProgress: (scrollProgress: number) => void
 
   // 🧠 NARRATIVE MODE
-  mode: 'BOOT' | 'ANALYSIS' | 'MEMORY' | 'COLLAPSE'
+  mode: 'BOOT' | 'ANALYSIS' | 'MEMORY' | 'COLLAPSE' | 'LANDSCAPE_ANALYSIS'
   setMode: (mode: WebGLState['mode']) => void
 
   // 🎛 POST FX
@@ -49,10 +62,39 @@ export interface WebGLState {
   setIntroState: (introState: Partial<IntroState>) => void
 }
 
+const getBreakpoint = (width: number): Breakpoint => {
+  if (width < 768) return 'mobile'
+  if (width < 1024) return 'tablet'
+  return 'desktop'
+}
+
+const getInitialViewport = (): Viewport => {
+  if (typeof window === 'undefined') {
+    return { width: 1920, height: 1080, dpr: 1, breakpoint: 'desktop' }
+  }
+  return {
+    width: window.innerWidth,
+    height: window.innerHeight,
+    dpr: window.devicePixelRatio,
+    breakpoint: getBreakpoint(window.innerWidth),
+  }
+}
+
 export const useWebGLStore = create<WebGLState>((set) => ({
   // 🔴 MASTER FLOW CONTROL
   phase: 'loading',
   setPhase: (phase) => set({ phase }),
+
+  // 📐 VIEWPORT
+  viewport: getInitialViewport(),
+  setViewport: (viewport) =>
+    set((state) => {
+      const newViewport = { ...state.viewport, ...viewport }
+      if (viewport.width !== undefined) {
+        newViewport.breakpoint = getBreakpoint(viewport.width)
+      }
+      return { viewport: newViewport }
+    }),
 
   headerStarted: false,
   headerAnimationComplete: false,
