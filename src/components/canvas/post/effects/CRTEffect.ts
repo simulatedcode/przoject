@@ -8,6 +8,7 @@ const MODE_MAP = {
   ANALYSIS: 1,
   MEMORY: 2,
   COLLAPSE: 3,
+  LANDSCAPE_ANALYSIS: 4,
 }
 
 export class CRTEffect extends Effect {

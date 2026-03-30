@@ -11,6 +11,7 @@ const MODE_MAP = {
   ANALYSIS: 'ANALYSIS',
   MEMORY: 'MEMORY',
   COLLAPSE: 'COLLAPSE',
+  LANDSCAPE_ANALYSIS: 'LANDSCAPE_ANALYSIS',
 } as const
 
 interface CRTShaderPassProps {
